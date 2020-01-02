@@ -1,0 +1,9 @@
+{
+  "name": "arx-mesh-editor",
+  "version": "0.0.1",
+  "description": "An editor for the level files of Arx Fatalis",
+  "main": "index.js",
+  "scripts": {},
+  "author": "Lajos Meszaros <m_lajos@hotmail.com>",
+  "license": "GPL-3.0-or-later"
+}
