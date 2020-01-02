@@ -5,5 +5,14 @@
   "main": "index.js",
   "scripts": {},
   "author": "Lajos Meszaros <m_lajos@hotmail.com>",
-  "license": "GPL-3.0-or-later"
+  "license": "GPL-3.0-or-later",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/meszaros-lajos-gyorgy/arx-mesh-editor.git"
+  },
+  "bugs": {
+    "url": "https://github.com/meszaros-lajos-gyorgy/arx-mesh-editor/issues"
+  },
+  "homepage": "https://github.com/meszaros-lajos-gyorgy/arx-mesh-editor#readme",
+  "dependencies": {}
 }

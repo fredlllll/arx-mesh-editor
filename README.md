@@ -6,11 +6,13 @@ An editor for the level files of Arx Fatalis
 
 source: https://wiki.arx-libertatis.org/Filetypes
 
-dlf - level
+`dlf` - level
 
-fts - compiled scene
+`fts` - compiled scene
 
-llf - level lighting
+`llf` - level lighting
+
+`DanaeLoadLevel` - https://github.com/arx/ArxLibertatis/blob/master/src/scene/LoadLevel.cpp#L225
 
 ## goals for this project
 
