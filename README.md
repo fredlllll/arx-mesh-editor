@@ -2,6 +2,8 @@
 
 An editor for the level files of Arx Fatalis
 
+[![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
+
 ## file formats of Arx
 
 source: https://wiki.arx-libertatis.org/Filetypes

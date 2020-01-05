@@ -2,8 +2,33 @@
   "name": "arx-mesh-editor",
   "version": "0.0.1",
   "description": "An editor for the level files of Arx Fatalis",
-  "main": "index.js",
-  "scripts": {},
+  "main": "src/js/index.js",
+  "scripts": {
+    "start": "npm run app",
+    "dev": "cross-env NODE_ENV=development npm-run-all --parallel build:watch app",
+    "test": "npm-run-all lint:*",
+    "app": "http-server static",
+    "build": "webpack",
+    "build:watch": "webpack --watch",
+    "commit": "git-cz",
+    "commit:again": "git-cz --retry",
+    "lint:js": "eslint \"src/**/*.js\"",
+    "lint:style": "stylelint \"src/**/*.scss\"",
+    "lint-staged": "lint-staged"
+  },
+  "lint-staged": {
+    "src/**/*.js": [
+      "eslint --fix",
+      "git add"
+    ],
+    "src/**/*.scss": [
+      "stylelint --fix",
+      "git add"
+    ]
+  },
+  "pre-commit": [
+    "lint-staged"
+  ],
   "author": "Lajos Meszaros <m_lajos@hotmail.com>",
   "license": "GPL-3.0-or-later",
   "repository": {
@@ -14,5 +39,57 @@
     "url": "https://github.com/meszaros-lajos-gyorgy/arx-mesh-editor/issues"
   },
   "homepage": "https://github.com/meszaros-lajos-gyorgy/arx-mesh-editor#readme",
-  "dependencies": {}
+  "dependencies": {
+    "ramda": "^0.26.1",
+    "three": "^0.112.1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.7.7",
+    "@babel/core": "^7.7.7",
+    "@babel/preset-env": "^7.7.7",
+    "@babel/register": "^7.7.7",
+    "autoprefixer": "^9.7.3",
+    "babel-eslint": "^10.0.3",
+    "babel-loader": "^8.0.6",
+    "classnames": "^2.2.6",
+    "commitizen": "^4.0.3",
+    "cross-env": "^6.0.3",
+    "css-loader": "^3.4.1",
+    "cssnano": "^4.1.10",
+    "cz-conventional-changelog": "^3.0.2",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.9.0",
+    "eslint-config-prettier-standard": "^3.0.1",
+    "eslint-config-standard": "^14.1.0",
+    "eslint-plugin-import": "^2.19.1",
+    "eslint-plugin-node": "^11.0.0",
+    "eslint-plugin-prettier": "^3.1.2",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-ramda": "^2.5.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "http-server": "^0.12.0",
+    "lint-staged": "^9.5.0",
+    "mini-css-extract-plugin": "^0.9.0",
+    "node-sass-chokidar": "^1.4.0",
+    "nodemon": "^2.0.2",
+    "npm-run-all": "^4.1.5",
+    "optimize-css-assets-webpack-plugin": "^5.0.3",
+    "postcss-loader": "^3.0.0",
+    "pre-commit": "^1.2.2",
+    "prettier": "^1.19.1",
+    "prettier-config-standard": "^1.0.1",
+    "regenerator-runtime": "^0.13.3",
+    "sass-loader": "^8.0.0",
+    "stylelint": "^12.0.1",
+    "stylelint-config-standard": "^19.0.0",
+    "stylelint-scss": "^3.13.0",
+    "terser-webpack-plugin": "^2.3.1",
+    "webpack": "^4.41.5",
+    "webpack-cli": "^3.3.10"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
 }
