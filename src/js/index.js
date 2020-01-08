@@ -25,7 +25,20 @@ Promise.all([
 
 /* global requestAnimationFrame */
 
-import { Scene, PerspectiveCamera, WebGLRenderer, BoxGeometry, MeshBasicMaterial, Mesh } from 'three'
+import {
+  Scene,
+  PerspectiveCamera,
+  WebGLRenderer,
+  Color,
+  Vector3,
+  Triangle,
+  Geometry,
+  Face3,
+  Mesh,
+  Line,
+  MeshBasicMaterial,
+  LineBasicMaterial
+} from 'three'
 
 const width = 640
 const height = 480
@@ -37,18 +50,37 @@ const renderer = new WebGLRenderer()
 renderer.setSize(width, height)
 document.body.appendChild(renderer.domElement)
 
-const geometry = new BoxGeometry(1, 1, 1)
-const material = new MeshBasicMaterial({ color: 0x00ff00 })
-const cube = new Mesh(geometry, material)
-scene.add(cube)
+const edgeColor = new Color(0x00ff00)
+const faceColor = new Color(0xffffff)
 
-camera.position.z = 5
+const geom = new Geometry()
+const v1 = new Vector3(0, 0, 0)
+const v2 = new Vector3(30, 0, 0)
+const v3 = new Vector3(30, 30, 0)
+const triangle = new Triangle(v1, v2, v3)
+const normal = triangle.normal()
+geom.vertices.push(triangle.a)
+geom.vertices.push(triangle.b)
+geom.vertices.push(triangle.c)
+geom.faces.push(new Face3(0, 1, 2, normal))
+
+const mesh = new Mesh(geom, new MeshBasicMaterial({ color: faceColor }))
+scene.add(mesh)
+const line = new Line(geom, new LineBasicMaterial({ color: edgeColor }))
+scene.add(line)
+
+camera.position.set(0, 0, 100)
+camera.lookAt(0, 0, 0)
 
 function animate() {
   requestAnimationFrame(animate)
+
+  mesh.rotation.x += 0.01
+  mesh.rotation.y += 0.01
+  line.rotation.x += 0.01
+  line.rotation.y += 0.01
+
   renderer.render(scene, camera)
-  cube.rotation.x += 0.01
-  cube.rotation.y += 0.01
 }
 
 animate()
