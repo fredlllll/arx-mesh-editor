@@ -10,6 +10,7 @@
     "app": "http-server static",
     "build": "webpack",
     "build:watch": "webpack --watch",
+    "add-built-files": "git add -f static",
     "commit": "git-cz",
     "commit:again": "git-cz --retry",
     "lint:js": "eslint \"src/**/*.js\"",
@@ -27,7 +28,9 @@
     ]
   },
   "pre-commit": [
-    "lint-staged"
+    "lint-staged",
+    "build",
+    "add-built-files"
   ],
   "author": "Lajos Meszaros <m_lajos@hotmail.com>",
   "license": "GPL-3.0-or-later",
