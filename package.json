@@ -4,7 +4,6 @@
   "description": "An editor for the level files of Arx Fatalis",
   "main": "src/js/index.js",
   "scripts": {
-    "start": "npm run app",
     "dev": "cross-env NODE_ENV=development npm-run-all --parallel build:watch app",
     "test": "npm-run-all lint:*",
     "app": "http-server static",
