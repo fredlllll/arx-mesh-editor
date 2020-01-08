@@ -78,11 +78,7 @@ const common = {
 
 const clientConfig = {
   entry: {
-    ArxMeshEditor: [
-      'regenerator-runtime/runtime',
-      './src/css/style.scss',
-      './src/js/index.js'
-    ]
+    ArxMeshEditor: ['regenerator-runtime/runtime', './src/css/style.scss', './src/js/index.js']
   },
   output: {
     path: path.resolve(__dirname, 'static'),
