@@ -8,7 +8,24 @@ import webpack from 'webpack'
 
 const mode = process.env.NODE_ENV === 'development' ? 'development' : 'production'
 
-const common = {
+const config = {
+  entry: {
+    ArxMeshEditor: ['regenerator-runtime/runtime', './src/css/style.scss', './src/js/index.js']
+  },
+  output: {
+    path: path.resolve(__dirname, 'static'),
+    filename: 'js/[name].js'
+  },
+  plugins: [
+    new MiniCssExtractPlugin({
+      filename: 'css/[name].css'
+    }),
+    new webpack.BannerPlugin({
+      banner: 'Arx Mesh Editor - created by Lajos Meszaros <m_lajos@hotmail.com>'
+    }),
+    // https://github.com/webpack/webpack/issues/2537#issuecomment-263630802
+    new webpack.EnvironmentPlugin(['NODE_ENV'])
+  ],
   mode,
   module: {
     rules: [
@@ -73,28 +90,10 @@ const common = {
       new OptimizeCSSAssetsPlugin({})
     ]
   },
-  devtool: mode === 'production' ? 'none' : 'cheap-module-eval-source-map'
+  devtool: mode === 'production' ? 'none' : 'cheap-module-eval-source-map',
+  devServer: {
+    contentBase: './static'
+  }
 }
 
-const clientConfig = {
-  entry: {
-    ArxMeshEditor: ['regenerator-runtime/runtime', './src/css/style.scss', './src/js/index.js']
-  },
-  output: {
-    path: path.resolve(__dirname, 'static'),
-    filename: 'js/[name].js'
-  },
-  plugins: [
-    new MiniCssExtractPlugin({
-      filename: 'css/[name].css'
-    }),
-    new webpack.BannerPlugin({
-      banner: 'Arx Mesh Editor - created by Lajos Meszaros <m_lajos@hotmail.com>'
-    }),
-    // https://github.com/webpack/webpack/issues/2537#issuecomment-263630802
-    new webpack.EnvironmentPlugin(['NODE_ENV'])
-  ],
-  ...common
-}
-
-export default clientConfig
+export default config

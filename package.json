@@ -4,12 +4,9 @@
   "description": "An editor for the level files of Arx Fatalis",
   "main": "src/js/index.js",
   "scripts": {
-    "dev": "cross-env NODE_ENV=development npm-run-all --parallel build:watch app",
+    "dev": "cross-env NODE_ENV=development webpack-dev-server --open",
     "test": "npm-run-all lint:*",
-    "app": "http-server static",
-    "build": "webpack",
-    "build:watch": "webpack --watch",
-    "add-built-files": "git add -f static",
+    "build": "cross-env NODE_ENV=production webpack",
     "commit": "git-cz",
     "commit:again": "git-cz --retry",
     "lint:js": "eslint \"src/**/*.js\"",
@@ -27,9 +24,7 @@
     ]
   },
   "pre-commit": [
-    "lint-staged",
-    "build",
-    "add-built-files"
+    "lint-staged"
   ],
   "author": "Lajos Meszaros <m_lajos@hotmail.com>",
   "license": "GPL-3.0-or-later",
@@ -69,7 +64,6 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-ramda": "^2.5.1",
     "eslint-plugin-standard": "^4.0.1",
-    "http-server": "^0.12.0",
     "lint-staged": "^9.5.0",
     "mini-css-extract-plugin": "^0.9.0",
     "node-sass-chokidar": "^1.4.0",
@@ -87,7 +81,8 @@
     "stylelint-scss": "^3.13.0",
     "terser-webpack-plugin": "^2.3.1",
     "webpack": "^4.41.5",
-    "webpack-cli": "^3.3.10"
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.10.1"
   },
   "config": {
     "commitizen": {
