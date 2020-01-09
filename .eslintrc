@@ -1,12 +1,18 @@
 {
   "extends": [
     "standard",
-    "prettier-standard"
+    "prettier-standard",
+    "plugin:@typescript-eslint/recommended"
   ],
   "plugins": [
-    "ramda"
+    "ramda",
+    "@typescript-eslint"
   ],
-  "parser": "babel-eslint",
+  "parserOptions": {
+    "project": "./tsconfig.json",
+    "tsconfigRootDir": "./"
+  },
+  "parser": "@typescript-eslint/parser",
   "rules": {
     "prefer-template": "error",
     "prettier/prettier": [
@@ -57,7 +63,8 @@
     "import/resolver": {
       "node": {
         "extensions": [
-          ".js"
+          ".js",
+          ".ts"
         ]
       }
     }

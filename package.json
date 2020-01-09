@@ -9,12 +9,12 @@
     "build": "cross-env NODE_ENV=production webpack",
     "commit": "git-cz",
     "commit:again": "git-cz --retry",
-    "lint:js": "eslint \"src/**/*.js\"",
+    "lint:js": "eslint \"src/**/*.[tj]s\"",
     "lint:style": "stylelint \"src/**/*.scss\"",
     "lint-staged": "lint-staged"
   },
   "lint-staged": {
-    "src/**/*.js": [
+    "src/**/*.[tj]s": [
       "eslint --fix",
       "git add"
     ],
@@ -44,7 +44,10 @@
     "@babel/cli": "^7.7.7",
     "@babel/core": "^7.7.7",
     "@babel/preset-env": "^7.7.7",
+    "@babel/preset-typescript": "^7.7.7",
     "@babel/register": "^7.7.7",
+    "@typescript-eslint/eslint-plugin": "^2.15.0",
+    "@typescript-eslint/parser": "^2.15.0",
     "autoprefixer": "^9.7.3",
     "babel-eslint": "^10.0.3",
     "babel-loader": "^8.0.6",
@@ -80,6 +83,7 @@
     "stylelint-config-standard": "^19.0.0",
     "stylelint-scss": "^3.13.0",
     "terser-webpack-plugin": "^2.3.1",
+    "typescript": "^3.7.4",
     "webpack": "^4.41.5",
     "webpack-cli": "^3.3.10",
     "webpack-dev-server": "^3.10.1"

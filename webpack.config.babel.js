@@ -10,7 +10,7 @@ const mode = process.env.NODE_ENV === 'development' ? 'development' : 'productio
 
 const config = {
   entry: {
-    ArxMeshEditor: ['regenerator-runtime/runtime', './src/css/style.scss', './src/js/index.js']
+    ArxMeshEditor: ['regenerator-runtime/runtime', './src/css/style.scss', './src/js/index.ts']
   },
   output: {
     path: path.resolve(__dirname, 'static'),
@@ -30,7 +30,7 @@ const config = {
   module: {
     rules: [
       {
-        test: /\.js$/,
+        test: /\.(ts|js)$/,
         loader: 'babel-loader',
         query: {
           compact: false

@@ -71,7 +71,7 @@ let cntrX = 0
 let cntrZ = 0
 const speed = 0.005
 
-function animate() {
+function animate(): void {
   requestAnimationFrame(animate)
 
   cntrX += speed
