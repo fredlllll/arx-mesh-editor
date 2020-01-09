@@ -30,14 +30,11 @@ import {
   PerspectiveCamera,
   WebGLRenderer,
   Color,
-  Vector3,
-  Triangle,
-  Geometry,
-  Face3,
   Mesh,
-  Line,
-  MeshBasicMaterial,
-  LineBasicMaterial
+  BoxGeometry,
+  MeshPhongMaterial,
+  PointLight,
+  AmbientLight
 } from 'three'
 
 const width = 640
@@ -50,35 +47,39 @@ const renderer = new WebGLRenderer()
 renderer.setSize(width, height)
 document.body.appendChild(renderer.domElement)
 
-const edgeColor = new Color(0x00ff00)
+// const edgeColor = new Color(0x00ff00)
 const faceColor = new Color(0xffffff)
+const lightColor = new Color(0xffffee)
 
-const geom = new Geometry()
-const v1 = new Vector3(0, 0, 0)
-const v2 = new Vector3(30, 0, 0)
-const v3 = new Vector3(30, 30, 0)
-const triangle = new Triangle(v1, v2, v3)
-const normal = triangle.normal()
-geom.vertices.push(triangle.a)
-geom.vertices.push(triangle.b)
-geom.vertices.push(triangle.c)
-geom.faces.push(new Face3(0, 1, 2, normal))
+const geometry = new BoxGeometry(10, 10, 10)
+const material = new MeshPhongMaterial({ color: faceColor })
 
-const mesh = new Mesh(geom, new MeshBasicMaterial({ color: faceColor }))
+const mesh = new Mesh(geometry, material)
 scene.add(mesh)
-const line = new Line(geom, new LineBasicMaterial({ color: edgeColor }))
-scene.add(line)
 
-camera.position.set(0, 0, 100)
+const light = new PointLight(lightColor, 1.5, 100)
+light.position.set(20, 20, 20)
+scene.add(light)
+
+const ambientLight = new AmbientLight(0x404040)
+scene.add(ambientLight)
+
+camera.position.set(0, 30, 0)
 camera.lookAt(0, 0, 0)
+
+let cntrX = 0
+let cntrZ = 0
+const speed = 0.005
 
 function animate() {
   requestAnimationFrame(animate)
 
-  mesh.rotation.x += 0.01
-  mesh.rotation.y += 0.01
-  line.rotation.x += 0.01
-  line.rotation.y += 0.01
+  cntrX += speed
+  cntrZ += speed
+
+  camera.position.x = Math.sin(Math.PI * cntrX) * 100
+  camera.position.z = Math.cos(Math.PI * cntrZ) * 100
+  camera.lookAt(0, 0, 0)
 
   renderer.render(scene, camera)
 }
