@@ -38,29 +38,6 @@ const config = {
       },
       {
         test: /\.s?css$/,
-        exclude: [/node_modules/],
-        use: [
-          MiniCssExtractPlugin.loader,
-          {
-            loader: 'css-loader',
-            options: {
-              modules: {
-                localIdentName: '[local]_[hash:base64:5]'
-              }
-            }
-          },
-          {
-            loader: 'postcss-loader',
-            options: {
-              plugins: () => [autoprefixer]
-            }
-          },
-          'sass-loader'
-        ]
-      },
-      {
-        test: /\.s?css$/,
-        include: [/node_modules/],
         use: [
           MiniCssExtractPlugin.loader,
           {
@@ -78,7 +55,7 @@ const config = {
     ]
   },
   resolve: {
-    extensions: ['.js', '.json', '.scss', '.css']
+    extensions: ['.js', '.ts', '.json', '.scss', '.css']
   },
   optimization: {
     minimizer: [
