@@ -25,63 +25,86 @@ Promise.all([
 
 /* global requestAnimationFrame */
 
-import {
-  Scene,
-  PerspectiveCamera,
-  WebGLRenderer,
-  Color,
-  Mesh,
-  BoxGeometry,
-  MeshPhongMaterial,
-  PointLight,
-  AmbientLight
-} from 'three'
+import * as THREE from 'three'
+import { NOP } from './helpers/function'
 
-const width = 640
-const height = 480
+const scene = new THREE.Scene()
 
-const scene = new Scene()
-const camera = new PerspectiveCamera(75, width / height, 0.1, 1000)
+function addScreen(container: HTMLElement | null): [Function, Function, THREE.Camera | null] {
+  if (container) {
+    const { width, height } = container.getBoundingClientRect()
 
-const renderer = new WebGLRenderer()
-renderer.setSize(width, height)
-document.body.appendChild(renderer.domElement)
+    const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000)
 
-// const edgeColor = new Color(0x00ff00)
-const faceColor = new Color(0xffffff)
-const lightColor = new Color(0xffffee)
+    const renderer = new THREE.WebGLRenderer({ antialias: true })
+    renderer.setClearColor('#f7f7f7')
+    renderer.setSize(width, height)
 
-const geometry = new BoxGeometry(10, 10, 10)
-const material = new MeshPhongMaterial({ color: faceColor })
+    container.appendChild(renderer.domElement)
 
-const mesh = new Mesh(geometry, material)
-scene.add(mesh)
+    const render = (): void => {
+      renderer.render(scene, camera)
+    }
 
-const light = new PointLight(lightColor, 1.5, 100)
-light.position.set(20, 20, 20)
-scene.add(light)
+    const resize = (): void => {
+      const { width, height } = container.getBoundingClientRect()
+      renderer.setSize(width, height)
+      camera.aspect = width / height
+      camera.updateProjectionMatrix()
+    }
 
-const ambientLight = new AmbientLight(0x404040)
-scene.add(ambientLight)
+    return [render, resize, camera]
+  } else {
+    return [NOP, NOP, null]
+  }
+}
 
-camera.position.set(0, 30, 0)
-camera.lookAt(0, 0, 0)
+const [render3d, resize3d, camera3d] = addScreen(document.getElementById('3d'))
+
+window.addEventListener('resize', (): void => {
+  resize3d()
+})
 
 let cntrX = 0
 let cntrZ = 0
 const speed = 0.005
+const distance = 50
 
-function animate(): void {
+if (camera3d) {
+  camera3d.position.y = 30
+}
+
+const animate = (): void => {
   requestAnimationFrame(animate)
 
   cntrX += speed
   cntrZ += speed
 
-  camera.position.x = Math.sin(Math.PI * cntrX) * 100
-  camera.position.z = Math.cos(Math.PI * cntrZ) * 100
-  camera.lookAt(0, 0, 0)
+  if (camera3d) {
+    camera3d.position.x = Math.sin(Math.PI * cntrX) * distance
+    camera3d.position.z = Math.cos(Math.PI * cntrZ) * distance
+    camera3d.lookAt(0, 0, 0)
+  }
 
-  renderer.render(scene, camera)
+  render3d()
 }
+
+// todo: add orthograpic projections via https://threejs.org/docs/#api/en/cameras/OrthographicCamera
+
+const faceColor = new THREE.Color(0xffffff)
+const lightColor = new THREE.Color(0xffffee)
+
+const geometry = new THREE.BoxGeometry(10, 10, 10)
+const material = new THREE.MeshPhongMaterial({ color: faceColor })
+
+const mesh = new THREE.Mesh(geometry, material)
+scene.add(mesh)
+
+const light = new THREE.PointLight(lightColor, 1.5, 100)
+light.position.set(20, 20, 20)
+scene.add(light)
+
+const ambientLight = new THREE.AmbientLight(0x404040)
+scene.add(ambientLight)
 
 animate()

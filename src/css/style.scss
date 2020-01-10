@@ -1,3 +1,6 @@
+$headerHeight: 50px;
+$uiBgColor: #ddd;
+
 html,
 body {
   margin: 0;
@@ -9,15 +12,41 @@ body {
   font-family: sans-serif;
 }
 
-h1 {
-  text-align: center;
-  margin: 0;
-  padding-top: 50px;
+header {
+  height: $headerHeight;
+  padding: 0 10px;
+  box-shadow: 0 -1px 0 0 #ddd inset;
+
+  h1 {
+    margin: 0;
+    padding: 0;
+    height: $headerHeight;
+    line-height: $headerHeight;
+    font-size: 18px;
+    font-weight: normal;
+    display: inline-block;
+  }
 }
 
-canvas {
-  display: block;
-  margin: 50px auto 0 auto;
-  border: 1px solid black;
-  padding: 2px;
+#renders {
+  height: calc(100% - #{$headerHeight});
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  grid-gap: 1px 1px;
+  background: $uiBgColor;
+
+  div {
+    background: #f7f7f7;
+  }
+
+  label {
+    background: $uiBgColor;
+    padding: 0 3px;
+    position: absolute;
+  }
+
+  canvas {
+    display: block;
+  }
 }
