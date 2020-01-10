@@ -23,3 +23,7 @@ source: https://wiki.arx-libertatis.org/Filetypes
 [ ] parse it
 
 [ ] render vertexes to canvas with webgl
+
+## low priority todos
+
+WebpackDevServer is not live reloading html files
