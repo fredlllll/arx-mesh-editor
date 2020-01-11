@@ -31,8 +31,9 @@ header {
 #renders {
   height: calc(100% - #{$headerHeight});
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
+  // simple 1fr is not enough here - https://stackoverflow.com/a/43312314/1806628
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
   grid-gap: 1px 1px;
   background: $uiBgColor;
 
