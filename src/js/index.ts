@@ -30,28 +30,10 @@ import { NOP } from './helpers/function'
 
 const scene = new THREE.Scene()
 
-function addScreen(
-  container: HTMLElement | null,
-  type: '3d' | 'top' | 'left' | 'front'
-): [Function, Function, THREE.Camera | null] {
+function addScreen(container: HTMLElement | null): [Function, Function, THREE.Camera | null] {
   if (container) {
     const { width, height } = container.getBoundingClientRect()
-    let camera: THREE.PerspectiveCamera | THREE.OrthographicCamera
-
-    switch (type) {
-      case '3d':
-        camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000)
-        break
-      case 'top':
-      case 'left':
-      case 'front':
-        {
-          const zoom = 6
-          // TODO: need to check, if these settings make the render flat enough
-          camera = new THREE.OrthographicCamera(-width / zoom, width / zoom, height / zoom, -height / zoom, 1, 1000)
-        }
-        break
-    }
+    const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000)
 
     const renderer = new THREE.WebGLRenderer({ antialias: true })
     renderer.setClearColor('#f7f7f7')
@@ -78,16 +60,10 @@ function addScreen(
   }
 }
 
-const [render3d, resize3d, camera3d] = addScreen(document.getElementById('3d'), '3d')
-const [renderTop, resizeTop, cameraTop] = addScreen(document.getElementById('top'), 'top')
-const [renderLeft, resizeLeft, cameraLeft] = addScreen(document.getElementById('left'), 'left')
-const [renderFront, resizeFront, cameraFront] = addScreen(document.getElementById('front'), 'front')
+const [render, resize, camera] = addScreen(document.getElementById('screen'))
 
 window.addEventListener('resize', (): void => {
-  resize3d()
-  resizeTop()
-  resizeLeft()
-  resizeFront()
+  resize()
 })
 
 let cntrX = 0
@@ -95,22 +71,8 @@ let cntrZ = 0
 const speed = 0.005
 const distance = 50
 
-if (camera3d) {
-  camera3d.position.y = 30
-}
-
-// TODO: need to calibrate positions
-if (cameraTop) {
-  cameraTop.position.y = distance
-  cameraTop.lookAt(0, 0, 0)
-}
-if (cameraLeft) {
-  cameraLeft.position.x = distance
-  cameraLeft.lookAt(0, 0, 0)
-}
-if (cameraFront) {
-  cameraFront.position.z = distance
-  cameraFront.lookAt(0, 0, 0)
+if (camera) {
+  camera.position.y = 30
 }
 
 // TODO: need to pause rendering, when browser window is blurred
@@ -120,19 +82,14 @@ const animate = (): void => {
   cntrX += speed
   cntrZ += speed
 
-  if (camera3d) {
-    camera3d.position.x = Math.sin(Math.PI * cntrX) * distance
-    camera3d.position.z = Math.cos(Math.PI * cntrZ) * distance
-    camera3d.lookAt(0, 0, 0)
+  if (camera) {
+    camera.position.x = Math.sin(Math.PI * cntrX) * distance
+    camera.position.z = Math.cos(Math.PI * cntrZ) * distance
+    camera.lookAt(0, 0, 0)
   }
 
-  render3d()
-  renderTop()
-  renderLeft()
-  renderFront()
+  render()
 }
-
-// todo: add orthograpic projections via https://threejs.org/docs/#api/en/cameras/OrthographicCamera
 
 const faceColor = new THREE.Color(0xffffff)
 const lightColor = new THREE.Color(0xffffee)
@@ -151,5 +108,3 @@ const ambientLight = new THREE.AmbientLight(0x404040)
 scene.add(ambientLight)
 
 animate()
-
-// TODO: ortographic views should only display viewframe

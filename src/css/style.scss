@@ -1,5 +1,6 @@
 $headerHeight: 50px;
-$uiBgColor: #ddd;
+$uiBgColor: #f7f7f7;
+$uiSeparatorColor: #ddd;
 
 html,
 body {
@@ -15,7 +16,7 @@ body {
 header {
   height: $headerHeight;
   padding: 0 10px;
-  box-shadow: 0 -1px 0 0 #ddd inset;
+  box-shadow: 0 -1px 0 0 $uiSeparatorColor inset;
 
   h1 {
     margin: 0;
@@ -28,24 +29,9 @@ header {
   }
 }
 
-#renders {
+#screen {
   height: calc(100% - #{$headerHeight});
-  display: grid;
-  // simple 1fr is not enough here - https://stackoverflow.com/a/43312314/1806628
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
-  grid-gap: 1px 1px;
   background: $uiBgColor;
-
-  div {
-    background: #f7f7f7;
-  }
-
-  label {
-    background: $uiBgColor;
-    padding: 0 3px;
-    position: absolute;
-  }
 
   canvas {
     display: block;
