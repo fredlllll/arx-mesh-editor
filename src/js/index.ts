@@ -75,11 +75,6 @@ window.addEventListener('blur', (): void => {
   isWindowActive = false
 })
 
-/*
-let cntrX = 0
-let cntrZ = 0
-const speed = 0.005
-*/
 const distance = 50
 
 if (camera) {
@@ -95,17 +90,6 @@ const animate = (): void => {
   if (!isWindowActive) {
     return
   }
-
-  /*
-  cntrX += speed
-  cntrZ += speed
-
-  if (camera) {
-    camera.position.x = Math.sin(Math.PI * cntrX) * distance
-    camera.position.z = Math.cos(Math.PI * cntrZ) * distance
-    camera.lookAt(0, 0, 0)
-  }
-  */
 
   render()
 }
