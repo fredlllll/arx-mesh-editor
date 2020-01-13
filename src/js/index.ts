@@ -66,6 +66,15 @@ window.addEventListener('resize', (): void => {
   resize()
 })
 
+let isWindowActive = true
+
+window.addEventListener('focus', (): void => {
+  isWindowActive = true
+})
+window.addEventListener('blur', (): void => {
+  isWindowActive = false
+})
+
 let cntrX = 0
 let cntrZ = 0
 const speed = 0.005
@@ -75,9 +84,12 @@ if (camera) {
   camera.position.y = 30
 }
 
-// TODO: need to pause rendering, when browser window is blurred
 const animate = (): void => {
   requestAnimationFrame(animate)
+
+  if (!isWindowActive) {
+    return
+  }
 
   cntrX += speed
   cntrZ += speed
