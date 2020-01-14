@@ -27,3 +27,16 @@ source: https://wiki.arx-libertatis.org/Filetypes
 ## low priority todos
 
 WebpackDevServer is not live reloading html files
+
+## controls to implement - preferrably how blender does it
+
+3 button setup:
+  rotate - MMB (middle mouse button) + moving mouse
+  pan - shift + MMB + moving mouse
+  zoom - scroll mouse wheel
+
+2 button setup:
+  rotate - alt + LMB
+  pan - shift + alt + LMB
+  zoom - ctrl + alt + LMB
+
