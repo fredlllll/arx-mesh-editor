@@ -29,43 +29,45 @@ import * as THREE from 'three'
 import { NOP } from './helpers/function'
 
 const scene = new THREE.Scene()
+const container = document.getElementById('screen')
 
-function addScreen(container: HTMLElement | null): [Function, Function, THREE.Camera | null] {
-  if (container) {
-    const { width, height } = container.getBoundingClientRect()
-    const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000)
+let isWindowActive = true
+let render = NOP
+let resize = NOP
+let camera: THREE.PerspectiveCamera | null = null
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true })
-    renderer.setClearColor('#f7f7f7')
-    renderer.setSize(width, height)
+if (container) {
+  const { width, height } = container.getBoundingClientRect()
+  camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000)
 
-    container.appendChild(renderer.domElement)
+  const renderer = new THREE.WebGLRenderer({ antialias: true })
+  renderer.setClearColor('#f7f7f7')
+  renderer.setSize(width, height)
 
-    const render = (): void => {
+  container.appendChild(renderer.domElement)
+
+  render = (): void => {
+    if (camera) {
       renderer.render(scene, camera)
     }
+  }
 
-    const resize = (): void => {
-      const { width, height } = container.getBoundingClientRect()
-      renderer.setSize(width, height)
+  resize = (): void => {
+    const { width, height } = container.getBoundingClientRect()
+    renderer.setSize(width, height)
+    if (camera) {
       camera.aspect = width / height
       camera.updateProjectionMatrix()
     }
-
-    return [render, resize, camera]
-  } else {
-    return [NOP, NOP, null]
+    if (!isWindowActive) {
+      render()
+    }
   }
 }
-
-const [render, resize, camera] = addScreen(document.getElementById('screen'))
 
 window.addEventListener('resize', (): void => {
   resize()
 })
-
-let isWindowActive = true
-
 window.addEventListener('focus', (): void => {
   isWindowActive = true
 })
