@@ -31,10 +31,20 @@ import { NOP } from './helpers/function'
 const scene = new THREE.Scene()
 const container = document.getElementById('screen')
 
+const distance = 50
+const rotationUnitPerPixel = 0.003
+
 let isWindowActive = true
+let isMouseDown = false
+let prevMouseX = 0
+// let prevMouseY = 0
 let render = NOP
 let resize = NOP
+let repositionCamera = NOP
 let camera: THREE.PerspectiveCamera | null = null
+
+let cameraX = 0.3
+// let cameraY = 0.3
 
 if (container) {
   const { width, height } = container.getBoundingClientRect()
@@ -59,7 +69,19 @@ if (container) {
       camera.aspect = width / height
       camera.updateProjectionMatrix()
     }
-    if (!isWindowActive) {
+    if (isWindowActive) {
+      render()
+    }
+  }
+
+  repositionCamera = (): void => {
+    if (camera) {
+      camera.position.y = 30
+      camera.position.x = Math.sin(Math.PI * cameraX) * distance
+      camera.position.z = Math.cos(Math.PI * cameraX) * distance
+      camera.lookAt(0, 0, 0)
+    }
+    if (isWindowActive) {
       render()
     }
   }
@@ -70,29 +92,55 @@ window.addEventListener('resize', (): void => {
 })
 window.addEventListener('focus', (): void => {
   isWindowActive = true
+  resize()
 })
 window.addEventListener('blur', (): void => {
   isWindowActive = false
+  isMouseDown = false
 })
 
-const distance = 50
+// -----------------
 
-if (camera) {
-  camera.position.y = 30
-  camera.position.x = Math.sin(Math.PI * 0.3) * distance
-  camera.position.z = Math.cos(Math.PI * 0.3) * distance
-  camera.lookAt(0, 0, 0)
-}
-
-const animate = (): void => {
-  requestAnimationFrame(animate)
-
-  if (!isWindowActive) {
-    return
+window.addEventListener('mousedown', (e: MouseEvent): void => {
+  isMouseDown = true
+  if (container) {
+    const { x } = container.getBoundingClientRect()
+    prevMouseX = e.clientX - x
+    // prevMouseY = e.clientY - y
   }
+})
 
-  render()
-}
+window.addEventListener('mousemove', (e: MouseEvent): void => {
+  if (isMouseDown && container) {
+    const { x } = container.getBoundingClientRect()
+    const currentMouseX = e.clientX - x
+    // const currentMouseY = e.clientY - y
+
+    const diffX = currentMouseX - prevMouseX
+    // const diffY = currentMouseY - prevMouseY
+
+    if (camera) {
+      if (diffX !== 0) {
+        cameraX -= diffX * rotationUnitPerPixel
+        camera.position.x = Math.sin(cameraX) * distance
+        camera.position.z = Math.cos(cameraX) * distance
+        camera.lookAt(0, 0, 0)
+        render()
+      }
+    }
+
+    prevMouseX = currentMouseX
+    // prevMouseY = currentMouseY
+  }
+})
+
+window.addEventListener('mouseup', (): void => {
+  isMouseDown = false
+})
+
+// -----------------
+
+repositionCamera()
 
 const faceColor = new THREE.Color(0xffffff)
 const lightColor = new THREE.Color(0xffffee)
@@ -110,4 +158,4 @@ scene.add(light)
 const ambientLight = new THREE.AmbientLight(0x404040)
 scene.add(ambientLight)
 
-animate()
+render()
