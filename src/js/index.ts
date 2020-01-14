@@ -48,9 +48,7 @@ function addScreen(container: HTMLElement | null): [Function, Function, THREE.Ca
     const resize = (): void => {
       const { width, height } = container.getBoundingClientRect()
       renderer.setSize(width, height)
-      if (camera instanceof THREE.PerspectiveCamera) {
-        camera.aspect = width / height
-      }
+      camera.aspect = width / height
       camera.updateProjectionMatrix()
     }
 
