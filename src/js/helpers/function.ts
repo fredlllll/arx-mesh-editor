@@ -1,3 +1,1 @@
-const NOP = (): void => {}
-
-export { NOP }
+export const NOP = () => {}
