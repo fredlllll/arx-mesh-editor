@@ -59,6 +59,17 @@ export class ThreeApp extends EventDispatcher {
     this.animate()
   }
 
+  public addCamera(cam: Camera): void {
+    this.cameras_.push(cam)
+    this.scene_.add(cam)
+  }
+
+  public removeCamera(cam: Camera): void {
+    const index = this.cameras_.findIndex(c => c === cam)
+    this.cameras_.splice(index, 1)
+    this.scene_.remove(cam)
+  }
+
   private animate = (): void => {
     window.requestAnimationFrame(this.animate)
 

@@ -10,8 +10,7 @@ export class ArxMeshEditor {
     const threeApp = this.createThreeApp(containerOrId)
 
     const camera = this.createCamera(threeApp.aspect)
-    threeApp.scene.add(camera)
-    threeApp.cameras.push(camera)
+    threeApp.addCamera(camera)
     this.createCameraControl(threeApp, camera)
 
     this.initEvents(threeApp)
