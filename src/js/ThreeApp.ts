@@ -51,7 +51,7 @@ export class ThreeApp extends EventDispatcher {
     }
 
     this.updateScreenDimensions()
-    this.renderer_ = this.createRenderer(webGLParameters)
+    this.renderer_ = this.createRenderer(webGLParameters, this.screenWidth_, this.screenHeight_)
     this.container_.appendChild(this.renderer_.domElement)
     this.scene_ = new Scene()
     this.initEvents()
@@ -73,16 +73,23 @@ export class ThreeApp extends EventDispatcher {
   }
 
   private updateScreenDimensions(): void {
-    this.screenWidth_ = this.container_.clientWidth
-    this.screenHeight_ = this.container_.clientHeight
-    this.aspect_ = this.screenWidth_ / this.screenHeight_
+    const w = this.container_.clientWidth
+    const h = this.container_.clientHeight
+
+    this.screenWidth_ = w
+    this.screenHeight_ = h
+    this.aspect_ = w / h
   }
 
-  private createRenderer(webGLParameters: WebGLRendererParameters): WebGLRenderer {
+  private createRenderer(
+    webGLParameters: WebGLRendererParameters,
+    sizeWidth: number,
+    sizeHeight: number
+  ): WebGLRenderer {
     const renderer = new WebGLRenderer(webGLParameters)
     renderer.setPixelRatio(window.devicePixelRatio)
-    renderer.setSize(this.screenWidth_, this.screenHeight_)
-    renderer.setViewport(0, 0, this.screenWidth_, this.screenHeight_)
+    renderer.setSize(sizeWidth, sizeHeight)
+    renderer.setViewport(0, 0, sizeWidth, sizeHeight)
     renderer.autoClear = false
     return renderer
   }
