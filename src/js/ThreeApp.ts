@@ -1,5 +1,5 @@
 import { WebGLRenderer, Scene, EventDispatcher, Camera, WebGLRendererParameters } from 'three'
-import { isString } from './TypeGuards'
+import { isString } from './typeGuards'
 
 export class ThreeApp extends EventDispatcher {
   private container_: HTMLElement
