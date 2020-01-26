@@ -40,10 +40,10 @@ export class ArxMeshEditor {
     this.threeApp.scene.add(ambientLight)
   }
 
-  private onResize = () => {
+  private onResize = (): void => {
     this.camera.aspect = this.threeApp.aspect
     this.camera.updateProjectionMatrix()
   }
 
-  private onAnimate = () => {}
+  private onAnimate = (): void => {}
 }

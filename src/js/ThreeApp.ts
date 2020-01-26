@@ -3,42 +3,42 @@ import { isString } from './TypeGuards'
 
 export class ThreeApp extends EventDispatcher {
   private container_: HTMLElement
-  public get container() {
+  public get container(): HTMLElement {
     return this.container_
   }
 
   private renderer_: WebGLRenderer
-  public get renderer() {
+  public get renderer(): WebGLRenderer {
     return this.renderer_
   }
 
   private scene_: Scene
-  public get scene() {
+  public get scene(): Scene {
     return this.scene_
   }
 
   private cameras_: Camera[] = []
-  public get cameras() {
+  public get cameras(): Camera[] {
     return this.cameras_
   }
 
   private aspect_ = 0
-  public get aspect() {
+  public get aspect(): number {
     return this.aspect_
   }
 
   private screenWidth_ = 0
-  public get screenWidth() {
+  public get screenWidth(): number {
     return this.screenWidth_
   }
 
   private screenHeight_ = 0
-  public get screenHeight() {
+  public get screenHeight(): number {
     return this.screenHeight_
   }
 
   private isWindowActive_ = true
-  public get isWindowActive() {
+  public get isWindowActive(): boolean {
     return this.isWindowActive_
   }
 
@@ -59,7 +59,7 @@ export class ThreeApp extends EventDispatcher {
     this.animate()
   }
 
-  private animate = () => {
+  private animate = (): void => {
     window.requestAnimationFrame(this.animate)
 
     this.dispatchEvent({ type: 'animate' })
@@ -72,13 +72,13 @@ export class ThreeApp extends EventDispatcher {
     }
   }
 
-  private updateScreenDimensions() {
+  private updateScreenDimensions(): void {
     this.screenWidth_ = this.container_.clientWidth
     this.screenHeight_ = this.container_.clientHeight
     this.aspect_ = this.screenWidth_ / this.screenHeight_
   }
 
-  private createRenderer(webGLParameters: WebGLRendererParameters) {
+  private createRenderer(webGLParameters: WebGLRendererParameters): WebGLRenderer {
     const renderer = new WebGLRenderer(webGLParameters)
     renderer.setPixelRatio(window.devicePixelRatio)
     renderer.setSize(this.screenWidth_, this.screenHeight_)
@@ -87,22 +87,22 @@ export class ThreeApp extends EventDispatcher {
     return renderer
   }
 
-  private initEvents() {
+  private initEvents(): void {
     window.addEventListener('resize', this.onWindowResize, false)
     window.addEventListener('focus', this.onWindowFocus)
     window.addEventListener('blur', this.onWindowBlur)
   }
 
-  private onWindowFocus = () => {
+  private onWindowFocus = (): void => {
     this.isWindowActive_ = true
     this.onWindowResize()
   }
 
-  private onWindowBlur = () => {
+  private onWindowBlur = (): void => {
     this.isWindowActive_ = false
   }
 
-  private onWindowResize = () => {
+  private onWindowResize = (): void => {
     this.updateScreenDimensions()
     this.renderer_.setSize(this.screenWidth_, this.screenHeight_)
     this.renderer_.setViewport(0, 0, this.screenWidth_, this.screenHeight_)

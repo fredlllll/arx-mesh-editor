@@ -2,11 +2,11 @@ import { Camera, Euler, Vector3 } from 'three'
 import { ThreeApp } from './ThreeApp'
 
 export class EditorCameraControl {
-  public get camera() {
+  public get camera(): Camera {
     return this.camera_
   }
 
-  public get threeApp() {
+  public get threeApp(): ThreeApp {
     return this.threeApp_
   }
 
@@ -45,7 +45,7 @@ export class EditorCameraControl {
     this.camRot = camera_.rotation
   }
 
-  private onAnimate = () => {
+  private onAnimate = (): void => {
     // update cam position etc
     const forward = this.camera_.localToWorld(new Vector3(0, 0, 1))
     const left = this.camera_.localToWorld(new Vector3(-1, 0, 0))
@@ -67,7 +67,7 @@ export class EditorCameraControl {
     this.camera.position.add(offset)
   }
 
-  private onMouseMove = (ev: MouseEvent) => {
+  private onMouseMove = (ev: MouseEvent): void => {
     // camerarotation should actually be updated in animate, but i think its fine in this case?
     if (this.isMouseDown) {
       this.camRot.y -= ev.movementX * this.rotationSpeed
@@ -81,19 +81,19 @@ export class EditorCameraControl {
     }
   }
 
-  private onMouseDown = (ev: MouseEvent) => {
-    if (ev.button == this.controlButton) {
+  private onMouseDown = (ev: MouseEvent): void => {
+    if (ev.button === this.controlButton) {
       this.isMouseDown = true
     }
   }
 
-  private onMouseUp = (ev: MouseEvent) => {
-    if (ev.button == this.controlButton) {
+  private onMouseUp = (ev: MouseEvent): void => {
+    if (ev.button === this.controlButton) {
       this.isMouseDown = false
     }
   }
 
-  private onBlur = () => {
+  private onBlur = (): void => {
     this.isMouseDown = false
 
     this.forwardsDown = false
@@ -102,7 +102,7 @@ export class EditorCameraControl {
     this.rightDown = false
   }
 
-  private setKeyDown(ev: KeyboardEvent, down: boolean) {
+  private setKeyDown(ev: KeyboardEvent, down: boolean): void {
     switch (ev.code) {
       case this.keyForwards:
         this.forwardsDown = down
@@ -119,11 +119,11 @@ export class EditorCameraControl {
     }
   }
 
-  private onKeyDown = (ev: KeyboardEvent) => {
+  private onKeyDown = (ev: KeyboardEvent): void => {
     this.setKeyDown(ev, true)
   }
 
-  private onKeyUp = (ev: KeyboardEvent) => {
+  private onKeyUp = (ev: KeyboardEvent): void => {
     this.setKeyDown(ev, false)
   }
 }
