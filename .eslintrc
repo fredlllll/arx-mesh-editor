@@ -58,7 +58,8 @@
     "ramda/set-simplification": "error",
     "ramda/unless-simplification": "error",
     "ramda/when-simplification": "error",
-    "@typescript-eslint/no-empty-function": "off"
+    "@typescript-eslint/no-empty-function": "off",
+    "@typescript-eslint/no-explicit-any": "off"
   },
   "settings": {
     "import/resolver": {
