@@ -2,16 +2,11 @@ import { Camera, Euler, Vector3 } from 'three'
 import { ThreeApp } from './ThreeApp'
 
 export class EditorCameraControl {
-  public get camera(): Camera {
-    return this.camera_
-  }
-
-  public get threeApp(): ThreeApp {
-    return this.threeApp_
-  }
-
   public rotationSpeed = 0.3
   public movementSpeed = 1
+
+  private threeApp_: ThreeApp
+  private camera_: Camera
 
   private isMouseDown = false
   private camEuler = new Euler(0, 0, 0, 'YXZ')
@@ -34,9 +29,26 @@ export class EditorCameraControl {
 
   private movedWhileDown = false
 
-  constructor(private threeApp_: ThreeApp, private camera_: Camera) {
-    const elem = threeApp_.renderer.domElement
+  public get camera(): Camera {
+    return this.camera_
+  }
 
+  public get threeApp(): ThreeApp {
+    return this.threeApp_
+  }
+
+  constructor(threeApp: ThreeApp, camera: Camera) {
+    this.initEvents(threeApp)
+
+    this.camEuler.y = camera.rotation.y
+    this.camEuler.x = camera.rotation.x
+
+    this.threeApp_ = threeApp
+    this.camera_ = camera
+  }
+
+  private initEvents(threeApp: ThreeApp): void {
+    const elem = threeApp.renderer.domElement
     elem.addEventListener('mousemove', this.onMouseMove)
     elem.addEventListener('mousedown', this.onMouseDown)
     elem.addEventListener('mouseup', this.onMouseUp)
@@ -48,11 +60,7 @@ export class EditorCameraControl {
     // TODO: keep track of mouseup even if the mouse is outside the browser window??
     window.addEventListener('blur', this.onBlur)
 
-    threeApp_.addEventListener('animate', this.onAnimate)
-
-    // TODO: init camEuler
-    this.camEuler.y = this.camera_.rotation.y
-    this.camEuler.x = this.camera_.rotation.x
+    threeApp.addEventListener('animate', this.onAnimate)
   }
 
   private onAnimate = (): void => {
