@@ -3,27 +3,48 @@ import { ThreeApp } from './ThreeApp'
 import { EditorCameraControl } from './EditorCameraControl'
 
 export class ArxMeshEditor {
-  threeApp: ThreeApp
-  camera: PerspectiveCamera
-  cameraControl: EditorCameraControl
+  private threeApp: ThreeApp
+  private camera: PerspectiveCamera
 
   constructor(containerOrId: HTMLElement | string) {
-    this.threeApp = new ThreeApp(containerOrId, { antialias: true })
-    this.threeApp.scene.background = new Color('#f7f7f7')
+    const threeApp = this.createThreeApp(containerOrId)
 
-    this.threeApp.addEventListener('resize', this.onResize)
+    const camera = this.createCamera(threeApp.aspect)
+    threeApp.scene.add(camera)
+    threeApp.cameras.push(camera)
+    this.createCameraControl(threeApp, camera)
 
-    this.camera = new PerspectiveCamera(75, this.threeApp.aspect, 0.1, 1000)
-    this.camera.position.x = 50
-    this.camera.lookAt(0, 0, 0)
-    this.threeApp.scene.add(this.camera)
-    this.threeApp.cameras.push(this.camera)
+    this.initEvents(threeApp)
+    this.initTestScene(threeApp)
 
-    this.threeApp.addEventListener('animate', this.onAnimate)
+    this.threeApp = threeApp
+    this.camera = camera
+  }
 
-    this.cameraControl = new EditorCameraControl(this.threeApp, this.camera)
+  private createThreeApp(containerOrId: HTMLElement | string): ThreeApp {
+    const threeApp = new ThreeApp(containerOrId, { antialias: true })
+    threeApp.scene.background = new Color('#f7f7f7')
+    return threeApp
+  }
 
-    // test stuff
+  private createCamera(aspect: number): PerspectiveCamera {
+    const camera = new PerspectiveCamera(75, aspect, 0.1, 1000)
+    camera.position.x = 50
+    camera.lookAt(0, 0, 0)
+    return camera
+  }
+
+  private createCameraControl(threeApp: ThreeApp, camera: PerspectiveCamera): EditorCameraControl {
+    const cameraControl = new EditorCameraControl(threeApp, camera)
+    return cameraControl
+  }
+
+  private initEvents(threeApp: ThreeApp): void {
+    threeApp.addEventListener('resize', this.onResize)
+    threeApp.addEventListener('animate', this.onAnimate)
+  }
+
+  private initTestScene(threeApp: ThreeApp): void {
     const faceColor = new Color(0xffffff)
     const lightColor = new Color(0xffffee)
 
@@ -31,14 +52,14 @@ export class ArxMeshEditor {
     const material = new MeshPhongMaterial({ color: faceColor })
 
     const mesh = new Mesh(geometry, material)
-    this.threeApp.scene.add(mesh)
+    threeApp.scene.add(mesh)
 
     const light = new PointLight(lightColor, 1.5, 100)
     light.position.set(20, 20, 20)
-    this.threeApp.scene.add(light)
+    threeApp.scene.add(light)
 
     const ambientLight = new AmbientLight(0x404040)
-    this.threeApp.scene.add(ambientLight)
+    threeApp.scene.add(ambientLight)
   }
 
   private onResize = (): void => {
