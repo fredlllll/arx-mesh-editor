@@ -60,7 +60,7 @@ export class ThreeApp extends EventDispatcher {
   }
 
   private animate = () => {
-    requestAnimationFrame(this.animate)
+    window.requestAnimationFrame(this.animate)
 
     this.dispatchEvent({ type: 'animate' })
 
