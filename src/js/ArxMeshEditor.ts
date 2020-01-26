@@ -14,8 +14,9 @@ export class ArxMeshEditor {
     this.threeApp.addEventListener('resize', this.onResize)
 
     this.camera = new PerspectiveCamera(75, this.threeApp.aspect, 0.1, 1000)
-    this.camera.position.x = 5
+    this.camera.position.x = 50
     this.camera.lookAt(0, 0, 0)
+    this.threeApp.scene.add(this.camera)
     this.threeApp.cameras.push(this.camera)
 
     this.threeApp.addEventListener('animate', this.onAnimate)

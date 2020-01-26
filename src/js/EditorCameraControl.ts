@@ -10,11 +10,11 @@ export class EditorCameraControl {
     return this.threeApp_
   }
 
-  public rotationSpeed = 0.1
+  public rotationSpeed = 0.3
   public movementSpeed = 1
 
   private isMouseDown = false
-  private camRot: Euler
+  private camEuler = new Euler(0, 0, 0, 'YXZ')
 
   private controlButton = 2
 
@@ -22,11 +22,17 @@ export class EditorCameraControl {
   private keyBackwards = 'KeyS'
   private keyLeft = 'KeyA'
   private keyRight = 'KeyD'
+  private keyUp = 'Space'
+  private keyDown = 'ControlLeft'
 
   private forwardsDown = false
   private backwardsDown = false
   private leftDown = false
   private rightDown = false
+  private upDown = false
+  private downDown = false
+
+  private movedWhileDown = false
 
   constructor(private threeApp_: ThreeApp, private camera_: Camera) {
     const elem = threeApp_.renderer.domElement
@@ -34,21 +40,26 @@ export class EditorCameraControl {
     elem.addEventListener('mousemove', this.onMouseMove)
     elem.addEventListener('mousedown', this.onMouseDown)
     elem.addEventListener('mouseup', this.onMouseUp)
+    elem.addEventListener('contextmenu', this.onContextMenu)
 
-    elem.addEventListener('keydown', this.onKeyDown)
-    elem.addEventListener('keyup', this.onKeyUp)
+    document.addEventListener('keydown', this.onKeyDown)
+    document.addEventListener('keyup', this.onKeyUp)
 
+    // TODO: keep track of mouseup even if the mouse is outside the browser window??
     window.addEventListener('blur', this.onBlur)
 
     threeApp_.addEventListener('animate', this.onAnimate)
 
-    this.camRot = camera_.rotation
+    // TODO: init camEuler
+    this.camEuler.y = this.camera_.rotation.y
+    this.camEuler.x = this.camera_.rotation.x
   }
 
   private onAnimate = (): void => {
     // update cam position etc
-    const forward = this.camera_.localToWorld(new Vector3(0, 0, 1))
-    const left = this.camera_.localToWorld(new Vector3(-1, 0, 0))
+    const forward = new Vector3(0, 0, -1).applyQuaternion(this.camera.quaternion)
+    const left = new Vector3(-1, 0, 0).applyQuaternion(this.camera.quaternion)
+    const up = new Vector3(0, 1, 0) // up down motion is not depending on camera orientation
 
     const offset = new Vector3()
     if (this.forwardsDown) {
@@ -63,27 +74,40 @@ export class EditorCameraControl {
     if (this.rightDown) {
       offset.sub(left)
     }
+    if (this.upDown) {
+      offset.add(up)
+    }
+    if (this.downDown) {
+      offset.sub(up)
+    }
+
     offset.multiplyScalar(this.movementSpeed)
     this.camera.position.add(offset)
+  }
+
+  // prevent context menu from showing up if we moved the mouse while rightclicking
+  private onContextMenu = (ev: MouseEvent): void => {
+    if (ev.button === this.controlButton && this.movedWhileDown) {
+      ev.preventDefault()
+    }
   }
 
   private onMouseMove = (ev: MouseEvent): void => {
     // camerarotation should actually be updated in animate, but i think its fine in this case?
     if (this.isMouseDown) {
-      this.camRot.y -= ev.movementX * this.rotationSpeed
-      let x = this.camRot.x + ev.movementY * this.rotationSpeed
-      if (x > 89) {
-        x = 89
-      } else if (x < -89) {
-        x = -89
-      }
-      this.camRot.x = x
+      this.movedWhileDown = true
+      this.camEuler.y -= ev.movementX * this.rotationSpeed * 0.01
+      this.camEuler.x -= ev.movementY * this.rotationSpeed * 0.01
+      this.camEuler.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, this.camEuler.x))
+
+      this.camera_.quaternion.setFromEuler(this.camEuler)
     }
   }
 
   private onMouseDown = (ev: MouseEvent): void => {
     if (ev.button === this.controlButton) {
       this.isMouseDown = true
+      this.movedWhileDown = false
     }
   }
 
@@ -115,6 +139,12 @@ export class EditorCameraControl {
         break
       case this.keyRight:
         this.rightDown = down
+        break
+      case this.keyUp:
+        this.upDown = down
+        break
+      case this.keyDown:
+        this.downDown = down
         break
     }
   }
