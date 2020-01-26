@@ -9,7 +9,7 @@
     "build": "cross-env NODE_ENV=production webpack",
     "commit": "git-cz",
     "commit:again": "git-cz --retry",
-    "lint:js": "eslint \"src/**/*.[tj]s\"",
+    "lint:js": "eslint \"src/**/*.[tj]s\" --fix",
     "lint:style": "stylelint \"src/**/*.scss\"",
     "lint-staged": "lint-staged"
   },
