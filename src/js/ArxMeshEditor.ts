@@ -1,10 +1,13 @@
 import { Color, PerspectiveCamera, BoxGeometry, MeshPhongMaterial, Mesh, PointLight, AmbientLight } from 'three'
 import { ThreeApp } from './ThreeApp'
 import { EditorCameraControl } from './EditorCameraControl'
+import { ArxLevel } from './ArxLevel'
 
 export class ArxMeshEditor {
   private threeApp: ThreeApp
   private camera: PerspectiveCamera
+
+  private currentLevel_?: ArxLevel
 
   constructor(containerOrId: HTMLElement | string) {
     const threeApp = this.createThreeApp(containerOrId)
@@ -18,6 +21,35 @@ export class ArxMeshEditor {
 
     this.threeApp = threeApp
     this.camera = camera
+  }
+
+  public newLevel(): void {
+    // create a new empty level
+    const level = new ArxLevel()
+    this.SetCurrentLevel(level)
+  }
+
+  public loadLevel(name: string): Promise<ArxLevel> {
+    const level = new ArxLevel()
+    this.SetCurrentLevel(level)
+    return level.load(name)
+  }
+
+  public saveLevel(name?: string): Promise<ArxLevel> | undefined {
+    if (this.currentLevel_) {
+      return this.currentLevel_.save(name)
+    }
+    return undefined // cant save level if its not set
+  }
+
+  private SetCurrentLevel(level: ArxLevel | undefined): void {
+    if (this.currentLevel_) {
+      this.threeApp.scene.remove(this.currentLevel_)
+    }
+    if (level) {
+      this.threeApp.scene.add(level)
+    }
+    this.currentLevel_ = level
   }
 
   private createThreeApp(containerOrId: HTMLElement | string): ThreeApp {
