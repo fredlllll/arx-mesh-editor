@@ -53,6 +53,7 @@ export class EditorCameraControl {
     elem.addEventListener('mousedown', this.onMouseDown)
     elem.addEventListener('mouseup', this.onMouseUp)
     elem.addEventListener('contextmenu', this.onContextMenu)
+    elem.addEventListener('mouseout', this.onMouseOut)
 
     document.addEventListener('keydown', this.onKeyDown)
     document.addEventListener('keyup', this.onKeyUp)
@@ -93,11 +94,9 @@ export class EditorCameraControl {
     this.target.position.add(offset)
   }
 
-  // prevent context menu from showing up if we moved the mouse while rightclicking
+  // prevent context menu from showing up
   private onContextMenu = (ev: MouseEvent): void => {
-    if (ev.button === this.controlButton && this.movedWhileDown) {
-      ev.preventDefault()
-    }
+    ev.preventDefault()
   }
 
   private onMouseMove = (ev: MouseEvent): void => {
@@ -120,9 +119,13 @@ export class EditorCameraControl {
   }
 
   private onMouseUp = (ev: MouseEvent): void => {
-    if (ev.button === this.controlButton) {
+    if (this.isMouseDown && ev.button === this.controlButton) {
       this.isMouseDown = false
     }
+  }
+
+  private onMouseOut = (): void => {
+    this.isMouseDown = false
   }
 
   private onBlur = (): void => {
