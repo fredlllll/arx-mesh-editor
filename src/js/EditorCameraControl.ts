@@ -27,8 +27,6 @@ export class EditorCameraControl {
   private upDown = false
   private downDown = false
 
-  private movedWhileDown = false
-
   public get target(): Object3D {
     return this.target_
   }
@@ -102,7 +100,6 @@ export class EditorCameraControl {
   private onMouseMove = (ev: MouseEvent): void => {
     // target rotation should actually be updated in animate, but i think its fine in this case?
     if (this.isMouseDown) {
-      this.movedWhileDown = true
       this.targetEuler.y -= ev.movementX * this.rotationSpeed * 0.01
       this.targetEuler.x -= ev.movementY * this.rotationSpeed * 0.01
       this.targetEuler.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, this.targetEuler.x))
@@ -114,7 +111,6 @@ export class EditorCameraControl {
   private onMouseDown = (ev: MouseEvent): void => {
     if (ev.button === this.controlButton) {
       this.isMouseDown = true
-      this.movedWhileDown = false
     }
   }
 
