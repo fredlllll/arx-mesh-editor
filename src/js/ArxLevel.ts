@@ -4,12 +4,7 @@ import { FTSLoader } from './FTSLoader'
 import { LLFLoader } from './LLFLoader'
 
 export class ArxLevel extends Object3D {
-  private levelName: string
-
-  constructor() {
-    super()
-    this.levelName = ''
-  }
+  private levelName = ''
 
   public async load(levelName: string): Promise<ArxLevel> {
     // load everything, then set name variable so we dont accidentally think we loaded a level and overwrite it with an empty level
