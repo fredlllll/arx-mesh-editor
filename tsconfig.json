@@ -1,24 +1,8 @@
 {
+  "extends": "./node_modules/electron-webpack/tsconfig-base.json",
   "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
-    "noFallthroughCasesInSwitch": true,
     "noUnusedParameters": true,
-    "noImplicitReturns": true,
     "esModuleInterop": true,
-    "noUnusedLocals": true,
-    "noImplicitAny": true,
-    "declarationDir": "dist/types",
-    "declaration": true,
-    "target": "es2015",
-    "module": "es2015",
-    "strict": true,
-    "moduleResolution": "node"
-  },
-  "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "static"
-  ]
+    "noImplicitAny": true
+  }
 }

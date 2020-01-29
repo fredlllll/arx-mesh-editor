@@ -2,33 +2,33 @@
   "name": "arx-mesh-editor",
   "version": "0.0.1",
   "description": "An editor for the level files of Arx Fatalis",
-  "main": "src/js/index.js",
+  "main": "src/main/index.js",
   "scripts": {
-    "dev": "cross-env NODE_ENV=development webpack-dev-server --open",
-    "test": "npm-run-all lint:*",
-    "build": "cross-env NODE_ENV=production webpack",
+    "dev": "electron-webpack dev",
+    "build": "electron-webpack && electron-builder",
     "commit": "git-cz",
     "commit:again": "git-cz --retry",
     "lint:js": "eslint \"src/**/*.[tj]s\"",
-    "lint:style": "stylelint \"src/**/*.scss\"",
+    "lint:css": "stylelint \"src/**/*.scss\"",
     "lint:js:fix": "npm run lint:js -- --fix",
-    "lint:style:fix": "npm run lint:style -- --fix",
+    "lint:css:fix": "npm run lint:style -- --fix",
     "lint-staged": "lint-staged"
   },
   "lint-staged": {
     "src/**/*.[tj]s": [
-      "eslint --fix",
-      "git add"
+      "eslint --fix"
     ],
     "src/**/*.scss": [
-      "stylelint --fix",
-      "git add"
+      "stylelint --fix"
     ]
   },
   "pre-commit": [
     "lint-staged"
   ],
   "author": "Lajos Meszaros <m_lajos@hotmail.com>",
+  "contributors": [
+    "Frederik Gelder"
+  ],
   "license": "GPL-3.0-or-later",
   "repository": {
     "type": "git",
@@ -40,56 +40,39 @@
   "homepage": "https://github.com/meszaros-lajos-gyorgy/arx-mesh-editor#readme",
   "dependencies": {
     "ramda": "^0.26.1",
+    "source-map-support": "^0.5.16",
     "three": "^0.112.1"
   },
   "devDependencies": {
-    "@babel/cli": "^7.7.7",
-    "@babel/core": "^7.7.7",
-    "@babel/preset-env": "^7.7.7",
-    "@babel/preset-typescript": "^7.7.7",
-    "@babel/register": "^7.7.7",
-    "@typescript-eslint/eslint-plugin": "^2.15.0",
-    "@typescript-eslint/parser": "^2.15.0",
-    "autoprefixer": "^9.7.3",
-    "babel-eslint": "^10.0.3",
-    "babel-loader": "^8.0.6",
-    "babel-plugin-transform-class-properties": "^6.24.1",
-    "classnames": "^2.2.6",
+    "@typescript-eslint/eslint-plugin": "^2.18.0",
+    "@typescript-eslint/parser": "^2.18.0",
     "commitizen": "^4.0.3",
-    "cross-env": "^6.0.3",
-    "css-loader": "^3.4.1",
-    "cssnano": "^4.1.10",
-    "cz-conventional-changelog": "^3.0.2",
-    "eslint": "^6.8.0",
-    "eslint-config-prettier": "^6.9.0",
+    "cz-conventional-changelog": "^3.1.0",
+    "electron": "^7.1.10",
+    "electron-builder": "^22.3.2",
+    "electron-webpack": "^2.7.4",
+    "electron-webpack-eslint": "^5.0.1",
+    "electron-webpack-ts": "^3.2.0",
+    "eslint-config-prettier": "^6.10.0",
     "eslint-config-prettier-standard": "^3.0.1",
     "eslint-config-standard": "^14.1.0",
-    "eslint-plugin-import": "^2.19.1",
+    "eslint-plugin-import": "^2.20.0",
     "eslint-plugin-node": "^11.0.0",
     "eslint-plugin-prettier": "^3.1.2",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-ramda": "^2.5.1",
     "eslint-plugin-standard": "^4.0.1",
-    "lint-staged": "^9.5.0",
-    "mini-css-extract-plugin": "^0.9.0",
-    "node-sass-chokidar": "^1.4.0",
-    "nodemon": "^2.0.2",
-    "npm-run-all": "^4.1.5",
-    "optimize-css-assets-webpack-plugin": "^5.0.3",
-    "postcss-loader": "^3.0.0",
+    "lint-staged": "^10.0.4",
+    "node-sass": "^4.13.1",
     "pre-commit": "^1.2.2",
     "prettier": "^1.19.1",
     "prettier-config-standard": "^1.0.1",
-    "regenerator-runtime": "^0.13.3",
-    "sass-loader": "^8.0.0",
-    "stylelint": "^12.0.1",
+    "sass-loader": "^8.0.2",
+    "stylelint": "^13.0.0",
     "stylelint-config-standard": "^19.0.0",
-    "stylelint-scss": "^3.13.0",
-    "terser-webpack-plugin": "^2.3.1",
-    "typescript": "^3.7.4",
-    "webpack": "^4.41.5",
-    "webpack-cli": "^3.3.10",
-    "webpack-dev-server": "^3.10.1"
+    "stylelint-scss": "^3.14.2",
+    "typescript": "^3.7.5",
+    "webpack": "^4.41.5"
   },
   "config": {
     "commitizen": {

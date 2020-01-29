@@ -56,7 +56,6 @@ export class EditorCameraControl {
     document.addEventListener('keydown', this.onKeyDown)
     document.addEventListener('keyup', this.onKeyUp)
 
-    // TODO: keep track of mouseup even if the mouse is outside the browser window??
     window.addEventListener('blur', this.onBlur)
 
     threeApp.addEventListener('animate', this.onAnimate)
