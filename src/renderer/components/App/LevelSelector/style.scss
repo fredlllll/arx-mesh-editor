@@ -1,0 +1,16 @@
+@import '../constants.scss';
+
+#LevelSelector {
+  $width: 320px;
+  $height: 200px;
+
+  position: fixed;
+  width: $width;
+  height: $height;
+  z-index: 10;
+  background: white;
+  box-shadow: 0 0 0 1px $uiSeparatorColor;
+  border-radius: 2px;
+  top: calc(50% - #{$height / 2});
+  left: calc(50% - #{$width / 2});
+}

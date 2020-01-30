@@ -7,7 +7,9 @@ module.exports = config => {
   styleRules.forEach(rule => {
     const cssLoaderIdx = rule.use.findIndex(use => use.loader === 'css-loader')
     const cssLoader = rule.use[cssLoaderIdx]
-    cssLoader.options.modules = true
+    cssLoader.options.modules = {
+      localIdentName: '[local]_[hash:base64:5]'
+    }
 
     rule.use.splice(cssLoaderIdx, 0, 'css-modules-typescript-loader')
     rule.use.splice(cssLoaderIdx + 2, 0, {

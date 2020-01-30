@@ -13,8 +13,12 @@
   font-size: 12px;
   border-radius: 2px;
 
-  &:hover {
+  &:hover:not([disabled]) {
     background: darken(gold, 10%);
+  }
+
+  &:disabled {
+    background: lightgrey;
   }
 
   &:focus {

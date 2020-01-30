@@ -1,12 +1,13 @@
-import React, { ReactElement } from 'react'
+import React, { ReactElement, MutableRefObject } from 'react'
 import s from './style.scss'
 
-const ScreenID = s.Screen
+interface ScreenProps {
+  ref: MutableRefObject<any>
+}
 
-const Screen = (): ReactElement<any> => {
-  return <div id={s.Screen} />
+const Screen = (props: ScreenProps): ReactElement<any> => {
+  const { ref } = props
+  return <div id={s.Screen} ref={ref} />
 }
 
 export default Screen
-
-export { ScreenID }

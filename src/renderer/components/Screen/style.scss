@@ -1,4 +1,4 @@
-@import '../../constants.scss';
+@import '../App/constants.scss';
 
 #Screen {
   height: calc(100% - #{$headerHeight});
@@ -6,5 +6,6 @@
 
   canvas {
     display: block;
+    background: green;
   }
 }

@@ -7,6 +7,7 @@ interface ButtonProps {
   onClick: MouseEventHandler
   id?: string
   className?: string
+  disabled?: boolean
 }
 
 const Button = (props: ButtonProps): ReactElement<any> => {
