@@ -1,4 +1,6 @@
 import React, { ReactElement } from 'react'
+import cn from 'classnames'
+import s from './style.scss'
 
 interface ButtonProps {
   label: string
@@ -9,9 +11,9 @@ interface ButtonProps {
 }
 
 const Button = (props: ButtonProps): ReactElement<any> => {
-  const { label, onClick, ...rest } = props
+  const { label, onClick, className, ...rest } = props
   return (
-    <button type="button" onClick={onClick} {...rest}>
+    <button type="button" onClick={onClick} className={cn(className, s.Button)} {...rest}>
       {label}
     </button>
   )
