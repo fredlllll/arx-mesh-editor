@@ -3,6 +3,7 @@
   "compilerOptions": {
     "noUnusedParameters": true,
     "esModuleInterop": true,
-    "noImplicitAny": true
+    "noImplicitAny": true,
+    "jsx": "react"
   }
 }

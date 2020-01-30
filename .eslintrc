@@ -1,6 +1,7 @@
 {
   "extends": [
     "standard",
+    "standard-react",
     "prettier-standard",
     "plugin:@typescript-eslint/recommended"
   ],
@@ -15,6 +16,7 @@
   "parser": "@typescript-eslint/parser",
   "rules": {
     "prefer-template": "error",
+    "react/prop-types": "off",
     "prettier/prettier": [
       "error",
       {
@@ -59,14 +61,29 @@
     "ramda/unless-simplification": "error",
     "ramda/when-simplification": "error",
     "@typescript-eslint/no-empty-function": "off",
-    "@typescript-eslint/no-explicit-any": "off"
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/member-delimiter-style": [
+      "error",
+      {
+        "multiline": {
+          "delimiter": "none",
+          "requireLast": false
+        },
+        "singleline": {
+          "delimiter": "comma",
+          "requireLast": false
+        }
+      }
+    ]
   },
   "settings": {
     "import/resolver": {
       "node": {
         "extensions": [
           ".js",
-          ".ts"
+          ".ts",
+          ".jsx",
+          ".tsx"
         ]
       }
     }

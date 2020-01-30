@@ -1,0 +1,10 @@
+@import '../../constants.scss';
+
+#Screen {
+  height: calc(100% - #{$headerHeight});
+  background: $uiBgColor;
+
+  canvas {
+    display: block;
+  }
+}
