@@ -1,3 +1,5 @@
+const autoprefixer = require('autoprefixer')
+
 module.exports = config => {
   // https://github.com/electron-userland/electron-webpack/blob/master/docs/en/modifying-webpack-configurations.md#use-case-1
   const styleRules = config.module.rules.filter(rule => rule.test.toString().match(/css|less|s\(\[ac\]\)ss/))
@@ -8,6 +10,12 @@ module.exports = config => {
     cssLoader.options.modules = true
 
     rule.use.splice(cssLoaderIdx, 0, 'css-modules-typescript-loader')
+    rule.use.splice(cssLoaderIdx + 2, 0, {
+      loader: 'postcss-loader',
+      options: {
+        plugins: () => [autoprefixer]
+      }
+    })
   })
 
   return config
