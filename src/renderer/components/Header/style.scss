@@ -16,4 +16,10 @@
     font-weight: normal;
     display: inline-block;
   }
+
+  .right {
+    height: $headerHeight;
+    line-height: $headerHeight;
+    float: right;
+  }
 }

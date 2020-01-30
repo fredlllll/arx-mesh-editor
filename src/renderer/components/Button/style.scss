@@ -1,3 +1,23 @@
 .Button {
+  $size: 24px;
+
   -webkit-app-region: no-drag;
+  border: 0;
+  background: gold;
+  margin: 0 0 0 10px;
+  padding: 0 $size / 3;
+  line-height: $size;
+  height: $size;
+  vertical-align: middle;
+  font-weight: bold;
+  font-size: 12px;
+  border-radius: 2px;
+
+  &:hover {
+    background: darken(gold, 10%);
+  }
+
+  &:focus {
+    outline: none;
+  }
 }
