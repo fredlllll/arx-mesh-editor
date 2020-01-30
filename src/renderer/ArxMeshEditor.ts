@@ -1,4 +1,13 @@
-import { Color, PerspectiveCamera, BoxGeometry, MeshPhongMaterial, Mesh, PointLight, AmbientLight } from 'three'
+import {
+  Color,
+  PerspectiveCamera,
+  BoxGeometry,
+  MeshPhongMaterial,
+  Mesh,
+  PointLight,
+  AmbientLight,
+  GridHelper
+} from 'three'
 import { ThreeApp } from './ThreeApp'
 import { EditorCameraControl } from './EditorCameraControl'
 import { ArxLevel } from './ArxLevel'
@@ -84,6 +93,9 @@ export class ArxMeshEditor {
 
     const mesh = new Mesh(geometry, material)
     threeApp.scene.add(mesh)
+
+    const grid = new GridHelper(200, 20)
+    threeApp.scene.add(grid)
 
     const light = new PointLight(lightColor, 1.5, 100)
     light.position.set(20, 20, 20)
