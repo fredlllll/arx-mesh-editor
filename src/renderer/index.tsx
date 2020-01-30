@@ -4,7 +4,7 @@ import { render } from 'react-dom'
 import { ArxMeshEditor } from './ArxMeshEditor'
 import App from './components/App'
 import { ScreenID } from './components/Screen'
-import './style.scss'
+import './reset.scss'
 
 const container = document.getElementById('app')
 
