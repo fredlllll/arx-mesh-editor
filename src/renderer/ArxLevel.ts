@@ -36,3 +36,5 @@ export class ArxLevel extends Object3D {
     return this
   }
 }
+
+export const NEW_LEVEL = 'new'

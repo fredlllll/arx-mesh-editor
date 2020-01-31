@@ -1,6 +1,7 @@
 import React, { ReactElement, useState } from 'react'
 import { isNil } from 'ramda'
 import Button from '../../Button'
+import { NEW_LEVEL } from '../../../ArxLevel'
 import s from './style.scss'
 
 const levels = [
@@ -42,6 +43,13 @@ const LevelSelector = (props: LevelSelectorProps): ReactElement<any> => {
         label="Open level"
         onClick={(): void => {
           onSelect(selectedLevel)
+        }}
+      />
+      <div>----- or -----</div>
+      <Button
+        label="Create a new level"
+        onClick={(): void => {
+          onSelect(NEW_LEVEL)
         }}
       />
     </div>

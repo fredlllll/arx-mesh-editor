@@ -26,7 +26,6 @@ export class ArxMeshEditor {
     this.createCameraControl(threeApp, camera)
 
     this.initEvents(threeApp)
-    this.initTestScene(threeApp)
 
     this.threeApp = threeApp
     this.camera = camera
@@ -41,6 +40,23 @@ export class ArxMeshEditor {
   public loadLevel(name: string): Promise<ArxLevel> {
     const level = new ArxLevel()
     this.SetCurrentLevel(level)
+
+    // demo
+    const threeApp = this.threeApp
+    const faceColor = new Color(0xffffff)
+    const lightColor = new Color(0xffffee)
+
+    const geometry = new BoxGeometry(10, 10, 10)
+    const material = new MeshPhongMaterial({ color: faceColor })
+
+    const mesh = new Mesh(geometry, material)
+    threeApp.scene.add(mesh)
+
+    const light = new PointLight(lightColor, 1.5, 100)
+    light.position.set(20, 20, 20)
+    threeApp.scene.add(light)
+    // end of demo
+
     return level.load(name)
   }
 
@@ -52,9 +68,8 @@ export class ArxMeshEditor {
   }
 
   private SetCurrentLevel(level: ArxLevel | undefined): void {
-    if (this.currentLevel_) {
-      this.threeApp.scene.remove(this.currentLevel_)
-    }
+    this.threeApp.scene.dispose()
+    this.initEmptyMap()
     if (level) {
       this.threeApp.scene.add(level)
     }
@@ -84,22 +99,11 @@ export class ArxMeshEditor {
     threeApp.addEventListener('animate', this.onAnimate)
   }
 
-  private initTestScene(threeApp: ThreeApp): void {
-    const faceColor = new Color(0xffffff)
-    const lightColor = new Color(0xffffee)
-
-    const geometry = new BoxGeometry(10, 10, 10)
-    const material = new MeshPhongMaterial({ color: faceColor })
-
-    const mesh = new Mesh(geometry, material)
-    threeApp.scene.add(mesh)
+  private initEmptyMap(): void {
+    const threeApp = this.threeApp
 
     const grid = new GridHelper(200, 20)
     threeApp.scene.add(grid)
-
-    const light = new PointLight(lightColor, 1.5, 100)
-    light.position.set(20, 20, 20)
-    threeApp.scene.add(light)
 
     const ambientLight = new AmbientLight(0x404040)
     threeApp.scene.add(ambientLight)
