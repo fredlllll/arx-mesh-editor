@@ -17,7 +17,7 @@ const App = (props: AppProps): ReactElement<any> => {
 
   const [isLevelLoaded, setIsLevelLoaded] = useState(false)
 
-  const screenRef = useRef<HTMLElement>()
+  const screenRef = useRef<HTMLDivElement>(null)
 
   return (
     <>
@@ -45,8 +45,6 @@ const App = (props: AppProps): ReactElement<any> => {
           onSelect={(level: string): void => {
             setIsLevelLoaded(true)
             if (!isNil(screenRef.current)) {
-              // TODO: something is not okay, screenRef.current is always undefined
-              // possibly because of Screen being inside a fragment
               arxMeshEditor = new ArxMeshEditor(screenRef.current)
               arxMeshEditor.loadLevel(level)
             }

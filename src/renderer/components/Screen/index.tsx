@@ -1,13 +1,8 @@
-import React, { ReactElement, MutableRefObject } from 'react'
+import React, { forwardRef } from 'react'
 import s from './style.scss'
 
-interface ScreenProps {
-  ref: MutableRefObject<any>
-}
-
-const Screen = (props: ScreenProps): ReactElement<any> => {
-  const { ref } = props
-  return <div id={s.Screen} ref={ref} />
-}
+const Screen = forwardRef<HTMLDivElement, {}>((props, ref) => {
+  return <div id={s.Screen} ref={ref} {...props} />
+})
 
 export default Screen
