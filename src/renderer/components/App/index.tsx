@@ -1,10 +1,10 @@
 import React, { ReactElement, useState, useRef, useLayoutEffect } from 'react'
 import { isNil } from 'ramda'
-import Screen from '../Screen'
-import Header from '../Header'
 import { ArxMeshEditor } from '../../ArxMeshEditor'
 import './reset.scss'
 import { NEW_LEVEL } from '../../ArxLevel'
+import Screen from './Screen'
+import Header from './Header'
 import LevelSelector from './LevelSelector'
 
 interface AppProps {

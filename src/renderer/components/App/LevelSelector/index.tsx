@@ -1,6 +1,6 @@
 import React, { ReactElement, useState } from 'react'
 import { isNil } from 'ramda'
-import Button from '../../Button'
+import Button from '../Button'
 import { NEW_LEVEL } from '../../../ArxLevel'
 import s from './style.scss'
 
