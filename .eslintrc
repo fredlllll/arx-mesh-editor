@@ -74,7 +74,10 @@
           "requireLast": false
         }
       }
-    ]
+    ],
+    "indent": "off",
+    "@typescript-eslint/indent": "off",
+    "react/jsx-indent": "off"
   },
   "settings": {
     "import/resolver": {
