@@ -1,10 +1,11 @@
 import React, { ReactElement } from 'react'
-import { faTimes, faWindowMinimize, faWindowMaximize, faWindowRestore } from '@fortawesome/free-solid-svg-icons'
+import { faWindowMinimize, faWindowMaximize, faWindowRestore } from '@fortawesome/free-regular-svg-icons'
+import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import Button from '../Button'
 import s from './style.scss'
 
 interface HeaderProps {
-  isWindowMaximized: bool
+  isWindowMaximized: boolean
   onMinimizeClick: Function
   onMaximizeClick: Function
   onCloseClick: Function
