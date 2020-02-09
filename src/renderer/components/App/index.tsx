@@ -17,6 +17,7 @@ const App = (props: AppProps): ReactElement<any> => {
   const { electronRemote: remote } = props
 
   const [isLevelLoaded, setIsLevelLoaded] = useState(false)
+  const [isWindowMaximized, setIsWindowMaximized] = useState(false)
 
   const screenRef = useRef<HTMLDivElement>(null)
 
@@ -26,23 +27,24 @@ const App = (props: AppProps): ReactElement<any> => {
     }
   }, [])
 
+  const window = remote.getCurrentWindow()
+
   return (
     <>
       <Header
+        isWindowMaximized={isWindowMaximized}
         onMinimizeClick={(): void => {
-          const window = remote.getCurrentWindow()
           window.minimize()
         }}
         onMaximizeClick={(): void => {
-          const window = remote.getCurrentWindow()
           if (window.isMaximized()) {
             window.unmaximize()
           } else {
             window.maximize()
           }
+          setIsWindowMaximized(window.isMaximized())
         }}
         onCloseClick={(): void => {
-          const window = remote.getCurrentWindow()
           window.close()
         }}
       />
