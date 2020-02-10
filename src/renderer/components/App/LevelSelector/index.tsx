@@ -9,6 +9,7 @@ const levels = [
   {
     name: 'City of Arx',
     filename: 'level11'
+    // files in an array with relative paths from arxRoot
   }
 ]
 
@@ -22,7 +23,7 @@ const LevelSelector = (props: LevelSelectorProps): ReactElement<any> => {
   const { onSelect } = props
 
   const [selectedLevel, setSelectedLevel] = useState()
-  const [arxPath, setArxPath] = useState()
+  const [arxPath, setArxPath] = useState() // should be arxRoot
 
   return (
     <div id={s.LevelSelector}>
