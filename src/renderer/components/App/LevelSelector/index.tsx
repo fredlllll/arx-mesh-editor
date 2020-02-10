@@ -1,29 +1,28 @@
-import React, { ReactElement, useState } from 'react'
+import React, { ReactElement, useState, useEffect } from 'react'
 import { isNil } from 'ramda'
 import { remote } from 'electron'
 import Button from '../Button'
-import { NEW_LEVEL } from '../../../ArxLevel'
+import { NEW_LEVEL, LEVELS } from '../../../ArxLevel'
 import s from './style.scss'
 
-const levels = [
-  {
-    name: 'City of Arx',
-    filename: 'level11'
-    // files in an array with relative paths from arxRoot
-  }
-]
-
 interface LevelSelectorProps {
-  onSelect: any
+  onArxRootChange: any // TODO: this should be a well defined function
+  onSelect: any // TODO: this also should be a well defined function
 }
 
 const { dialog } = remote
 
 const LevelSelector = (props: LevelSelectorProps): ReactElement<any> => {
-  const { onSelect } = props
+  const { onArxRootChange, onSelect } = props
 
   const [selectedLevel, setSelectedLevel] = useState()
-  const [arxPath, setArxPath] = useState() // should be arxRoot
+  const [arxRoot, setArxRoot] = useState()
+
+  useEffect(() => {
+    if (arxRoot !== undefined) {
+      onArxRootChange(arxRoot)
+    }
+  }, [arxRoot])
 
   return (
     <div id={s.LevelSelector}>
@@ -32,7 +31,7 @@ const LevelSelector = (props: LevelSelectorProps): ReactElement<any> => {
       <input
         readOnly
         type="text"
-        value={arxPath}
+        value={arxRoot}
         onClick={(): void => {
           dialog
             .showOpenDialog({
@@ -41,23 +40,23 @@ const LevelSelector = (props: LevelSelectorProps): ReactElement<any> => {
             })
             .then(result => {
               if (!result.canceled) {
-                setArxPath(result.filePaths[0])
+                setArxRoot(result.filePaths[0])
               }
             })
         }}
         onChange={(e): void => {
-          setArxPath(e.target.value)
+          setArxRoot(e.target.value)
         }}
       />
       <hr />
       <ul>
-        {levels.map(({ name, filename }) => (
-          <li key={filename}>
+        {Object.keys(LEVELS).map(name => (
+          <li key={name}>
             <label>
               <input
                 type="radio"
-                value={filename}
-                checked={filename === selectedLevel}
+                value={name}
+                checked={name === selectedLevel}
                 onChange={(e): void => {
                   setSelectedLevel(e.target.value)
                 }}

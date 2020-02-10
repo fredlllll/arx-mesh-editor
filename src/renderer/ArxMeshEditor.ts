@@ -15,6 +15,7 @@ import { ArxLevel } from './ArxLevel'
 export class ArxMeshEditor {
   private threeApp: ThreeApp
   private camera: PerspectiveCamera
+  private arxRoot = ''
 
   private currentLevel_?: ArxLevel
 
@@ -57,7 +58,7 @@ export class ArxMeshEditor {
     threeApp.scene.add(light)
     // end of demo
 
-    return level.load(name)
+    return level.load(this.arxRoot, name)
   }
 
   public saveLevel(name?: string): Promise<ArxLevel> | undefined {
@@ -115,4 +116,8 @@ export class ArxMeshEditor {
   }
 
   private onAnimate = (): void => {}
+
+  public setArxRoot = (arxRoot: string): void => {
+    this.arxRoot = arxRoot
+  }
 }

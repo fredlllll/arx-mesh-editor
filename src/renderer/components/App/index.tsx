@@ -51,6 +51,9 @@ const App = (props: AppProps): ReactElement<any> => {
       <Screen ref={screenRef} />
       {!isLevelLoaded && (
         <LevelSelector
+          onArxRootChange={(arxRoot: string): void => {
+            arxMeshEditor.setArxRoot(arxRoot)
+          }}
           onSelect={(level: string): void => {
             setIsLevelLoaded(true)
             if (level === NEW_LEVEL) {
