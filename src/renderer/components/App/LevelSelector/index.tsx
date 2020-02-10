@@ -1,5 +1,6 @@
 import React, { ReactElement, useState } from 'react'
 import { isNil } from 'ramda'
+import { remote } from 'electron'
 import Button from '../Button'
 import { NEW_LEVEL } from '../../../ArxLevel'
 import s from './style.scss'
@@ -15,12 +16,39 @@ interface LevelSelectorProps {
   onSelect: any
 }
 
+const { dialog } = remote
+
 const LevelSelector = (props: LevelSelectorProps): ReactElement<any> => {
   const { onSelect } = props
 
   const [selectedLevel, setSelectedLevel] = useState()
+  const [arxPath, setArxPath] = useState()
+
   return (
     <div id={s.LevelSelector}>
+      Arx extracted resources path (click to change):
+      <br />
+      <input
+        readOnly
+        type="text"
+        value={arxPath}
+        onClick={(): void => {
+          dialog
+            .showOpenDialog({
+              title: 'Select root of Arx extracted resources',
+              properties: ['openDirectory']
+            })
+            .then(result => {
+              if (!result.canceled) {
+                setArxPath(result.filePaths[0])
+              }
+            })
+        }}
+        onChange={(e): void => {
+          setArxPath(e.target.value)
+        }}
+      />
+      <hr />
       <ul>
         {levels.map(({ name, filename }) => (
           <li key={filename}>
