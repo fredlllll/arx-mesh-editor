@@ -1,11 +1,11 @@
 import React, { ReactElement, useState, useRef, useLayoutEffect } from 'react'
 import { isNil } from 'ramda'
 import { ArxMeshEditor } from '../../ArxMeshEditor'
-import './reset.scss'
 import { NEW_LEVEL } from '../../ArxLevel'
 import Screen from './Screen'
 import Header from './Header'
 import LevelSelector from './LevelSelector'
+import './reset.scss'
 
 interface AppProps {
   electronRemote: any
