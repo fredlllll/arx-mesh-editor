@@ -11,13 +11,14 @@ export class DLFLoader {
   public async load(fileName: string): Promise<any> {
     await tryAccessing(fileName)
     const buffer = await fs.promises.readFile(fileName)
+    const bufferView = new DataView(buffer)
 
     // Step 1: read header information
     // https://github.com/arx/ArxLibertatis/blob/master/plugins/blender/arx_addon/dataDlf.py#L34
 
     const data = {
       header: {
-        version: buffer.slice(0, 4) // need to turn these 4 bytes into a version float
+        version: bufferView.getFloat32(0)
       }
     }
 
