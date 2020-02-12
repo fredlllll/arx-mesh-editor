@@ -16,7 +16,7 @@ const LevelSelector = (props: LevelSelectorProps): ReactElement<any> => {
   const { onArxRootChange, onSelect } = props
 
   const [selectedLevel, setSelectedLevel] = useState()
-  const [arxRoot, setArxRoot] = useState()
+  const [arxRoot, setArxRoot] = useState('')
 
   useEffect(() => {
     if (arxRoot !== undefined) {
