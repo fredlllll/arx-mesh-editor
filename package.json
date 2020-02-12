@@ -39,8 +39,6 @@
   },
   "homepage": "https://github.com/meszaros-lajos-gyorgy/arx-mesh-editor#readme",
   "dependencies": {
-    "@types/binary-parser": "^1.5.0",
-    "binary-parser": "^1.5.0",
     "ramda": "^0.26.1",
     "source-map-support": "^0.5.16",
     "three": "^0.112.1"

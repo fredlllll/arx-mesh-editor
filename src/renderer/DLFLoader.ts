@@ -1,7 +1,4 @@
-/* global alert */
-
 import fs from 'fs'
-import { Parser } from 'binary-parser'
 
 const tryAccessing = (fileName: string): Promise<void> => {
   // .then() is available, when file exists, else .catch()
@@ -12,15 +9,24 @@ export class DLFLoader {
   public async load(fileName: string): Promise<any> {
     await tryAccessing(fileName)
     const buffer = await fs.promises.readFile(fileName)
+    const bufferView = new DataView(buffer.buffer)
 
     // Step 1: read header information
     // https://github.com/arx/ArxLibertatis/blob/master/plugins/blender/arx_addon/dataDlf.py#L34
 
+    /*
     const headerParser = new Parser()
       .floatle('version')
       .string('ident', { length: 16, stripNull: true })
       .string('lastuser', { length: 256, stripNull: true })
       .int32('time')
+    */
+
+    const data = {
+      header: {
+        version: bufferView.getFloat32(0, true)
+      }
+    }
 
     /*
       ("pos_edit",        SavedVec3),
@@ -45,11 +51,7 @@ export class DLFLoader {
       ("bpad",            c_int32 * 256),
     */
 
-    const data = {
-      header: headerParser.parse(buffer)
-    }
-
-    alert(JSON.stringify(data)) // TODO: really need to make the console accessible asap!
+    console.log(data)
 
     return fileName // TODO actually do something
   }

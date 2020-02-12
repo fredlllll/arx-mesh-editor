@@ -1,5 +1,3 @@
-/* global alert */
-
 import path from 'path'
 import { Object3D } from 'three'
 import { has } from 'ramda'
@@ -32,7 +30,7 @@ export class ArxLevel extends Object3D {
     // load everything, then set name variable so we dont accidentally think we loaded a level and overwrite it with an empty level
 
     if (!has(levelName, LEVELS)) {
-      alert(`level does not exist: ${levelName}`) // TODO: we need proper error handling, not this shit
+      console.error(new Error(`level does not exist: ${levelName}`)) // TODO: we need proper error handling, not this shit
       return this
     }
 
