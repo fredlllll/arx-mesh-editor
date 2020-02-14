@@ -5,10 +5,7 @@ import { DLFLoader } from './DLFLoader'
 import { FTSLoader } from './FTSLoader'
 import { LLFLoader } from './LLFLoader'
 import { LEVELS } from './constants/LEVELS'
-
-const isDlf = (filename: string): boolean => filename.toLowerCase().endsWith('.dlf')
-const isLlf = (filename: string): boolean => filename.toLowerCase().endsWith('.llf')
-const isFts = (filename: string): boolean => filename.toLowerCase().endsWith('.fts')
+import { isDlf, isFts, isLlf } from './helpers/file'
 
 export class ArxLevel extends Object3D {
   private levelName = ''
