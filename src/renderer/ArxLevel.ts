@@ -5,7 +5,6 @@ import { DLFLoader } from './DLFLoader'
 import { FTSLoader } from './FTSLoader'
 import { LLFLoader } from './LLFLoader'
 import { LEVELS } from './constants/LEVELS'
-import { isDlf, isFts, isLlf } from './helpers/file'
 
 export class ArxLevel extends Object3D {
   private levelName = ''
@@ -18,31 +17,15 @@ export class ArxLevel extends Object3D {
       return this
     }
 
-    const loaders = LEVELS[levelName].resources.map(
-      (res: string): Promise<any> => {
-        let loader = null
+    const levelData = LEVELS[levelName]
 
-        if (isDlf(res)) {
-          loader = new DLFLoader()
-        }
+    const loaderPromises = [
+      new DLFLoader().load(path.resolve(arxRoot, levelData.dlf)),
+      new FTSLoader().load(path.resolve(arxRoot, levelData.fts)),
+      new LLFLoader().load(path.resolve(arxRoot, levelData.llf))
+    ]
 
-        if (isLlf(res)) {
-          loader = new FTSLoader()
-        }
-
-        if (isFts(res)) {
-          loader = new LLFLoader()
-        }
-
-        if (loader !== null) {
-          return loader.load(path.resolve(arxRoot, res))
-        } else {
-          return Promise.reject(new Error(`unrecognisable file type: ${levelName}`))
-        }
-      }
-    )
-
-    await Promise.all(loaders)
+    await Promise.all(loaderPromises)
 
     // TODO: work with results
 
