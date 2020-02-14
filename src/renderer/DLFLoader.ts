@@ -14,17 +14,14 @@ export class DLFLoader {
     // Step 1: read header information
     // https://github.com/arx/ArxLibertatis/blob/master/plugins/blender/arx_addon/dataDlf.py#L34
 
-    /*
-    const headerParser = new Parser()
-      .floatle('version')
-      .string('ident', { length: 16, stripNull: true })
-      .string('lastuser', { length: 256, stripNull: true })
-      .int32('time')
-    */
+    const textDecoder = new TextDecoder('utf-8') // TODO need to find a compatible charset
 
     const data = {
       header: {
-        version: bufferView.getFloat32(0, true)
+        version: bufferView.getFloat32(0, true),
+        ident: textDecoder.decode(buffer.buffer.slice(4, 4 + 16)),
+        lastuser: textDecoder.decode(buffer.buffer.slice(20, 20 + 256)),
+        time: bufferView.getInt32(256 + 20, true)
       }
     }
 
