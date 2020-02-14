@@ -4,20 +4,7 @@ import { has } from 'ramda'
 import { DLFLoader } from './DLFLoader'
 import { FTSLoader } from './FTSLoader'
 import { LLFLoader } from './LLFLoader'
-
-interface LevelData {
-  resources: Array<string>
-}
-
-export const LEVELS: Record<string, LevelData> = {
-  'City of Arx': {
-    resources: [
-      'GRAPH/levels/level11/level11.DLF',
-      'GRAPH/levels/level11/level11.LLF',
-      'GAME/GRAPH/Levels/Level11/fast.fts'
-    ]
-  }
-}
+import { LEVELS } from './constants/LEVELS'
 
 const isDlf = (filename: string): boolean => filename.toLowerCase().endsWith('.dlf')
 const isLlf = (filename: string): boolean => filename.toLowerCase().endsWith('.llf')
@@ -77,5 +64,3 @@ export class ArxLevel extends Object3D {
     return this
   }
 }
-
-export const NEW_LEVEL = 'new'

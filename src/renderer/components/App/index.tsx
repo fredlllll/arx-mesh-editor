@@ -1,7 +1,7 @@
 import React, { ReactElement, useState, useRef, useLayoutEffect } from 'react'
 import { isNil } from 'ramda'
 import { ArxMeshEditor } from '../../ArxMeshEditor'
-import { NEW_LEVEL } from '../../ArxLevel'
+import { NEW_LEVEL } from '../../constants/LEVELS'
 import Screen from './Screen'
 import Header from './Header'
 import LevelSelector from './LevelSelector'

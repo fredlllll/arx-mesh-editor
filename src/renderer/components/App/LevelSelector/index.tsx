@@ -2,7 +2,7 @@ import React, { ReactElement, useState, useEffect } from 'react'
 import { isNil } from 'ramda'
 import { remote } from 'electron'
 import Button from '../Button'
-import { NEW_LEVEL, LEVELS } from '../../../ArxLevel'
+import { NEW_LEVEL, LEVELS } from '../../../constants/LEVELS'
 import s from './style.scss'
 
 interface LevelSelectorProps {
