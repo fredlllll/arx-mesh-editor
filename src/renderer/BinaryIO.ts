@@ -117,12 +117,43 @@ export class BinaryIO extends DataView {
   }
 
   readString(length?: number): string {
-    // TODO: implement reading either fixed length or variable length strings (c strings or with length byte??)
-    return `${length}`
+    // TODO: this assumes utf-8 do we need special treatment for the 127-255 characters?
+    let retval: string
+    if (length !== undefined) {
+      // a bit ugly, but better than string concatenations
+      retval = String.fromCharCode(...new Uint8Array(this.buffer.slice(this.position, this.position + length)))
+      this.position += length
+    } else {
+      const codes: number[] = []
+      let c = 0
+      do {
+        c = this.readUint8()
+        codes.push(c)
+      } while (c !== 0)
+      retval = String.fromCharCode(...codes)
+    }
+    return retval
   }
 
-  writeString(str: string): void {
-    // TODO: write string to view, either fixed length or variable length?
-    this.writeUint32(str.length) // TODO: just so str is used somehow
+  writeString(str: string, length?: number): void {
+    // TODO: this will probably break for utf characters, what encoding to we need to handle? ascii?
+    // if length is given we assume a fixed length string
+    if (length !== undefined) {
+      for (let i = 0; i < length; i++) {
+        const c = str.charCodeAt(i) // will be NaN if out of bounds
+        if (isNaN(c)) {
+          this.writeUint8(0) // pad with 0
+        } else {
+          this.writeUint8(c)
+        }
+      }
+    } else {
+      // otherwise its a 0 terminated c string
+      for (let i = 0; i < str.length; i++) {
+        const c = str.charCodeAt(i)
+        this.writeUint8(c)
+      }
+      this.writeUint8(0)
+    }
   }
 }

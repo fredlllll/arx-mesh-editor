@@ -1,4 +1,5 @@
 import fs from 'fs'
+import { BinaryIO } from './BinaryIO'
 
 const tryAccessing = (fileName: string): Promise<void> => {
   // .then() is available, when file exists, else .catch()
@@ -9,19 +10,17 @@ export class DLFLoader {
   public async load(fileName: string): Promise<any> {
     await tryAccessing(fileName)
     const buffer = await fs.promises.readFile(fileName)
-    const bufferView = new DataView(buffer.buffer)
+    const binary = new BinaryIO(buffer.buffer)
 
     // Step 1: read header information
     // https://github.com/arx/ArxLibertatis/blob/master/plugins/blender/arx_addon/dataDlf.py#L34
 
-    const textDecoder = new TextDecoder('utf-8') // TODO need to find a compatible charset
-
     const data = {
       header: {
-        version: bufferView.getFloat32(0, true),
-        ident: textDecoder.decode(buffer.buffer.slice(4, 4 + 16)),
-        lastuser: textDecoder.decode(buffer.buffer.slice(20, 20 + 256)),
-        time: bufferView.getInt32(256 + 20, true)
+        version: binary.readFloat32(true),
+        ident: binary.readString(16),
+        lastuser: binary.readString(256),
+        time: binary.readInt32(true)
       }
     }
 
