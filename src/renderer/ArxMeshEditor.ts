@@ -35,12 +35,12 @@ export class ArxMeshEditor {
   public newLevel(): void {
     // create a new empty level
     const level = new ArxLevel()
-    this.SetCurrentLevel(level)
+    this.setCurrentLevel(level)
   }
 
   public loadLevel(name: string): Promise<ArxLevel> {
     const level = new ArxLevel()
-    this.SetCurrentLevel(level)
+    this.setCurrentLevel(level)
 
     // demo
     const threeApp = this.threeApp
@@ -68,7 +68,7 @@ export class ArxMeshEditor {
     return undefined // cant save level if its not set
   }
 
-  private SetCurrentLevel(level: ArxLevel | undefined): void {
+  private setCurrentLevel(level: ArxLevel | undefined): void {
     this.threeApp.scene.dispose()
     this.initEmptyMap()
     if (level) {
