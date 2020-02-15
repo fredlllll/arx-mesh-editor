@@ -1,14 +1,10 @@
 import fs from 'fs'
 import { BinaryIO } from './BinaryIO'
-
-const tryAccessing = (fileName: string): Promise<void> => {
-  // .then() is available, when file exists, else .catch()
-  return fs.promises.access(fileName, fs.constants.R_OK)
-}
+import { checkCanRead } from './helpers/file'
 
 export class DLFLoader {
   public async load(fileName: string): Promise<any> {
-    await tryAccessing(fileName)
+    await checkCanRead(fileName)
     const buffer = await fs.promises.readFile(fileName)
     const binary = new BinaryIO(buffer.buffer)
 
