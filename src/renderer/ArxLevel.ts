@@ -1,7 +1,7 @@
 import path from 'path'
 import { Object3D } from 'three'
 import { has } from 'ramda'
-import { DLFLoader } from './DLFLoader'
+import { DLFLoader } from './DLF/DLFLoader'
 import { FTSLoader } from './FTSLoader'
 import { LLFLoader } from './LLFLoader'
 import { LEVELS } from './constants/LEVELS'
