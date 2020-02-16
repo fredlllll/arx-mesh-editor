@@ -1,5 +1,5 @@
 import fs from 'fs'
-import { BinaryIO } from '../BinaryIO'
+import { BinaryIO } from '../Binary/BinaryIO'
 import { checkCanRead } from '../helpers/file'
 import { DanaeLsHeader } from './DanaeLsHeader'
 

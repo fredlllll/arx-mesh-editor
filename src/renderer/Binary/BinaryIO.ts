@@ -1,12 +1,15 @@
-import { SavedVector3 } from './SavedVector3'
-import { SavedAnglef } from './SavedAnglef'
+import { SavedVector3 } from '../SavedVector3'
+import { SavedAnglef } from '../SavedAnglef'
+import TextIO from './TextIO'
 
 export class BinaryIO extends DataView {
   position: number
+  textIO: TextIO
 
   constructor(buffer: ArrayBufferLike, byteOffset?: number, byteLength?: number) {
     super(buffer, byteOffset, byteLength)
     this.position = 0
+    this.textIO = new TextIO('iso-8859-1')
   }
 
   readFloat32(littleEndian?: boolean): number {
@@ -278,11 +281,12 @@ export class BinaryIO extends DataView {
         codes.push(c)
       }
     }
-    // TODO: this assumes utf-8 do we need special treatment for the 127-255 characters?
-    return String.fromCharCode(...codes)
+
+    return this.textIO.decode(Uint8Array.from(codes))
   }
 
   writeString(str: string, length?: number): void {
+    // TODO: utilize TextIO here
     // TODO: this will probably break for utf characters, what encoding do we need to handle? ascii?
     // if length is given we assume a fixed length string
     if (length !== undefined) {

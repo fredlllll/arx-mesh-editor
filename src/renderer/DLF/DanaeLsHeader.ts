@@ -1,4 +1,4 @@
-import { BinaryIO } from '../BinaryIO'
+import { BinaryIO } from '../Binary/BinaryIO'
 import { SavedVector3 } from '../SavedVector3'
 import { SavedAnglef } from '../SavedAnglef'
 
