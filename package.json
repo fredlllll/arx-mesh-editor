@@ -39,6 +39,7 @@
   },
   "homepage": "https://github.com/meszaros-lajos-gyorgy/arx-mesh-editor#readme",
   "dependencies": {
+    "implode-decoder": "^1.0.1",
     "ramda": "^0.26.1",
     "source-map-support": "^0.5.16",
     "three": "^0.112.1"
