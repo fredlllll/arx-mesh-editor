@@ -282,28 +282,24 @@ export class BinaryIO extends DataView {
       }
     }
 
-    return this.textIO.decode(Uint8Array.from(codes))
+    return this.textIO.decode(codes)
   }
 
   writeString(str: string, length?: number): void {
-    // TODO: utilize TextIO here
-    // TODO: this will probably break for utf characters, what encoding do we need to handle? ascii?
     // if length is given we assume a fixed length string
     if (length !== undefined) {
-      for (let i = 0; i < length; i++) {
-        const c = str.charCodeAt(i) // will be NaN if out of bounds
-        if (isNaN(c)) {
-          this.writeUint8(0) // pad with 0
-        } else {
-          this.writeUint8(c)
-        }
-      }
+      const charCodes = new Array(length)
+      charCodes.fill(0)
+
+      // replacing 0s in charCodes one by one from left to right
+      this.textIO.encode(str).forEach((charCode, index) => {
+        charCodes[index] = charCode
+      })
+
+      charCodes.forEach(this.writeUint8)
     } else {
       // otherwise its a 0 terminated c string
-      for (let i = 0; i < str.length; i++) {
-        const c = str.charCodeAt(i)
-        this.writeUint8(c)
-      }
+      this.textIO.encode(str).forEach(this.writeUint8)
       this.writeUint8(0)
     }
   }

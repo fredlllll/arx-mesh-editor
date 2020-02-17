@@ -1,3 +1,8 @@
+import { map, prop, __, join, has } from 'ramda'
+import { CHARS, CODES } from './Latin1CharsetLookup'
+
+const UNKNOWN_CHAR = CODES[' ']
+
 class TextIO {
   charset: string
 
@@ -5,12 +10,12 @@ class TextIO {
     this.charset = charset
   }
 
-  public decode(bytes: Uint8Array): string {
-    return String.fromCharCode(...bytes)
+  public decode(bytes: number[]): string {
+    return join('', map(prop(__, CHARS), bytes))
   }
 
-  public encode(str: string): Uint8Array {
-    return Uint8Array.from(str.split('').map(char => char.charCodeAt(0)))
+  public encode(str: string): number[] {
+    return str.split('').map(char => (has(char, CODES) ? CODES[char] : UNKNOWN_CHAR))
   }
 }
 
