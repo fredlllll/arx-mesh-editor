@@ -5,7 +5,7 @@ const isExtension: (f: string, e: string) => boolean = (filename: string, extens
 }
 
 const isExtensionClosure: (e: string) => (f: string) => boolean = (extensionWithDot: string) => {
-  return (filename: string) => {
+  return (filename: string): boolean => {
     return isExtension(filename, extensionWithDot)
   }
 }
