@@ -30,10 +30,6 @@ export class DanaeLsHeader {
   cpad = ''
   bpad: number[] = new Array<number>(256)
 
-  getLength(): number {
-    return 8520 // sum of all fields in the header
-  }
-
   readFrom(binary: BinaryIO): void {
     this.version = binary.readFloat32(true)
     this.ident = binary.readString(16, true)
