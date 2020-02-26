@@ -49,11 +49,14 @@ class TestTransform extends Transform {
       bytes.push(chunk[i], 0)
     }
 
-    const chunk1 = bytes.slice(0, bytes.length / 2)
-    const chunk2 = bytes.slice(bytes.length / 2, bytes.length)
+    const chunk1 = Buffer.from(bytes.slice(0, bytes.length / 2))
+    const chunk2 = Buffer.from(bytes.slice(bytes.length / 2 + 1, bytes.length + 1))
 
-    this.push(Buffer.from(chunk1))
-    this.push(Buffer.from(chunk2))
+    console.log(chunk1)
+    console.log(chunk2)
+
+    this.push(chunk1)
+    this.push(chunk2)
 
     next()
   }
