@@ -1,6 +1,6 @@
 import fs from 'fs'
-import { Readable, Writable } from 'stream'
-import decodeImplode from 'implode-decoder'
+import { Readable, Writable, Transform } from 'stream'
+// import decodeImplode from 'implode-decoder'
 import { BinaryIO } from '../Binary/BinaryIO'
 import { checkCanRead } from '../helpers/file'
 import { NOP } from '../helpers/function'
@@ -41,6 +41,24 @@ class BufferWriter extends Writable {
   }
 }
 
+class TestTransform extends Transform {
+  _transform(chunk: any, _encoding: string, next: Function): void {
+    const bytes = []
+
+    for (let i = 0; i < chunk.length; i++) {
+      bytes.push(chunk[i], 0)
+    }
+
+    const chunk1 = bytes.slice(0, bytes.length / 2)
+    const chunk2 = bytes.slice(bytes.length / 2, bytes.length)
+
+    this.push(Buffer.from(chunk1))
+    this.push(Buffer.from(chunk2))
+
+    next()
+  }
+}
+
 export class DLFLoader {
   public async load(fileName: string): Promise<any> {
     await checkCanRead(fileName)
@@ -55,20 +73,31 @@ export class DLFLoader {
     const rest = buffer.slice(headerSize)
 
     const readable = bufferToStream(rest)
-    readable.pipe(decodeImplode())
+    // readable.pipe(decodeImplode())
+
+    const testTransform = new TestTransform()
+    readable.pipe(testTransform)
 
     // TODO: test this with a custom transform, instead of decodeImplode
     const bw = new BufferWriter()
     bw.onFinish = (uncompressed: Buffer): void => {
-      console.log(rest.byteLength, uncompressed.byteLength)
+      console.log(uncompressed)
     }
     readable.pipe(bw)
+
+    readable.on('end', () => {
+      console.log('--- readable ended')
+    })
+
+    readable.on('finish', () => {
+      console.log('--- writable finished')
+    })
 
     const data = {
       header: header
     }
 
-    console.log(data)
+    console.log(Object.keys(data))
 
     return fileName // TODO actually do something
   }
