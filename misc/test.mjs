@@ -1,7 +1,15 @@
 import fs from 'fs'
+import { Transform } from 'stream'
 
 const checkCanRead = pathName => {
   return fs.promises.access(pathName, fs.constants.R_OK)
+}
+
+class TestTransform extends Transform {
+  _transform(chunk, encoding, next) {
+    this.push(Buffer.from([65]))
+    next()
+  }
 }
 
 ;(async () => {
@@ -9,10 +17,13 @@ const checkCanRead = pathName => {
 
   try {
     await checkCanRead(fileName)
-    console.log(`${fileName} is readable!`)
   } catch(e) {
     console.error(`can't access ${fileName} for reading`)
+    return;
   }
-})()
 
-// const buffer = await fs.promises.readFile(fileName)
+  const reader = fs.createReadStream(fileName)
+  const writer = fs.createWriteStream('e:/dummy')
+  const transformer = new TestTransform()
+  reader.pipe(transformer).pipe(writer)
+})()
