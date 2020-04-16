@@ -12,7 +12,8 @@
     "lint:css": "stylelint \"src/**/*.scss\"",
     "lint:js:fix": "npm run lint:js -- --fix",
     "lint:css:fix": "npm run lint:style -- --fix",
-    "lint-staged": "lint-staged"
+    "lint-staged": "lint-staged",
+    "test": "node --experimental-modules ./misc/test.mjs ./data/level11.FTS"
   },
   "lint-staged": {
     "src/**/*.+(js|jsx|ts|tsx)": [
