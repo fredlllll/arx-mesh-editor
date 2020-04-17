@@ -1,5 +1,6 @@
 import { SavedVector3 } from '../SavedVector3'
 import { SavedAnglef } from '../SavedAnglef'
+import { SavedColor } from '../SavedColor'
 import TextIO from './TextIO'
 
 class BinaryIO extends DataView {
@@ -288,7 +289,7 @@ class BinaryIO extends DataView {
   writeString(str: string, length?: number): void {
     // if length is given we assume a fixed length string
     if (length !== undefined) {
-      const charCodes = new Array(length)
+      const charCodes = new Array<number>(length)
       charCodes.fill(0)
 
       // replacing 0s in charCodes one by one from left to right
@@ -304,6 +305,7 @@ class BinaryIO extends DataView {
     }
   }
 
+  // vector3
   readVector3(littleEndian?: boolean): SavedVector3 {
     const x = this.readFloat32(littleEndian)
     const y = this.readFloat32(littleEndian)
@@ -331,6 +333,7 @@ class BinaryIO extends DataView {
     }
   }
 
+  // anglef
   readAnglef(littleEndian?: boolean): SavedAnglef {
     const a = this.readFloat32(littleEndian)
     const b = this.readFloat32(littleEndian)
@@ -355,6 +358,34 @@ class BinaryIO extends DataView {
   writeAnglefArray(values: SavedAnglef[], littleEndian?: boolean): void {
     for (let i = 0; i < values.length; i++) {
       this.writeAnglef(values[i], littleEndian)
+    }
+  }
+
+  // savedcolor
+  readColor(littleEndian?: boolean): SavedColor {
+    const r = this.readFloat32(littleEndian)
+    const g = this.readFloat32(littleEndian)
+    const b = this.readFloat32(littleEndian)
+    return new SavedColor(r, g, b)
+  }
+
+  readColorArray(length: number, littleEndian?: boolean): SavedColor[] {
+    const arr = new Array<SavedColor>(length)
+    for (let i = 0; i < length; i++) {
+      arr[i] = this.readColor(littleEndian)
+    }
+    return arr
+  }
+
+  writeColor(col: SavedColor, littleEndian?: boolean): void {
+    this.writeFloat32(col.r, littleEndian)
+    this.writeFloat32(col.g, littleEndian)
+    this.writeFloat32(col.b, littleEndian)
+  }
+
+  writeColorArray(values: SavedColor[], littleEndian?: boolean): void {
+    for (let i = 0; i < values.length; i++) {
+      this.writeColor(values[i], littleEndian)
     }
   }
 }

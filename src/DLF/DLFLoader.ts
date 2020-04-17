@@ -1,56 +1,73 @@
 import fs from 'fs'
-import { Readable, Writable } from 'stream'
-import decodeImplode from 'implode-decoder'
 import BinaryIO from '../Binary/BinaryIO'
 import { checkCanRead } from '../helpers/file'
-import { NOP } from '../helpers/function'
+import { decompress } from '../helpers/compression'
 import { DanaeLsHeader } from './DanaeLsHeader'
-
-const bufferToStream = (buffer: Buffer): Readable => {
-  const readable = new Readable()
-  readable.push(buffer)
-  readable.push(null)
-  return readable
-}
-
-class BufferWriter extends Writable {
-  chunks: Buffer[] = []
-  onFinish: Function = NOP
-  _write(chunk: any, _encoding: string, next: Function): void {
-    this.chunks.push(chunk)
-    next()
-  }
-
-  _final(next: Function): void {
-    this.onFinish(Buffer.concat(this.chunks))
-    next()
-  }
-}
+import { DanaeLsScene } from './DanaeLsScene'
+import { DanaeLsInter } from './DanaeLsInter'
+import { DanaeLsLight } from './DanaeLsLight'
+import { DanaeLsFog } from './DanaeLsFog'
+import { DanaeLsPath } from './DanaeLsPath'
 
 export default class DLFLoader {
   public async load(fileName: string): Promise<any> {
     await checkCanRead(fileName)
     const buffer = await fs.promises.readFile(fileName)
-    const binary = new BinaryIO(buffer.buffer)
+    let binary = new BinaryIO(buffer.buffer)
 
     // https://github.com/arx/ArxLibertatis/blob/master/plugins/blender/arx_addon/dataDlf.py#L34
     const header = new DanaeLsHeader()
     header.readFrom(binary)
 
+    if (header.nbScn > 0) {
+      const scene = new DanaeLsScene()
+      scene.readFrom(binary)
+      // TODO do something with scene
+    }
+
     const headerSize = binary.position
-    const rest = buffer.slice(headerSize)
+    const remainder = await decompress(buffer.slice(headerSize))
+    binary = new BinaryIO(remainder.buffer)
 
-    return new Promise((resolve: Function) => {
-      const bufferWriter = new BufferWriter()
-      bufferWriter.onFinish = (data: Buffer): void => {
-        resolve({
-          header: header,
-          body: data
-        })
-      }
+    for (let i = 0; i < header.nbInter; i++) {
+      const inter = new DanaeLsInter()
+      inter.readFrom(binary)
+      // TODO: do somethign with inter
+    }
 
-      const readable = bufferToStream(rest)
-      readable.pipe(decodeImplode()).pipe(bufferWriter)
-    })
+    if (header.lighting > 0) {
+      // TODO: load lighting
+    }
+
+    const nbLights = header.version < 1.003 ? 0 : header.nbLights
+
+    const lightingFile = true // does a lighting file (llf) exist?
+    if (!lightingFile) {
+      // load lights from dlf
+      // loadLights(dat, pos, nb_lights);
+    } else {
+      // skip lights in dlf
+      const sizeofDanaeLsLight = DanaeLsLight.SizeOf()
+      binary.readInt8Array(sizeofDanaeLsLight * nbLights)
+    }
+
+    // fog
+    for (let i = 0; i < header.nbFogs; i++) {
+      const fog = new DanaeLsFog()
+      fog.readFrom(binary)
+      // TODO: do something with fog
+    }
+
+    // skip nodes for newer versions
+    if (header.version >= 1.001) {
+      binary.readInt8Array(header.nbNodes * (204 + header.nbNodeslinks * 64))
+    }
+
+    // paths
+    for (let i = 0; i < header.nbPaths; i++) {
+      const path = new DanaeLsPath()
+      path.readFrom(binary)
+      // TODO: do something with path
+    }
   }
 }
