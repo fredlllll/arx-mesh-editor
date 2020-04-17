@@ -2,7 +2,7 @@ import { SavedVector3 } from '../SavedVector3'
 import { SavedAnglef } from '../SavedAnglef'
 import TextIO from './TextIO'
 
-export class BinaryIO extends DataView {
+class BinaryIO extends DataView {
   position: number
   textIO: TextIO
 
@@ -358,3 +358,5 @@ export class BinaryIO extends DataView {
     }
   }
 }
+
+export default BinaryIO

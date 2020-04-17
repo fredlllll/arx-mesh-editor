@@ -1,9 +1,10 @@
 {
-  "extends": "./node_modules/electron-webpack/tsconfig-base.json",
   "compilerOptions": {
+    "target": "esnext",
+    "module": "commonjs",
     "noUnusedParameters": true,
     "esModuleInterop": true,
     "noImplicitAny": true,
-    "jsx": "react"
+    "typeRoots" : ["./node_modules/@types", "./types"]
   }
 }

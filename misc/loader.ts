@@ -1,16 +1,5 @@
-import fs from 'fs'
-import { Transform } from 'stream'
-
-const checkCanRead = (pathName: string): Promise<any> => {
-  return fs.promises.access(pathName, fs.constants.R_OK)
-}
-
-class TestTransform extends Transform {
-  _transform(_chunk: any, _encoding: string, next: Function): void {
-    this.push(Buffer.from([65]))
-    next()
-  }
-}
+import DLFLoader from './DLF/DLFLoader'
+import { checkCanRead } from './helpers/file'
 
 ;(async (): Promise<any> => {
   const fileName = process.argv[2] || ''
@@ -22,8 +11,7 @@ class TestTransform extends Transform {
     return
   }
 
-  const reader = fs.createReadStream(fileName)
-  const writer = fs.createWriteStream('e:/dummy')
-  const transformer = new TestTransform()
-  reader.pipe(transformer).pipe(writer)
+  const dlfLoader = new DLFLoader()
+  const dlfData = await dlfLoader.load(fileName)
+  console.log(dlfData)
 })()
