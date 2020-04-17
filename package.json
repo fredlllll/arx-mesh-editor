@@ -13,8 +13,8 @@
     "lint:js:fix": "npm run lint:js -- --fix",
     "lint:css:fix": "npm run lint:style -- --fix",
     "lint-staged": "lint-staged",
-    "loader": "ts-node ./misc/loader.ts ./data/level11.DLF",
-    "loader:watch": "nodemon -e ts -w ./misc -x npm run loader"
+    "loader": "ts-node ./src/loader.ts ./data/level11.DLF",
+    "loader:watch": "nodemon -e ts -w ./src -x npm run loader"
   },
   "lint-staged": {
     "src/**/*.+(js|jsx|ts|tsx)": [

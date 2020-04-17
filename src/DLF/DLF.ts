@@ -9,7 +9,14 @@ import { DanaeLsLight } from './DanaeLsLight'
 import { DanaeLsFog } from './DanaeLsFog'
 import { DanaeLsPath } from './DanaeLsPath'
 
-export default class DLFLoader {
+export default class DLF {
+  header: DanaeLsHeader
+  scene: DanaeLsScene
+  inter: DanaeLsInter
+  light: DanaeLsLight
+  fog: DanaeLsFog
+  path: DanaeLsPath
+
   public async load(fileName: string): Promise<any> {
     await checkCanRead(fileName)
     const buffer = await fs.promises.readFile(fileName)
@@ -17,21 +24,22 @@ export default class DLFLoader {
 
     // https://github.com/arx/ArxLibertatis/blob/master/plugins/blender/arx_addon/dataDlf.py#L34
     const header = new DanaeLsHeader()
+    this.header = header
     header.readFrom(binary)
+    const headerSize = binary.position
 
     if (header.nbScn > 0) {
-      const scene = new DanaeLsScene()
-      scene.readFrom(binary)
+      this.scene = new DanaeLsScene()
+      this.scene.readFrom(binary)
       // TODO do something with scene
     }
 
-    const headerSize = binary.position
     const remainder = await decompress(buffer.slice(headerSize))
     binary = new BinaryIO(remainder.buffer)
 
     for (let i = 0; i < header.nbInter; i++) {
-      const inter = new DanaeLsInter()
-      inter.readFrom(binary)
+      this.inter = new DanaeLsInter()
+      this.inter.readFrom(binary)
       // TODO: do somethign with inter
     }
 
@@ -53,8 +61,8 @@ export default class DLFLoader {
 
     // fog
     for (let i = 0; i < header.nbFogs; i++) {
-      const fog = new DanaeLsFog()
-      fog.readFrom(binary)
+      this.fog = new DanaeLsFog()
+      this.fog.readFrom(binary)
       // TODO: do something with fog
     }
 
@@ -65,9 +73,13 @@ export default class DLFLoader {
 
     // paths
     for (let i = 0; i < header.nbPaths; i++) {
-      const path = new DanaeLsPath()
-      path.readFrom(binary)
+      this.path = new DanaeLsPath()
+      this.path.readFrom(binary)
       // TODO: do something with path
     }
+  }
+
+  public async save(): Promise<any> {
+    return Promise.resolve()
   }
 }

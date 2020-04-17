@@ -1,4 +1,4 @@
-import DLFLoader from './DLF/DLFLoader'
+import DLF from './DLF/DLF'
 import { checkCanRead } from './helpers/file'
 ;(async (): Promise<any> => {
   const fileName = process.argv[2] || ''
@@ -10,7 +10,8 @@ import { checkCanRead } from './helpers/file'
     return
   }
 
-  const dlfLoader = new DLFLoader()
-  const dlfData = await dlfLoader.load(fileName)
-  console.log(dlfData)
+  const dlf = new DLF()
+  await dlf.load(fileName)
+
+  console.log(dlf)
 })()
