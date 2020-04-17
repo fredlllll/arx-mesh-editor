@@ -1,6 +1,5 @@
 import DLFLoader from './DLF/DLFLoader'
 import { checkCanRead } from './helpers/file'
-
 ;(async (): Promise<any> => {
   const fileName = process.argv[2] || ''
 
