@@ -1,25 +1,25 @@
 import fs from 'fs'
 import { Transform } from 'stream'
 
-const checkCanRead = pathName => {
+const checkCanRead = (pathName: string): Promise<any> => {
   return fs.promises.access(pathName, fs.constants.R_OK)
 }
 
 class TestTransform extends Transform {
-  _transform(chunk, encoding, next) {
+  _transform(_chunk: any, _encoding: string, next: Function): void {
     this.push(Buffer.from([65]))
     next()
   }
 }
 
-;(async () => {
+;(async (): Promise<any> => {
   const fileName = process.argv[2] || ''
 
   try {
     await checkCanRead(fileName)
-  } catch(e) {
+  } catch (e) {
     console.error(`can't access ${fileName} for reading`)
-    return;
+    return
   }
 
   const reader = fs.createReadStream(fileName)

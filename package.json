@@ -13,7 +13,8 @@
     "lint:js:fix": "npm run lint:js -- --fix",
     "lint:css:fix": "npm run lint:style -- --fix",
     "lint-staged": "lint-staged",
-    "test": "nodemon --no-warnings --experimental-modules ./misc/test.mjs ./data/level11.FTS"
+    "loader": "ts-node -O \"{\\\"module\\\": \\\"commonjs\\\"}\" ./misc/loader.ts ./data/level11.FTS",
+    "loader:watch": "nodemon -e ts -w ./misc -x npm run loader"
   },
   "lint-staged": {
     "src/**/*.+(js|jsx|ts|tsx)": [
@@ -95,6 +96,7 @@
     "stylelint": "^13.0.0",
     "stylelint-config-standard": "^19.0.0",
     "stylelint-scss": "^3.14.2",
+    "ts-node": "^8.8.2",
     "typescript": "^3.7.5",
     "webpack": "^4.41.5"
   },
