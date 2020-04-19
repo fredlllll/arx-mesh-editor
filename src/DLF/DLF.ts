@@ -12,10 +12,10 @@ import { DanaeLsPath } from './DanaeLsPath'
 export default class DLF {
   header: DanaeLsHeader
   scene: DanaeLsScene
-  inter: DanaeLsInter
+  inters: DanaeLsInter[]
   light: DanaeLsLight
-  fog: DanaeLsFog
-  path: DanaeLsPath
+  fogs: DanaeLsFog[]
+  paths: DanaeLsPath[]
 
   public async load(fileName: string): Promise<any> {
     await checkCanRead(fileName)
@@ -37,10 +37,12 @@ export default class DLF {
     const remainder = await decompress(buffer.slice(headerSize))
     binary = new BinaryIO(remainder.buffer)
 
+    this.inters = []
     for (let i = 0; i < header.nbInter; i++) {
-      this.inter = new DanaeLsInter()
-      this.inter.readFrom(binary)
+      const inter = new DanaeLsInter()
+      inter.readFrom(binary)
       // TODO: do somethign with inter
+      this.inters.push(inter)
     }
 
     if (header.lighting > 0) {
@@ -59,11 +61,12 @@ export default class DLF {
       binary.readInt8Array(sizeofDanaeLsLight * nbLights)
     }
 
-    // fog
+    this.fogs = []
     for (let i = 0; i < header.nbFogs; i++) {
-      this.fog = new DanaeLsFog()
-      this.fog.readFrom(binary)
+      const fog = new DanaeLsFog()
+      fog.readFrom(binary)
       // TODO: do something with fog
+      this.fogs.push(fog)
     }
 
     // skip nodes for newer versions
@@ -71,11 +74,12 @@ export default class DLF {
       binary.readInt8Array(header.nbNodes * (204 + header.nbNodeslinks * 64))
     }
 
-    // paths
+    this.paths = []
     for (let i = 0; i < header.nbPaths; i++) {
-      this.path = new DanaeLsPath()
-      this.path.readFrom(binary)
+      const path = new DanaeLsPath()
+      path.readFrom(binary)
       // TODO: do something with path
+      this.paths.push(path)
     }
   }
 
