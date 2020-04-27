@@ -2,26 +2,19 @@
   "name": "arx-mesh-editor",
   "version": "0.0.1",
   "description": "An editor for the level files of Arx Fatalis",
-  "main": "src/main/index.js",
+  "main": "src/loader.js",
   "scripts": {
-    "dev": "electron-webpack dev",
-    "build": "electron-webpack && electron-builder",
     "commit": "git-cz",
     "commit:again": "git-cz --retry",
-    "lint:js": "eslint \"src/**/*.+(js|jsx|ts|tsx)\"",
-    "lint:css": "stylelint \"src/**/*.scss\"",
+    "lint:js": "eslint \"src/**/*.+(js|ts)\"",
     "lint:js:fix": "npm run lint:js -- --fix",
-    "lint:css:fix": "npm run lint:style -- --fix",
     "lint-staged": "lint-staged",
     "loader": "ts-node ./src/loader.ts ./data/level11.DLF",
     "loader:watch": "nodemon -e ts -w ./src -x npm run loader"
   },
   "lint-staged": {
-    "src/**/*.+(js|jsx|ts|tsx)": [
+    "src/**/*.+(js|ts)": [
       "eslint --fix"
-    ],
-    "src/**/*.scss": [
-      "stylelint --fix"
     ]
   },
   "pre-commit": [
@@ -47,67 +40,33 @@
     "three": "^0.112.1"
   },
   "devDependencies": {
-    "@babel/preset-react": "^7.8.3",
-    "@babel/preset-typescript": "^7.8.3",
-    "@fortawesome/fontawesome-svg-core": "^1.2.27",
-    "@fortawesome/free-regular-svg-icons": "^5.12.1",
-    "@fortawesome/free-solid-svg-icons": "^5.12.1",
-    "@fortawesome/react-fontawesome": "^0.1.8",
-    "@types/classnames": "^2.2.9",
-    "@types/node-sass": "^4.11.0",
+    "@types/node": "^13.13.4",
     "@types/ramda": "^0.26.40",
-    "@types/react": "^16.9.19",
-    "@types/react-dom": "^16.9.5",
     "@typescript-eslint/eslint-plugin": "^2.18.0",
     "@typescript-eslint/parser": "^2.18.0",
-    "autoprefixer": "^9.7.4",
-    "babel-plugin-transform-class-properties": "^6.24.1",
-    "classnames": "^2.2.6",
     "commitizen": "^4.0.3",
-    "css-loader": "^3.4.2",
-    "css-modules-typescript-loader": "^4.0.0",
     "cz-conventional-changelog": "^3.1.0",
-    "electron": "^7.1.10",
-    "electron-builder": "^22.3.2",
-    "electron-webpack": "^2.7.4",
-    "electron-webpack-eslint": "^5.0.1",
-    "electron-webpack-ts": "^3.2.0",
+    "eslint": "^6.8.0",
     "eslint-config-prettier": "^6.10.0",
     "eslint-config-prettier-standard": "^3.0.1",
     "eslint-config-standard": "^14.1.0",
-    "eslint-config-standard-react": "^9.2.0",
     "eslint-plugin-import": "^2.20.0",
     "eslint-plugin-node": "^11.0.0",
     "eslint-plugin-prettier": "^3.1.2",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-ramda": "^2.5.1",
-    "eslint-plugin-react": "^7.18.0",
     "eslint-plugin-standard": "^4.0.1",
     "lint-staged": "^10.0.4",
-    "node-sass": "^4.13.1",
     "nodemon": "^2.0.3",
-    "postcss-loader": "^3.0.0",
     "pre-commit": "^1.2.2",
     "prettier": "^1.19.1",
     "prettier-config-standard": "^1.0.1",
-    "react": "^16.12.0",
-    "react-dom": "^16.12.0",
-    "sass-loader": "^8.0.2",
-    "stylelint": "^13.0.0",
-    "stylelint-config-standard": "^19.0.0",
-    "stylelint-scss": "^3.14.2",
     "ts-node": "^8.8.2",
-    "typescript": "^3.7.5",
-    "webpack": "^4.41.5"
+    "typescript": "^3.7.5"
   },
   "config": {
     "commitizen": {
       "path": "./node_modules/cz-conventional-changelog"
-    }
-  },
-  "electronWebpack": {
-    "renderer": {
-      "webpackConfig": "webpack.renderer.additions.js"
     }
   }
 }

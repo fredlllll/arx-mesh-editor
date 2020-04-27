@@ -1,7 +1,6 @@
 {
   "extends": [
     "standard",
-    "standard-react",
     "prettier-standard",
     "plugin:@typescript-eslint/recommended"
   ],
@@ -16,7 +15,6 @@
   "parser": "@typescript-eslint/parser",
   "rules": {
     "prefer-template": "error",
-    "react/prop-types": "off",
     "prettier/prettier": [
       "error",
       {
@@ -75,17 +73,14 @@
       }
     ],
     "indent": "off",
-    "@typescript-eslint/indent": "off",
-    "react/jsx-indent": "off"
+    "@typescript-eslint/indent": "off"
   },
   "settings": {
     "import/resolver": {
       "node": {
         "extensions": [
           ".js",
-          ".ts",
-          ".jsx",
-          ".tsx"
+          ".ts"
         ]
       }
     }
