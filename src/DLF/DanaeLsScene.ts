@@ -1,4 +1,4 @@
-import BinaryIO from '../Binary/BinaryIO'
+import BinaryIO, { TRUNCATE_ZERO_BYTES, LITTLE_ENDIAN } from '../Binary/BinaryIO'
 
 export class DanaeLsScene {
   name = ''
@@ -6,9 +6,9 @@ export class DanaeLsScene {
   fpad: number[] = new Array<number>(16)
 
   readFrom(binary: BinaryIO): void {
-    this.name = binary.readString(512, true)
-    this.pad = binary.readInt32Array(16, true)
-    this.fpad = binary.readFloat32Array(16, true)
+    this.name = binary.readString(512, TRUNCATE_ZERO_BYTES)
+    this.pad = binary.readInt32Array(16, LITTLE_ENDIAN)
+    this.fpad = binary.readFloat32Array(16, LITTLE_ENDIAN)
   }
 
   writeTo(binary: BinaryIO): void {

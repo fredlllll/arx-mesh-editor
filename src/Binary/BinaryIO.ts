@@ -390,4 +390,9 @@ class BinaryIO extends DataView {
   }
 }
 
+export const LITTLE_ENDIAN = true
+export const BIG_ENDIAN = false
+export const TRUNCATE_ZERO_BYTES = true
+export const KEEP_ZERO_BYTES = false
+
 export default BinaryIO

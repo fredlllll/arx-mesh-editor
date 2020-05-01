@@ -14,12 +14,12 @@ class TextIO {
   public decode(bytes: number[]): string {
     return join(
       '',
-      map(byte => defaultTo(CHAR_OF_AN_UNKNOWN_BYTE, nth(byte, CHARS)), bytes)
+      map((byte) => defaultTo(CHAR_OF_AN_UNKNOWN_BYTE, nth(byte, CHARS)), bytes)
     )
   }
 
   public encode(str: string): number[] {
-    return map(char => propOr(BYTE_OF_AN_UNKNOWN_CHAR, char, CODES), split('', str))
+    return map((char) => propOr(BYTE_OF_AN_UNKNOWN_CHAR, char, CODES), split('', str))
   }
 }
 

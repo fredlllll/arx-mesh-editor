@@ -1,4 +1,4 @@
-import BinaryIO from '../Binary/BinaryIO'
+import BinaryIO, { LITTLE_ENDIAN, BIG_ENDIAN, KEEP_ZERO_BYTES } from '../Binary/BinaryIO'
 import { SavedVector3 } from '../SavedVector3'
 import { SavedAnglef } from '../SavedAnglef'
 import { SavedColor } from '../SavedColor'
@@ -21,38 +21,38 @@ export class DanaeLsFog {
   cpadd = '' // 256 bytes
 
   readFrom(binary: BinaryIO): void {
-    this.pos = binary.readVector3(true)
-    this.rgb = binary.readColor(true)
-    this.size = binary.readFloat32(true)
-    this.special = binary.readInt32(true)
-    this.scale = binary.readFloat32(true)
-    this.move = binary.readVector3(true)
-    this.angle = binary.readAnglef(true)
-    this.speed = binary.readFloat32(true)
-    this.rotatespeed = binary.readFloat32(true)
-    this.tolive = binary.readInt32(true)
-    this.blend = binary.readInt32(true)
-    this.frequency = binary.readFloat32(true)
-    this.fpadd = binary.readFloat32Array(32, true)
-    this.lpadd = binary.readInt32Array(32, true)
-    this.cpadd = binary.readString(256)
+    this.pos = binary.readVector3(LITTLE_ENDIAN)
+    this.rgb = binary.readColor(LITTLE_ENDIAN)
+    this.size = binary.readFloat32(LITTLE_ENDIAN)
+    this.special = binary.readInt32(LITTLE_ENDIAN)
+    this.scale = binary.readFloat32(LITTLE_ENDIAN)
+    this.move = binary.readVector3(LITTLE_ENDIAN)
+    this.angle = binary.readAnglef(LITTLE_ENDIAN)
+    this.speed = binary.readFloat32(LITTLE_ENDIAN)
+    this.rotatespeed = binary.readFloat32(LITTLE_ENDIAN)
+    this.tolive = binary.readInt32(LITTLE_ENDIAN)
+    this.blend = binary.readInt32(LITTLE_ENDIAN)
+    this.frequency = binary.readFloat32(LITTLE_ENDIAN)
+    this.fpadd = binary.readFloat32Array(32, LITTLE_ENDIAN)
+    this.lpadd = binary.readInt32Array(32, LITTLE_ENDIAN)
+    this.cpadd = binary.readString(256, KEEP_ZERO_BYTES)
   }
 
   writeTo(binary: BinaryIO): void {
-    binary.writeVector3(this.pos, true)
-    binary.writeColor(this.rgb, true)
-    binary.writeFloat32(this.size, true)
-    binary.writeInt32(this.special, true)
-    binary.writeFloat32(this.scale, true)
-    binary.writeVector3(this.move, true)
-    binary.writeAnglef(this.angle, true)
-    binary.writeFloat32(this.speed, true)
-    binary.writeFloat32(this.rotatespeed, true)
-    binary.writeInt32(this.tolive, true)
-    binary.writeInt32(this.blend, true)
-    binary.writeFloat32(this.frequency, true)
-    binary.writeFloat32Array(this.fpadd, true)
-    binary.writeInt32Array(this.lpadd)
+    binary.writeVector3(this.pos, LITTLE_ENDIAN)
+    binary.writeColor(this.rgb, LITTLE_ENDIAN)
+    binary.writeFloat32(this.size, LITTLE_ENDIAN)
+    binary.writeInt32(this.special, LITTLE_ENDIAN)
+    binary.writeFloat32(this.scale, LITTLE_ENDIAN)
+    binary.writeVector3(this.move, LITTLE_ENDIAN)
+    binary.writeAnglef(this.angle, LITTLE_ENDIAN)
+    binary.writeFloat32(this.speed, LITTLE_ENDIAN)
+    binary.writeFloat32(this.rotatespeed, LITTLE_ENDIAN)
+    binary.writeInt32(this.tolive, LITTLE_ENDIAN)
+    binary.writeInt32(this.blend, LITTLE_ENDIAN)
+    binary.writeFloat32(this.frequency, LITTLE_ENDIAN)
+    binary.writeFloat32Array(this.fpadd, LITTLE_ENDIAN)
+    binary.writeInt32Array(this.lpadd, BIG_ENDIAN)
     binary.writeString(this.cpadd, 256)
   }
 }

@@ -1,4 +1,4 @@
-import BinaryIO from '../Binary/BinaryIO'
+import BinaryIO, { LITTLE_ENDIAN, BIG_ENDIAN } from '../Binary/BinaryIO'
 import { SavedVector3 } from '../SavedVector3'
 import { SavedColor } from '../SavedColor'
 
@@ -20,39 +20,39 @@ export class DanaeLsLight {
   lpadd = new Array<number>(31)
 
   readFrom(binary: BinaryIO): void {
-    this.pos = binary.readVector3(true)
-    this.rgb = binary.readColor(true)
-    this.fallstart = binary.readFloat32(true)
-    this.fallend = binary.readFloat32(true)
-    this.intensity = binary.readFloat32(true)
-    this.i = binary.readFloat32(true)
-    this.exFlicker = binary.readColor(true)
-    this.exRadius = binary.readFloat32(true)
-    this.exFrequency = binary.readFloat32(true)
-    this.exSize = binary.readFloat32(true)
-    this.exSpeed = binary.readFloat32(true)
-    this.exFlareSize = binary.readFloat32(true)
-    this.fpadd = binary.readFloat32Array(24, true)
-    this.extras = binary.readInt32(true)
-    this.lpadd = binary.readInt32Array(31, true)
+    this.pos = binary.readVector3(LITTLE_ENDIAN)
+    this.rgb = binary.readColor(LITTLE_ENDIAN)
+    this.fallstart = binary.readFloat32(LITTLE_ENDIAN)
+    this.fallend = binary.readFloat32(LITTLE_ENDIAN)
+    this.intensity = binary.readFloat32(LITTLE_ENDIAN)
+    this.i = binary.readFloat32(LITTLE_ENDIAN)
+    this.exFlicker = binary.readColor(LITTLE_ENDIAN)
+    this.exRadius = binary.readFloat32(LITTLE_ENDIAN)
+    this.exFrequency = binary.readFloat32(LITTLE_ENDIAN)
+    this.exSize = binary.readFloat32(LITTLE_ENDIAN)
+    this.exSpeed = binary.readFloat32(LITTLE_ENDIAN)
+    this.exFlareSize = binary.readFloat32(LITTLE_ENDIAN)
+    this.fpadd = binary.readFloat32Array(24, LITTLE_ENDIAN)
+    this.extras = binary.readInt32(LITTLE_ENDIAN)
+    this.lpadd = binary.readInt32Array(31, LITTLE_ENDIAN)
   }
 
   writeTo(binary: BinaryIO): void {
-    binary.writeVector3(this.pos, true)
-    binary.writeColor(this.rgb, true)
-    binary.writeFloat32(this.fallstart, true)
-    binary.writeFloat32(this.fallend, true)
-    binary.writeFloat32(this.intensity, true)
-    binary.writeFloat32(this.i, true)
-    binary.writeColor(this.exFlicker, true)
-    binary.writeFloat32(this.exRadius, true)
-    binary.writeFloat32(this.exFrequency, true)
-    binary.writeFloat32(this.exSize, true)
-    binary.writeFloat32(this.exSpeed, true)
-    binary.writeFloat32(this.exFlareSize, true)
-    binary.writeFloat32Array(this.fpadd, true)
-    binary.writeInt32(this.extras)
-    binary.writeInt32Array(this.lpadd)
+    binary.writeVector3(this.pos, LITTLE_ENDIAN)
+    binary.writeColor(this.rgb, LITTLE_ENDIAN)
+    binary.writeFloat32(this.fallstart, LITTLE_ENDIAN)
+    binary.writeFloat32(this.fallend, LITTLE_ENDIAN)
+    binary.writeFloat32(this.intensity, LITTLE_ENDIAN)
+    binary.writeFloat32(this.i, LITTLE_ENDIAN)
+    binary.writeColor(this.exFlicker, LITTLE_ENDIAN)
+    binary.writeFloat32(this.exRadius, LITTLE_ENDIAN)
+    binary.writeFloat32(this.exFrequency, LITTLE_ENDIAN)
+    binary.writeFloat32(this.exSize, LITTLE_ENDIAN)
+    binary.writeFloat32(this.exSpeed, LITTLE_ENDIAN)
+    binary.writeFloat32(this.exFlareSize, LITTLE_ENDIAN)
+    binary.writeFloat32Array(this.fpadd, LITTLE_ENDIAN)
+    binary.writeInt32(this.extras, BIG_ENDIAN)
+    binary.writeInt32Array(this.lpadd, BIG_ENDIAN)
   }
 
   static SizeOf(): number {
