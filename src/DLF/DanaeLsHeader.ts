@@ -6,7 +6,7 @@ export class DanaeLsHeader {
   // TODO: should we just ignore the contents of padding fields?
 
   version = 0
-  ident = ''
+  identifier = ''
   lastUser = ''
   time = 0
   posEdit: SavedVector3 = new SavedVector3(0, 0, 0)
@@ -32,7 +32,7 @@ export class DanaeLsHeader {
 
   readFrom(binary: BinaryIO): void {
     this.version = binary.readFloat32(LITTLE_ENDIAN)
-    this.ident = binary.readString(16, TRUNCATE_ZERO_BYTES)
+    this.identifier = binary.readString(16, TRUNCATE_ZERO_BYTES)
     this.lastUser = binary.readString(256, TRUNCATE_ZERO_BYTES)
     this.time = binary.readInt32(LITTLE_ENDIAN)
     this.posEdit = binary.readVector3(LITTLE_ENDIAN)
@@ -59,7 +59,7 @@ export class DanaeLsHeader {
 
   writeTo(binary: BinaryIO): void {
     binary.writeFloat32(this.version, LITTLE_ENDIAN)
-    binary.writeString(this.ident, 16)
+    binary.writeString(this.identifier, 16)
     binary.writeString(this.lastUser, 256)
     binary.writeInt32(this.time, LITTLE_ENDIAN)
     binary.writeVector3(this.posEdit, LITTLE_ENDIAN)

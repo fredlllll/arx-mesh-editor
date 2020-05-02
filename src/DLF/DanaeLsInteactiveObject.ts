@@ -6,7 +6,7 @@ export class DanaeLsInteractiveObject {
   name = ''
   pos: SavedVector3 = new SavedVector3(0, 0, 0)
   angle: SavedAnglef = new SavedAnglef(0, 0, 0)
-  ident: number
+  identifier: number
   flags: number
   pad: number[] = new Array<number>(14)
   fpad: number[] = new Array<number>(16)
@@ -15,7 +15,7 @@ export class DanaeLsInteractiveObject {
     this.name = binary.readString(512, TRUNCATE_ZERO_BYTES)
     this.pos = binary.readVector3(LITTLE_ENDIAN)
     this.angle = binary.readAnglef(LITTLE_ENDIAN)
-    this.ident = binary.readInt32(LITTLE_ENDIAN) // could also be a 4 byte string?
+    this.identifier = binary.readInt32(LITTLE_ENDIAN) // could also be a 4 byte string?
     this.flags = binary.readInt32(LITTLE_ENDIAN)
     this.pad = binary.readInt32Array(14, LITTLE_ENDIAN)
     this.fpad = binary.readFloat32Array(16, LITTLE_ENDIAN)
@@ -25,7 +25,7 @@ export class DanaeLsInteractiveObject {
     binary.writeString(this.name, 512)
     binary.writeVector3(this.pos, LITTLE_ENDIAN)
     binary.writeAnglef(this.angle, LITTLE_ENDIAN)
-    binary.writeInt32(this.ident, LITTLE_ENDIAN)
+    binary.writeInt32(this.identifier, LITTLE_ENDIAN)
     binary.writeInt32(this.flags, LITTLE_ENDIAN)
     binary.writeInt32Array(this.pad, LITTLE_ENDIAN)
     binary.writeFloat32Array(this.fpad, LITTLE_ENDIAN)
