@@ -1,8 +1,8 @@
-import BinaryIO, { TRUNCATE_ZERO_BYTES, LITTLE_ENDIAN, BIG_ENDIAN } from '../Binary/BinaryIO'
+import BinaryIO, { TRUNCATE_ZERO_BYTES, LITTLE_ENDIAN } from '../Binary/BinaryIO'
 import { SavedVector3 } from '../SavedVector3'
 import { SavedAnglef } from '../SavedAnglef'
 
-export class DanaeLsInter {
+export class DanaeLsInteractiveObject {
   name = ''
   pos: SavedVector3 = new SavedVector3(0, 0, 0)
   angle: SavedAnglef = new SavedAnglef(0, 0, 0)
@@ -25,9 +25,9 @@ export class DanaeLsInter {
     binary.writeString(this.name, 512)
     binary.writeVector3(this.pos, LITTLE_ENDIAN)
     binary.writeAnglef(this.angle, LITTLE_ENDIAN)
-    binary.writeInt32(this.ident, BIG_ENDIAN)
-    binary.writeInt32(this.flags, BIG_ENDIAN)
-    binary.writeInt32Array(this.pad, BIG_ENDIAN)
-    binary.writeFloat32Array(this.fpad, BIG_ENDIAN)
+    binary.writeInt32(this.ident, LITTLE_ENDIAN)
+    binary.writeInt32(this.flags, LITTLE_ENDIAN)
+    binary.writeInt32Array(this.pad, LITTLE_ENDIAN)
+    binary.writeFloat32Array(this.fpad, LITTLE_ENDIAN)
   }
 }

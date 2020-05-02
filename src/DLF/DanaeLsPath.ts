@@ -8,7 +8,7 @@ export class DanaeLsPath {
   flags = 0
   initpos = new SavedVector3(0, 0, 0)
   pos = new SavedVector3(0, 0, 0)
-  nbPathways = 0
+  numberOfPathways = 0
   rgb = new SavedColor(0, 0, 0)
   farclip = 0
   reverb = 0
@@ -25,7 +25,7 @@ export class DanaeLsPath {
     this.flags = binary.readInt16(LITTLE_ENDIAN)
     this.initpos = binary.readVector3(LITTLE_ENDIAN)
     this.pos = binary.readVector3(LITTLE_ENDIAN)
-    this.nbPathways = binary.readInt32(LITTLE_ENDIAN)
+    this.numberOfPathways = binary.readInt32(LITTLE_ENDIAN)
     this.rgb = binary.readColor(LITTLE_ENDIAN)
     this.farclip = binary.readFloat32(LITTLE_ENDIAN)
     this.reverb = binary.readFloat32(LITTLE_ENDIAN)
@@ -43,12 +43,12 @@ export class DanaeLsPath {
     binary.writeInt16(this.flags, LITTLE_ENDIAN)
     binary.writeVector3(this.initpos, LITTLE_ENDIAN)
     binary.writeVector3(this.pos, LITTLE_ENDIAN)
-    binary.writeInt32(this.nbPathways, LITTLE_ENDIAN)
+    binary.writeInt32(this.numberOfPathways, LITTLE_ENDIAN)
     binary.writeColor(this.rgb, LITTLE_ENDIAN)
     binary.writeFloat32(this.farclip, LITTLE_ENDIAN)
     binary.writeFloat32(this.reverb, LITTLE_ENDIAN)
     binary.writeFloat32(this.ambMaxVol, LITTLE_ENDIAN)
-    binary.writeFloat32Array(this.fpadd)
+    binary.writeFloat32Array(this.fpadd, LITTLE_ENDIAN)
     binary.writeInt32(this.height, LITTLE_ENDIAN)
     binary.writeInt32Array(this.lpadd, LITTLE_ENDIAN)
     binary.writeString(this.ambiance, 128)

@@ -5,7 +5,7 @@ import { checkCanRead } from '../helpers/file'
 import { decompress } from '../helpers/compression'
 import { DanaeLsHeader } from './DanaeLsHeader'
 import { DanaeLsScene } from './DanaeLsScene'
-import { DanaeLsInter } from './DanaeLsInter'
+import { DanaeLsInteractiveObject } from './DanaeLsInteactiveObject'
 import { DanaeLsLight } from './DanaeLsLight'
 import { DanaeLsFog } from './DanaeLsFog'
 import { DanaeLsPath } from './DanaeLsPath'
@@ -13,7 +13,7 @@ import { DanaeLsPath } from './DanaeLsPath'
 export default class DLF {
   header: DanaeLsHeader
   scene: DanaeLsScene
-  inters: DanaeLsInter[]
+  interactiveObjects: DanaeLsInteractiveObject[]
   light: DanaeLsLight
   fogs: DanaeLsFog[]
   paths: DanaeLsPath[]
@@ -27,54 +27,53 @@ export default class DLF {
     const header = new DanaeLsHeader()
     header.readFrom(binary)
     this.header = header
-    const headerSize = binary.position
 
-    if (header.nbScn > 0) {
+    if (header.numberOfScenes !== 0) {
       this.scene = new DanaeLsScene()
       this.scene.readFrom(binary)
     }
 
-    const remainder = await decompress(buffer.slice(headerSize))
+    const remainder = await decompress(buffer.slice(DanaeLsHeader.sizeOf()))
     const body = new BinaryIO(remainder.buffer)
 
-    this.inters = times(() => {
-      const inter = new DanaeLsInter()
+    this.interactiveObjects = times(() => {
+      const inter = new DanaeLsInteractiveObject()
       inter.readFrom(body)
       return inter
-    }, header.nbInter)
+    }, header.numberOfInteractiveObjects)
 
     if (header.lighting > 0) {
       // TODO: load lighting
     }
 
-    const nbLights = header.version < 1.003 ? 0 : header.nbLights
+    const numberOfLights = header.version < 1.003 ? 0 : header.numberOfLights
 
     const lightingFile = true // does a lighting file (llf) exist?
     if (!lightingFile) {
       // load lights from dlf
-      // loadLights(dat, pos, nb_lights);
+      // loadLights(dat, pos, numberOf_lights);
     } else {
       // skip lights in dlf
-      const sizeofDanaeLsLight = DanaeLsLight.SizeOf()
-      body.readInt8Array(sizeofDanaeLsLight * nbLights)
+      const sizeofDanaeLsLight = DanaeLsLight.sizeOf()
+      body.readInt8Array(sizeofDanaeLsLight * numberOfLights)
     }
 
     this.fogs = times(() => {
       const fog = new DanaeLsFog()
       fog.readFrom(body)
       return fog
-    }, header.nbFogs)
+    }, header.numberOfFogs)
 
     // skip nodes for newer versions
     if (header.version >= 1.001) {
-      body.readInt8Array(header.nbNodes * (204 + header.nbNodeslinks * 64))
+      body.readInt8Array(header.numberOfNodes * (204 + header.numberOfNodeLinks * 64))
     }
 
     this.paths = times(() => {
       const path = new DanaeLsPath()
       path.readFrom(body)
       return path
-    }, header.nbPaths)
+    }, header.numberOfPaths)
   }
 
   public async save(): Promise<any> {
