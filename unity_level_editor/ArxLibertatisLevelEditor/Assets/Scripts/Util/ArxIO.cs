@@ -28,6 +28,11 @@ namespace Assets.Scripts
 
             return outBytes;
         }
+
+        public static byte[] Pack(byte[] bytes)
+        {
+            return bytes; //because arxio doesnt support that yet im just gonna save uncompressed
+        }
     }
 
     public static class ArxIONative

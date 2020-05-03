@@ -1,6 +1,7 @@
 ﻿using System.Runtime.InteropServices;
+using UnityEngine;
 
-namespace Assets.Scripts.DLF
+namespace Assets.Scripts.Data
 {
     [StructLayout(LayoutKind.Sequential)]
     public struct SavedColor
@@ -16,6 +17,11 @@ namespace Assets.Scripts.DLF
         public float x;
         public float y;
         public float z;
+
+        public Vector3 ToVector3()
+        {
+            return new Vector3(x, y, z);
+        }
     }
 
     [StructLayout(LayoutKind.Sequential)]

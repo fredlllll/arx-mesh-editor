@@ -22,7 +22,7 @@ namespace Assets.Scripts.DLF
 
             dlh = reader.ReadStruct<DANAE_LS_HEADER>();
 
-            Debug.Log("Version " + dlh.version);
+            //Debug.Log("Version " + dlh.version);
 
             if (dlh.version >= 1.44f)
             {
@@ -31,14 +31,14 @@ namespace Assets.Scripts.DLF
                 reader = new StructReader(new MemoryStream(unpacked));
             }
 
-            Debug.Log("scenes " + dlh.nb_scn);
+            //Debug.Log("scenes " + dlh.nb_scn);
 
             if (dlh.nb_scn > 0)
             {
                 dls = reader.ReadStruct<DANAE_LS_SCENE>();
             }
 
-            Debug.Log("inters " + dlh.nb_inter);
+            //Debug.Log("inters " + dlh.nb_inter);
 
             for (int i = 0; i < dlh.nb_inter; i++)
             {
@@ -54,7 +54,7 @@ namespace Assets.Scripts.DLF
 
             int nb_lights = (dlh.version < 1.003f) ? 0 : dlh.nb_lights;
 
-            Debug.Log("lights " + nb_lights);
+            //Debug.Log("lights " + nb_lights);
 
             var lightingFileExists = false;
 
@@ -69,7 +69,7 @@ namespace Assets.Scripts.DLF
                 reader.BaseStream.Position += nb_lights * Marshal.SizeOf(typeof(DANAE_LS_LIGHT));
             }
 
-            Debug.Log("fogs " + dlh.nb_fogs);
+            //Debug.Log("fogs " + dlh.nb_fogs);
 
             for (int i = 0; i < dlh.nb_fogs; i++)
             {
@@ -80,7 +80,7 @@ namespace Assets.Scripts.DLF
             // Skip nodes
             reader.BaseStream.Position += (dlh.version < 1.001f) ? 0 : dlh.nb_nodes * (204 + dlh.nb_nodeslinks * 64);
 
-            Debug.Log("paths " + dlh.nb_paths);
+            //Debug.Log("paths " + dlh.nb_paths);
 
             for (int i = 0; i < dlh.nb_paths; i++)
             {
