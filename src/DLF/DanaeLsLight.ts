@@ -1,4 +1,4 @@
-import BinaryIO, { LITTLE_ENDIAN, BIG_ENDIAN } from '../Binary/BinaryIO'
+import BinaryIO, { LITTLE_ENDIAN } from '../Binary/BinaryIO'
 import { SavedVector3 } from '../SavedVector3'
 import { SavedColor } from '../SavedColor'
 
@@ -51,11 +51,11 @@ export class DanaeLsLight {
     binary.writeFloat32(this.exSpeed, LITTLE_ENDIAN)
     binary.writeFloat32(this.exFlareSize, LITTLE_ENDIAN)
     binary.writeFloat32Array(this.fpadd, LITTLE_ENDIAN)
-    binary.writeInt32(this.extras, BIG_ENDIAN)
-    binary.writeInt32Array(this.lpadd, BIG_ENDIAN)
+    binary.writeInt32(this.extras, LITTLE_ENDIAN)
+    binary.writeInt32Array(this.lpadd, LITTLE_ENDIAN)
   }
 
-  static SizeOf(): number {
+  static sizeOf(): number {
     return 296 // done the math in my head going from this https://github.com/arx/ArxLibertatis/blob/85d293a69d486466e0c51de3ebf92f70941dc4f0/src/scene/LevelFormat.h#L114
   }
 }
