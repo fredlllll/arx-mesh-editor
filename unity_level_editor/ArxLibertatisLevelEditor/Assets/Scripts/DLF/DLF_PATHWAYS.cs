@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 namespace Assets.Scripts.DLF
 {
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
-    public struct DANAE_LS_PATHWAYS
+    public class DLF_PATHWAYS
     {
         public SavedVec3 rpos;
         public int flag;

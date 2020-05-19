@@ -5,10 +5,9 @@ namespace Assets.Scripts.Util
 {
     public class StructReader : BinaryReader
     {
-        public StructReader(Stream baseStream) : base(baseStream)
-        {
+        public StructReader(Stream baseStream) : base(baseStream) { }
 
-        }
+        public StructReader(Stream baseStream, System.Text.Encoding encoding, bool leaveOpen) : base(baseStream, encoding, leaveOpen) { }
 
         public T ReadStruct<T>()
         {

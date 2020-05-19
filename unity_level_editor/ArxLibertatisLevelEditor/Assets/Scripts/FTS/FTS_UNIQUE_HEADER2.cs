@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Runtime.InteropServices;
 
 namespace Assets.Scripts.FTS
 {
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
-    public struct UNIQUE_HEADER2
+    public class FTS_UNIQUE_HEADER2
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
         public char[] path;

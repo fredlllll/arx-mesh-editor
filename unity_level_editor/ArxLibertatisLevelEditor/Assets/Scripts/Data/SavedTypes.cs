@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Assets.Scripts.Data
 {
     [StructLayout(LayoutKind.Sequential)]
-    public struct SavedColor
+    public class SavedColor
     {
         public float r;
         public float g;
@@ -12,7 +12,7 @@ namespace Assets.Scripts.Data
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    public struct SavedVec3
+    public class SavedVec3
     {
         public float x;
         public float y;
@@ -25,7 +25,7 @@ namespace Assets.Scripts.Data
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    public struct SavedAnglef
+    public class SavedAnglef
     {
         public float a;
         public float b;
@@ -33,7 +33,7 @@ namespace Assets.Scripts.Data
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    public struct SavedTextureVertex
+    public class SavedTextureVertex
     {
         public SavedVec3 pos;
         public float rhw;

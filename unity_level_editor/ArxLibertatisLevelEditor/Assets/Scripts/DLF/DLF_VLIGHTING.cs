@@ -3,7 +3,7 @@
 namespace Assets.Scripts.DLF
 {
     [StructLayout(LayoutKind.Sequential)]
-    public struct DANAE_LS_VLIGHTING
+    public class DLF_VLIGHTING
     {
         public int r;
         public int g;

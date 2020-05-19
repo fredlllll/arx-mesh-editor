@@ -1,137 +1,206 @@
 ﻿using Assets.Scripts.Util;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Runtime.InteropServices;
-using UnityEngine;
 
 namespace Assets.Scripts.DLF
 {
     public class DLF
     {
-        public DANAE_LS_HEADER dlh;
-        public DANAE_LS_SCENE dls;
-        public List<DANAE_LS_INTER> dlis = new List<DANAE_LS_INTER>();
-        public List<DANAE_LS_FOG> dlfs = new List<DANAE_LS_FOG>();
-        public List<DANAE_LS_PATH> dlps = new List<DANAE_LS_PATH>();
+        public DLF_HEADER Header { get; private set; }
+        public ObservableCollection<DLF_SCENE> Scenes { get; } = new ObservableCollection<DLF_SCENE>();
+        public ObservableCollection<DLF_INTER> Inters { get; } = new ObservableCollection<DLF_INTER>();
+        public DANAE_LIGHTINGHEADER LightingHeader { get; private set; } //TODO make a way to switch between embedded lighting and external?
+        public ObservableCollection<uint> LightColors { get; } = new ObservableCollection<uint>();
+        public ObservableCollection<DANAE_LIGHT> Lights { get; } = new ObservableCollection<DANAE_LIGHT>();
+        public ObservableCollection<DLF_FOG> Fogs { get; } = new ObservableCollection<DLF_FOG>();
+        private byte[] nodesData;
+        public ObservableCollection<DLF_PATH> Paths { get; } = new ObservableCollection<DLF_PATH>();
 
-        public DANAE_LLF_HEADER llh;
-
-        public void LoadFrom(Stream s)
+        public void LoadFrom(Stream unpackedStream)
         {
-            StructReader reader = new StructReader(s);
-
-            dlh = reader.ReadStruct<DANAE_LS_HEADER>();
-
-            //Debug.Log("Version " + dlh.version);
-
-            if (dlh.version >= 1.44f)
+            using (StructReader reader = new StructReader(unpackedStream, System.Text.Encoding.ASCII, true))
             {
-                byte[] restOfFile = reader.ReadBytes((int)(reader.BaseStream.Length - reader.BaseStream.Position));
-                byte[] unpacked = ArxIO.Unpack(restOfFile);
-                reader = new StructReader(new MemoryStream(unpacked));
-            }
 
-            //Debug.Log("scenes " + dlh.nb_scn);
+                Header = reader.ReadStruct<DLF_HEADER>();
 
-            if (dlh.nb_scn > 0)
-            {
-                dls = reader.ReadStruct<DANAE_LS_SCENE>();
-            }
-
-            //Debug.Log("inters " + dlh.nb_inter);
-
-            for (int i = 0; i < dlh.nb_inter; i++)
-            {
-                var dli = reader.ReadStruct<DANAE_LS_INTER>();
-                dlis.Add(dli);
-            }
-
-            if (dlh.lighting != 0)
-            {
-                //load lighting
-                //loadLighting(dat, pos, dlh.version > 1.001f, lightingFile != NULL);
-            }
-
-            int nb_lights = (dlh.version < 1.003f) ? 0 : dlh.nb_lights;
-
-            //Debug.Log("lights " + nb_lights);
-
-            var lightingFileExists = false;
-
-            if (!lightingFileExists)
-            {
-                //TODO: this
-                //loadLights(dat, pos, nb_lights);
-            }
-            else
-            {
-                //skip
-                reader.BaseStream.Position += nb_lights * Marshal.SizeOf(typeof(DANAE_LS_LIGHT));
-            }
-
-            //Debug.Log("fogs " + dlh.nb_fogs);
-
-            for (int i = 0; i < dlh.nb_fogs; i++)
-            {
-                var dlf = reader.ReadStruct<DANAE_LS_FOG>();
-                dlfs.Add(dlf);
-            }
-
-            // Skip nodes
-            reader.BaseStream.Position += (dlh.version < 1.001f) ? 0 : dlh.nb_nodes * (204 + dlh.nb_nodeslinks * 64);
-
-            //Debug.Log("paths " + dlh.nb_paths);
-
-            for (int i = 0; i < dlh.nb_paths; i++)
-            {
-                var dlp = reader.ReadStruct<DANAE_LS_PATH>();
-                dlps.Add(dlp);
-
-                if (dlp.height != 0)
+                for (int i = 0; i < Header.numScenes; i++)
                 {
-                    //zone
-                    for (int j = 0; j < dlp.nb_pathways; j++)
+                    var scene = reader.ReadStruct<DLF_SCENE>();
+                    Scenes.Add(scene);
+                }
+
+                for (int i = 0; i < Header.numInters; i++)
+                {
+                    var inter = reader.ReadStruct<DLF_INTER>();
+                    Inters.Add(inter);
+                }
+
+                if (Header.lighting != 0)
+                {
+                    LightingHeader = reader.ReadStruct<DANAE_LIGHTINGHEADER>();
+
+                    for (int i = 0; i < LightingHeader.numLights; i++)
                     {
-                        var dlpw = reader.ReadStruct<DANAE_LS_PATHWAYS>();
-                        //TODO: keep track of these somewhere and associate with the path
+                        LightColors.Add(reader.ReadUInt32()); //TODO is apparently BGRA if its in compact mode.
                     }
                 }
-                else
+
+                for (int i = 0; i < Header.numLights; i++)
                 {
-                    //path
-                    for (int j = 0; j < dlp.nb_pathways; j++)
-                    {
-                        var dlpw = reader.ReadStruct<DANAE_LS_PATHWAYS>();
-                        //TODO: same as above
-                    }
+                    var light = reader.ReadStruct<DANAE_LIGHT>();
+                    Lights.Add(light);
+                }
+
+                for (int i = 0; i < Header.numFogs; i++)
+                {
+                    var dlf = reader.ReadStruct<DLF_FOG>();
+                    Fogs.Add(dlf);
+                }
+
+                // Skip nodes, dont know why
+                //save in var so we can write it back later
+                nodesData = reader.ReadBytes(Header.numNodes * (204 + Header.numNodelinks * 64));
+
+                for (int i = 0; i < Header.numPaths; i++)
+                {
+                    var path = new DLF_PATH();
+                    path.ReadFrom(reader);
+                    Paths.Add(path);
                 }
             }
 
-            //now load llf
-            if (lightingFileExists)
-            {
-                reader = null; //TODO: set reader to proper file
+            //set event listeners
+            Scenes.CollectionChanged += Scenes_CollectionChanged;
+            Inters.CollectionChanged += Inters_CollectionChanged;
+            LightColors.CollectionChanged += LightColors_CollectionChanged;
+            Lights.CollectionChanged += Lights_CollectionChanged;
+            Fogs.CollectionChanged += Fogs_CollectionChanged;
+            Paths.CollectionChanged += Paths_CollectionChanged;
+        }
 
-                // using compression
-                if (dlh.version >= 1.44f)
-                {
-                    //decompress and reassign reader
-                    byte[] restOfFile = reader.ReadBytes((int)(reader.BaseStream.Length - reader.BaseStream.Position));
-                    byte[] unpacked = ArxIO.Unpack(restOfFile);
-                    reader = new StructReader(new MemoryStream(unpacked));
-                }
+        private void Scenes_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            Header.numScenes = Scenes.Count;
+        }
 
-                llh = reader.ReadStruct<DANAE_LLF_HEADER>();
+        private void Inters_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            Header.numInters = Inters.Count;
+        }
 
-                //TODO: now load lighting from this instead from dlf
-            }
+        private void LightColors_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            LightingHeader.numLights = LightColors.Count;
+        }
+
+        private void Lights_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            Header.numLights = Lights.Count;
+        }
+
+        private void Fogs_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            Header.numFogs = Fogs.Count;
+        }
+
+        private void Paths_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            Header.numPaths = Paths.Count;
         }
 
         public void WriteTo(Stream s)
         {
-            StructWriter writer = new StructWriter(s);
+            using (StructWriter writer = new StructWriter(s, System.Text.Encoding.ASCII, true))
+            {
 
-            writer.WriteStruct(dlh);
+                writer.WriteStruct(Header);
+
+                for (int i = 0; i < Scenes.Count; i++)
+                {
+                    writer.WriteStruct(Scenes[i]);
+                }
+
+                for (int i = 0; i < Inters.Count; i++)
+                {
+                    writer.WriteStruct(Inters[i]);
+                }
+
+                if (Header.lighting != 0)
+                {
+                    writer.WriteStruct(LightingHeader);
+
+                    for (int i = 0; i < LightingHeader.numLights; i++)
+                    {
+                        writer.Write(LightColors[i]);
+                    }
+                }
+
+                for (int i = 0; i < Header.numLights; i++)
+                {
+                    writer.WriteStruct(Lights[i]);
+                }
+
+                for (int i = 0; i < Header.numFogs; i++)
+                {
+                    writer.WriteStruct(Fogs[i]);
+                }
+
+                //write back nodes data
+                writer.Write(nodesData);
+
+                for (int i = 0; i < Header.numPaths; i++)
+                {
+                    Paths[i].WriteTo(writer);
+                }
+            }
+        }
+
+        public static Stream EnsureUnpacked(Stream s)
+        {
+            var reader = new StructReader(s, System.Text.Encoding.ASCII, true);
+            var streamStart = s.Position;
+
+            var version = reader.ReadSingle(); //read just version
+            s.Position = streamStart; //back to start for further processing
+            if (version >= 1.44f)
+            {
+                var header = reader.ReadStruct<DLF_HEADER>(); //read full header
+
+                MemoryStream ms = new MemoryStream();
+
+                StructWriter writer = new StructWriter(ms, System.Text.Encoding.ASCII, true);
+                writer.WriteStruct(header); //write header
+
+                byte[] restOfFile = reader.ReadBytes((int)(reader.BaseStream.Length - reader.BaseStream.Position));
+                byte[] unpacked = ArxIO.Unpack(restOfFile);
+
+                writer.Write(unpacked); //write unpacked rest
+                s.Dispose(); //close old stream
+                ms.Position = 0;
+                return ms;
+            }
+            return s; //no need to unpack, return input stream
+        }
+
+        public static Stream EnsurePacked(Stream s)
+        {
+            //TODO: i should pack stuff depending on version, but for now ill just assume version 1.44 by default
+
+            MemoryStream ms = new MemoryStream();
+
+            BinaryReader reader = new BinaryReader(s);
+            byte[] header = reader.ReadBytes(Marshal.SizeOf(typeof(DLF_HEADER)));
+            byte[] restOfFile = reader.ReadBytes((int)(reader.BaseStream.Length - reader.BaseStream.Position));
+
+            byte[] packed = ArxIO.Pack(restOfFile);
+
+            ms.Write(header, 0, header.Length);
+            ms.Write(packed, 0, packed.Length);
+            ms.Position = 0;
+
+            s.Dispose();
+            return ms;
         }
     }
 }

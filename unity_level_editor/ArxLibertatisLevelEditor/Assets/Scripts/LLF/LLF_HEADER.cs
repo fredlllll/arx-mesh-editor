@@ -1,27 +1,27 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace Assets.Scripts.DLF
+namespace Assets.Scripts.LLF
 {
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
-    public struct DANAE_LLF_HEADER
+    public class LLF_HEADER
     {
         public float version;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-        public char[] ident;
+        public char[] identifier;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
         public char[] lastuser;
         public int time;
-        public int nb_lights;
-        public int nb_Shadow_Polys;
-        public int nb_IGNORED_Polys;
-        public int nb_bkgpolys;
+        public int numLights;
+        public int numShadowPolys;
+        public int numIgnoredPolys;
+        public int numBackgroundPolys;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
-        public int[] pad;
+        public int[] ipad1;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
         public float[] fpad;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4096)]
         public char[] cpad;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
-        public int[] bpad;
+        public int[] ipad2;
     }
 }

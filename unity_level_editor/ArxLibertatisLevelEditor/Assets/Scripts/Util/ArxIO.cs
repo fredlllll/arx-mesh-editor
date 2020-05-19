@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using UnityEngine;
 
-namespace Assets.Scripts
+namespace Assets.Scripts.Util
 {
     public static class ArxIO
     {

@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 namespace Assets.Scripts.DLF
 {
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
-    public struct DANAE_LS_FOG
+    public class DLF_FOG
     {
         public SavedVec3 pos;
         public SavedColor rgb;

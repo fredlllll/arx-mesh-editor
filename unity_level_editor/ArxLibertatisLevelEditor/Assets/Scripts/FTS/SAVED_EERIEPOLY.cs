@@ -1,15 +1,10 @@
 ﻿using Assets.Scripts.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Assets.Scripts.FTS
 {
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
-    public struct SAVE_EERIEPOLY
+    public class SAVED_EERIEPOLY
     {
         public int type; // at least 16 bits
         public SavedVec3 min;

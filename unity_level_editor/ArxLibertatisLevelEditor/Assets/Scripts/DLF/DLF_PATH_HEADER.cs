@@ -1,30 +1,32 @@
 ﻿using Assets.Scripts.Data;
+using Assets.Scripts.Util;
 using System.Runtime.InteropServices;
 
 namespace Assets.Scripts.DLF
 {
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
-    public struct DANAE_LS_PATH
+    public class DLF_PATH_HEADER
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
         public char[] name;
         public short idx;
         public short flags;
-        public SavedVec3 initpos;
+        public SavedVec3 initPos;
         public SavedVec3 pos;
-        public int nb_pathways;
+        [SetElsewhere("DLF_PATH.Paths.Count")]
+        public int numPathways;
         public SavedColor rgb;
-        public float farclip;
+        public float farClip;
         public float reverb;
-        public float amb_max_vol;
+        public float ambientMaxVolume;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 26)]
-        public float[] fpadd;
+        public float[] fpad;
         public int height;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 31)]
-        public int[] lpadd;
+        public int[] ipad;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
         public char[] ambiance;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
-        public char[] cpadd;
+        public char[] cpad;
     }
 }

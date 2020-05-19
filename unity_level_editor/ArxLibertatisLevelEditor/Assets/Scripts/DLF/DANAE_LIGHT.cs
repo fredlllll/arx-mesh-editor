@@ -4,12 +4,12 @@ using System.Runtime.InteropServices;
 namespace Assets.Scripts.DLF
 {
     [StructLayout(LayoutKind.Sequential)]
-    public struct DANAE_LS_LIGHT
+    public class DANAE_LIGHT
     {
         public SavedVec3 pos;
         public SavedColor rgb;
-        public float fallstart;
-        public float fallend;
+        public float fallStart;
+        public float fallEnd;
         public float intensity;
         public float i;
         public SavedColor ex_flicker;
@@ -19,9 +19,9 @@ namespace Assets.Scripts.DLF
         public float ex_speed;
         public float ex_flaresize;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 24)]
-        public float[] fpadd;
+        public float[] fpad;
         public int extras;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 31)]
-        public int[] lpadd;
+        public int[] ipad;
     }
 }

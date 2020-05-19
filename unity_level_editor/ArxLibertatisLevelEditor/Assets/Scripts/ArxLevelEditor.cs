@@ -1,9 +1,9 @@
 ﻿using Assets.Scripts.DLF;
 using Assets.Scripts.FTS;
+using Assets.Scripts.LLF;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 public class ArxLevelEditor : MonoBehaviour
 {
@@ -28,7 +28,7 @@ public class ArxLevelEditor : MonoBehaviour
         List<GameObject> chunks = new List<GameObject>();
         foreach (var sceneChunk in fts.fepss)
         {
-            
+
             List<Vector3> verts = new List<Vector3>();
             List<Vector3> norms = new List<Vector3>();
             List<int> indices = new List<int>();
@@ -111,5 +111,48 @@ public class ArxLevelEditor : MonoBehaviour
         }
 
         lvl.transform.localScale = new Vector3(0.01f, -0.01f, 0.01f);
+    }
+
+    public void UnpackFiles()
+    {
+        var ftsDir = new DirectoryInfo(@"F:\Program Files\Arx Libertatis\paks\game\graph\levels");
+        var dlfLlfDir = new DirectoryInfo(@"F:\Program Files\Arx Libertatis\paks\graph\levels");
+
+        var levels = new int[]
+        {
+            0,1,2,3,4,5,6,7,8,10,11,12,13,14,15,16,17,18,19,20,21,22,23
+        };
+
+        foreach (var l in levels)
+        {
+            var fts = Path.Combine(ftsDir.FullName, "level" + l, "fast.fts");
+            var dlf = Path.Combine(dlfLlfDir.FullName, "level" + l, "level" + l + ".dlf");
+            var llf = Path.Combine(dlfLlfDir.FullName, "level" + l, "level" + l + ".llf");
+
+            //fts
+            using (var unpacked = FTS.EnsureUnpacked(new FileStream(fts, FileMode.Open, FileAccess.Read)))
+            {
+                using (var outFs = new FileStream(fts + ".unpacked", FileMode.Create, FileAccess.Write))
+                {
+                    unpacked.CopyTo(outFs);
+                }
+            }
+
+            using (var unpacked = DLF.EnsureUnpacked(new FileStream(dlf, FileMode.Open, FileAccess.Read)))
+            {
+                using (var outFs = new FileStream(dlf + ".unpacked", FileMode.Create, FileAccess.Write))
+                {
+                    unpacked.CopyTo(outFs);
+                }
+            }
+
+            using (var unpacked = LLF.EnsureUnpacked(new FileStream(llf, FileMode.Open, FileAccess.Read)))
+            {
+                using (var outFs = new FileStream(llf + ".unpacked", FileMode.Create, FileAccess.Write))
+                {
+                    unpacked.CopyTo(outFs);
+                }
+            }
+        }
     }
 }

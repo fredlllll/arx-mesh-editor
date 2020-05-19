@@ -4,39 +4,39 @@ using System.Runtime.InteropServices;
 namespace Assets.Scripts.DLF
 {
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
-    public struct DANAE_LS_HEADER
+    public class DLF_HEADER
     {
         public float version;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
-        public char[] ident;
+        public char[] identifier;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
-        public char[] lastuser;
+        public char[] lastUser;
         public int time;
-        public SavedVec3 pos_edit;
-        public SavedAnglef angle_edit;
-        public int nb_scn;
-        public int nb_inter;
-        public int nb_nodes;
-        public int nb_nodeslinks;
-        public int nb_zones;
+        public SavedVec3 positionEdit;
+        public SavedAnglef angleEdit;
+        public int numScenes;
+        public int numInters;
+        public int numNodes;
+        public int numNodelinks;
+        public int numZones;
         public int lighting;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
-        public int[] Bpad;
-        public int nb_lights;
-        public int nb_fogs;
+        public int[] ipad1;
+        public int numLights;
+        public int numFogs;
 
-        public int nb_bkgpolys;
-        public int nb_ignoredpolys;
-        public int nb_childpolys;
-        public int nb_paths;
+        public int numBackgroundPolys;
+        public int numIgnoredPolys;
+        public int numChildPolys;
+        public int numPaths;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 250)]
-        public int[] pad;
+        public int[] ipad2;
         public SavedVec3 offset;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 253)]
-        public float[] fpad;
+        public float[] fpad1;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4096)]
-        public char[] cpad;
+        public char[] cpad1;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
-        public int[] bpad;
+        public int[] ipad3;
     }
 }

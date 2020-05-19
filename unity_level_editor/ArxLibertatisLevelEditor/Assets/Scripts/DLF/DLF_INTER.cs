@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 namespace Assets.Scripts.DLF
 {
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
-    public struct DANAE_LS_INTER
+    public class DLF_INTER
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 512)]
         public char[] name;

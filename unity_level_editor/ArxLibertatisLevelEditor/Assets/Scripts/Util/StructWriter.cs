@@ -10,6 +10,8 @@ namespace Assets.Scripts.Util
 
         }
 
+        public StructWriter(Stream baseStream, System.Text.Encoding encoding, bool leaveOpen) : base(baseStream, encoding, leaveOpen) { }
+
         public void WriteStruct<T>(T obj)
         {
             var objectLength = Marshal.SizeOf(typeof(T));

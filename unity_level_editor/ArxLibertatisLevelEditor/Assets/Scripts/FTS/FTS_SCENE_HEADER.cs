@@ -1,15 +1,10 @@
 ﻿using Assets.Scripts.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Assets.Scripts.FTS
 {
     [StructLayout(LayoutKind.Sequential)]
-    public struct FAST_SCENE_HEADER
+    public class FTS_SCENE_HEADER
     {
         public float version;
         public int sizex;

@@ -3,7 +3,7 @@
 namespace Assets.Scripts.DLF
 {
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
-    public struct DANAE_LS_SCENE
+    public class DLF_SCENE
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 512)]
         public char[] name;
