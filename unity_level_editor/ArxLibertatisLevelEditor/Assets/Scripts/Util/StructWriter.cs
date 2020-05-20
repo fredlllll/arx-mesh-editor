@@ -16,9 +16,9 @@ namespace Assets.Scripts.Util
         {
             var objectLength = Marshal.SizeOf(typeof(T));
             var objectBuffer = Marshal.AllocHGlobal(objectLength);
-            Marshal.StructureToPtr(obj, objectBuffer, false);
             var objectBytes = new byte[objectLength];
-            //TODO: can i maybe use the objectBuffer as byte[] directly without copying?
+            Marshal.Copy(objectBytes, 0, objectBuffer, objectLength);//manually zeroing buffer because the runtime might only partially write char arrays and memory isnt zeroed
+            Marshal.StructureToPtr(obj, objectBuffer, true);
             Marshal.Copy(objectBuffer, objectBytes, 0, objectBytes.Length);
             Marshal.FreeHGlobal(objectBuffer);
             Write(objectBytes);
