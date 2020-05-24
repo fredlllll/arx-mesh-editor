@@ -9,6 +9,18 @@ namespace Assets.Scripts.Shared_IO
         public float r;
         public float g;
         public float b;
+
+        public SavedColor(Color col)
+        {
+            r = col.r;
+            g = col.g;
+            b = col.b;
+        }
+
+        public Color ToColor()
+        {
+            return new Color(r, g, b);
+        }
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -17,6 +29,13 @@ namespace Assets.Scripts.Shared_IO
         public float x;
         public float y;
         public float z;
+
+        public SavedVec3(Vector3 vec)
+        {
+            x = vec.x;
+            y = vec.y;
+            z = vec.z;
+        }
 
         public Vector3 ToVector3()
         {
@@ -30,6 +49,18 @@ namespace Assets.Scripts.Shared_IO
         public float a;
         public float b;
         public float g;
+
+        public SavedAnglef(Vector3 euler)
+        {
+            a = euler.x; //TODO: check if this is rads or degrees and if its flipped or anything
+            b = euler.y;
+            g = euler.z;
+        }
+
+        public Vector3 ToEuler()
+        {
+            return new Vector3(a, b, g);
+        }
     }
 
     [StructLayout(LayoutKind.Sequential)]

@@ -9,7 +9,7 @@ namespace Assets.Scripts.DLF_IO
     public struct DLF_IO_PATH_HEADER
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 64)]
-        public char[] name;
+        public byte[] name;
         public short idx;
         public short flags;
         public SavedVec3 initPos;
@@ -25,7 +25,7 @@ namespace Assets.Scripts.DLF_IO
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 31)]
         public int[] ipad;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
-        public char[] ambiance;
+        public byte[] ambiance;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 128)]
         public byte[] cpad;
     }

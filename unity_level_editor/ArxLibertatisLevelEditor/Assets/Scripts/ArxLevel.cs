@@ -1,4 +1,6 @@
 ﻿using Assets.Scripts.Data;
+using Assets.Scripts.Shared_IO;
+using Assets.Scripts.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,136 +13,200 @@ namespace Assets.Scripts
 {
     public class ArxLevel
     {
-        static DirectoryInfo ftsDir = new DirectoryInfo(@"F:\Program Files\Arx Libertatis\paks\game\graph\levels");
-        static DirectoryInfo dlfLlfDir = new DirectoryInfo(@"F:\Program Files\Arx Libertatis\paks\graph\levels");
+        private DLF_IO.DLF_IO dlf;
 
-        public DLF_IO.DLF_IO DLF { get; private set; }
-        public LLF_IO.LLF_IO LLF { get; private set; }
-        public FTS_IO.FTS_IO FTS { get; private set; }
+        public Vector3 EditCameraPos
+        {
+            get { return dlf.header.positionEdit.ToVector3(); }
+            set { dlf.header.positionEdit = new SavedVec3(value); }
+        }
+        public Vector3 EditCameraEuler
+        {
+            get { return dlf.header.angleEdit.ToEuler(); }
+            set { dlf.header.angleEdit = new SavedAnglef(value); }
+        }
+        public Vector3 LevelOffset
+        {
+            get { return dlf.header.offset.ToVector3(); }
+            set
+            {
+                dlf.header.offset = new SavedVec3(value);
+                LevelObject.transform.localPosition = value;
+            }
+        }
+
+        public string SceneName
+        {
+            get { return ArxIOHelper.GetString(dlf.scenes[0].name); }
+            set { dlf.scenes[0].name = ArxIOHelper.GetBytes(value, 512); }
+        }
+
+        private LLF_IO.LLF_IO llf;
+        private FTS_IO.FTS_IO fts;
 
         string name;
 
+        public string Name { get { return name; } }
+
         public GameObject LevelObject { get; private set; }
+        GameObject intersObject;
+        GameObject lightsObject;
+        GameObject fogsObject;
+        GameObject pathsObject;
+
+        ArxLevelMesh levelMesh;
 
         void LoadFiles()
         {
-            var dlf = Path.Combine(dlfLlfDir.FullName, name, name + ".dlf");
-            var llf = Path.Combine(dlfLlfDir.FullName, name, name + ".llf");
-            var fts = Path.Combine(ftsDir.FullName, name, "fast.fts");
+            var dlfPath = Path.Combine(ArxDirs.DLFDir, name, name + ".dlf");
+            var llfPath = Path.Combine(ArxDirs.LLFDir, name, name + ".llf");
+            var ftsPath = Path.Combine(ArxDirs.FTSDir, name, "fast.fts");
 
             //DEBUG: use unpacked versions of files for now
-            dlf += ".unpacked";
-            llf += ".unpacked";
-            fts += ".unpacked";
+            dlfPath += ".unpacked";
+            llfPath += ".unpacked";
+            ftsPath += ".unpacked";
 
-            DLF = new DLF_IO.DLF_IO();
-            using (FileStream fs = new FileStream(dlf, FileMode.Open, FileAccess.Read))
+            dlf = new DLF_IO.DLF_IO();
+            using (FileStream fs = new FileStream(dlfPath, FileMode.Open, FileAccess.Read))
             {
-                DLF.LoadFrom(fs);
+                dlf.LoadFrom(fs);
             }
 
-            LLF = new LLF_IO.LLF_IO();
-            using (FileStream fs = new FileStream(llf, FileMode.Open, FileAccess.Read))
+            llf = new LLF_IO.LLF_IO();
+            using (FileStream fs = new FileStream(llfPath, FileMode.Open, FileAccess.Read))
             {
-                LLF.LoadFrom(fs);
+                llf.LoadFrom(fs);
             }
 
-            FTS = new FTS_IO.FTS_IO();
-            using (FileStream fs = new FileStream(fts, FileMode.Open, FileAccess.Read))
+            fts = new FTS_IO.FTS_IO();
+            using (FileStream fs = new FileStream(ftsPath, FileMode.Open, FileAccess.Read))
             {
-                FTS.LoadFrom(fs);
+                fts.LoadFrom(fs);
+            }
+        }
+
+        void ProcessDLF()
+        {
+            CreateInters();
+            CreateLightingDLF();
+            CreateLightsDLF();
+            CreateFogs();
+            CreatePaths();
+        }
+
+        void ProcessLLF()
+        {
+
+        }
+
+        void ProcessFTS()
+        {
+            CreateMesh();
+        }
+
+        void CreateInters()
+        {
+            for (int i = 0; i < dlf.inters.Length; i++)
+            {
+                var inter = dlf.inters[i];
+                //TODO: add inter script that keeps reference to this
+
+                var interObject = new GameObject(ArxIOHelper.GetString(inter.name));
+                interObject.transform.SetParent(intersObject.transform);
+
+                interObject.transform.localPosition = inter.pos.ToVector3();
+                interObject.transform.localEulerAngles = inter.angle.ToEuler();
+            }
+        }
+
+        void CreateLightingDLF()
+        {
+            //because lighting has been moved to LLF this will most likely never be used
+            if (dlf.header.lighting == 0) { return; }
+
+            Debug.Log("if you see this, lighting is present in DLF, write code for it!");
+        }
+
+        void CreateLightsDLF()
+        {
+            for (int i = 0; i < dlf.lights.Length; i++)
+            {
+                var light = dlf.lights[i];
+                var lightObject = new GameObject("light " + i);
+                lightObject.transform.SetParent(lightsObject.transform);
+
+                lightObject.transform.localPosition = light.pos.ToVector3();
+
+                var l = lightObject.AddComponent<Light>();
+                l.color = light.rgb.ToColor();
+
+                l.type = LightType.Point;
+                l.intensity = light.intensity;
+
+                l.range = light.fallEnd;
+                //TODO: add script to sync light settings etc
+            }
+        }
+
+        void CreateFogs()
+        {
+            for (int i = 0; i < dlf.fogs.Length; i++)
+            {
+                //TODO: fogs are apparently points where fog particles are spawned in an interval
+                //fog extent depends on type. if its directional, no extent, otherwise extent 100
+            }
+        }
+
+        void CreatePaths()
+        {
+            for (int i = 0; i < dlf.paths.Length; i++)
+            {
+                var path = dlf.paths[i];
+                var pathObject = new GameObject(ArxIOHelper.GetString(path.header.name));
+                pathObject.transform.SetParent(pathsObject.transform);
+
+                pathObject.transform.position = path.header.pos.ToVector3(); //no idea if that is the right pos, or what init_pos is
+                //TODO: load paths etc and add sync script...
+            }
+        }
+
+        void CreateLightsLLF()
+        {
+            Debug.Log("numLights: " + llf.lights.Length);
+        }
+
+        void CreateLighting()
+        {
+            Debug.Log("numLightings: " + llf.lightColors.Length);
+        }
+
+        void CreateLights(DANAE_IO_LIGHT[] lights)
+        {
+            //TODO: when syncing lights, we dont know if to sync with llf or dlf...
+            for (int i = 0; i < lights.Length; i++)
+            {
+                var light = lights[i];
+                var lightObject = new GameObject("light " + i);
+                lightObject.transform.SetParent(lightsObject.transform);
+
+                lightObject.transform.localPosition = light.pos.ToVector3();
+
+                var l = lightObject.AddComponent<Light>();
+                l.color = light.rgb.ToColor();
+
+                l.type = LightType.Point;
+                l.intensity = light.intensity;
+
+                l.range = light.fallEnd;
+                //TODO: add script to sync light settings etc
             }
         }
 
         void CreateMesh()
         {
-            var testMaterial = new Material(Shader.Find("Legacy Shaders/Diffuse"));
-            testMaterial.color = Color.gray;
-
-            List<GameObject> cells = new List<GameObject>();
-            foreach (var cell in FTS.cells)
-            {
-
-                List<Vector3> verts = new List<Vector3>();
-                List<Vector3> norms = new List<Vector3>();
-                List<int> indices = new List<int>();
-                Mesh m = new Mesh();
-
-                foreach (var poly in cell.polygons)
-                {
-                    int firstVert = verts.Count;
-                    if ((poly.type & PolyType.POLY_QUAD) != 0)
-                    { //QUAD
-                        for (int i = 0; i < 4; i++)
-                        {
-                            verts.Add(new Vector3(poly.vertices[i].posX, poly.vertices[i].posY, poly.vertices[i].posZ));
-                            norms.Add(poly.normals[i].ToVector3());
-                        }
-
-                        indices.Add(firstVert);
-                        indices.Add(firstVert + 1);
-                        indices.Add(firstVert + 2);
-                        indices.Add(firstVert + 2);
-                        indices.Add(firstVert + 1);
-                        indices.Add(firstVert + 3);
-                    }
-                    else
-                    { //TRIANGLE
-                        for (int i = 0; i < 3; i++)
-                        {
-                            verts.Add(new Vector3(poly.vertices[i].posX, poly.vertices[i].posY, poly.vertices[i].posZ));
-                            norms.Add(poly.normals[i].ToVector3());
-                        }
-
-                        indices.Add(firstVert);
-                        indices.Add(firstVert + 1);
-                        indices.Add(firstVert + 2);
-                    }
-                }
-
-                m.vertices = verts.ToArray();
-                m.triangles = indices.ToArray();
-                m.normals = norms.ToArray();
-                //SubMeshDescriptor smd = new SubMeshDescriptor(0, indices.Count, MeshTopology.Quads);
-                //m.SetSubMesh(0, smd);
-
-                //m.RecalculateNormals();
-                m.RecalculateBounds();
-                m.RecalculateTangents();
-                m.Optimize();
-
-                GameObject chunk = new GameObject();
-                var mf = chunk.AddComponent<MeshFilter>();
-                mf.sharedMesh = m;
-                var mr = chunk.AddComponent<MeshRenderer>();
-                mr.sharedMaterial = testMaterial;
-
-                /*int c = 0;
-                foreach(var pos in m.vertices)
-                {
-                    GameObject helper = new GameObject();
-                    helper.transform.position = pos;
-                    helper.name = c.ToString();
-                    c++;
-                    helper.transform.SetParent(chunk.transform);
-                }*/
-
-                cells.Add(chunk);
-                /*if (cnt > 30)
-                {
-                    break; //DEBUG: only 20 chunks for now
-                }*/
-            }
-            GameObject lvl = new GameObject("levelMesh");
-
-            foreach (var c in cells)
-            {
-                c.transform.SetParent(lvl.transform);
-            }
-
-            lvl.transform.localScale = new Vector3(0.01f, -0.01f, 0.01f); //DEBUG, to better inspect it in the unity editor cause its so huge
-
-            lvl.transform.SetParent(LevelObject.transform);
+            levelMesh = new ArxLevelMesh(this);
+            levelMesh.CreateMesh(fts, llf);
         }
 
         public void Load(string name)
@@ -148,10 +214,28 @@ namespace Assets.Scripts
             this.name = name;
 
             LevelObject = new GameObject(name);
+            
+            intersObject = new GameObject(name + "_inters");
+            intersObject.transform.SetParent(LevelObject.transform);
+            lightsObject = new GameObject(name + "_lights");
+            lightsObject.transform.SetParent(LevelObject.transform);
+            fogsObject = new GameObject(name + "_fogs");
+            fogsObject.transform.SetParent(LevelObject.transform);
+            pathsObject = new GameObject(name + "_paths");
+            pathsObject.transform.SetParent(LevelObject.transform);
 
             LoadFiles();
 
-            CreateMesh();
+            LevelObject.transform.localPosition = dlf.header.offset.ToVector3();
+
+            ProcessDLF();
+            ProcessLLF();
+            ProcessFTS();
+
+            Vector3 sceneOffset = fts.sceneHeader.Mscenepos.ToVector3();
+            //edit cam pos = sceneOffset + dlf.header.positionEdit
+
+            LevelObject.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f); //1 unit is 1 cm in arx, so scale down so one unit is one meter (at least perceived)
         }
     }
 }

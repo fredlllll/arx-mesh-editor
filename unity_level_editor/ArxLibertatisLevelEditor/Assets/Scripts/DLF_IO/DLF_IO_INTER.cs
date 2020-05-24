@@ -8,13 +8,13 @@ namespace Assets.Scripts.DLF_IO
     public struct DLF_IO_INTER
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 512)]
-        public char[] name;
+        public byte[] name;
         public SavedVec3 pos;
         public SavedAnglef angle;
         public int ident;
         public int flags;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 14)]
-        public int[] pad;
+        public int[] ipad;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
         public float[] fpad;
     }

@@ -6,7 +6,7 @@ namespace Assets.Scripts.DLF_IO
     public struct DLF_IO_SCENE
     {
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 512)]
-        public char[] name;
+        public byte[] name;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
         public int[] pad;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
