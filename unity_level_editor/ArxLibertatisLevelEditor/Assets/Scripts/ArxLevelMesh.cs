@@ -96,7 +96,6 @@ namespace Assets.Scripts
             }
 
             lvl.transform.SetParent(level.LevelObject.transform);
-            lvl.transform.localPosition = fts.sceneHeader.Mscenepos.ToVector3();
             lvl.transform.localScale = new Vector3(1,-1,1); //y-1 cause its flipped otherwise??
         }
     }

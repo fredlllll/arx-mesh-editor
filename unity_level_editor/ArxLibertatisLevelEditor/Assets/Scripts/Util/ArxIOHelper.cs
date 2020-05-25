@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,6 +26,18 @@ namespace Assets.Scripts.Util
 
             byte[] bytes = BitConverter.GetBytes(bgra);
             return new Color(bytes[2] / 255f, bytes[1] / 255f, bytes[0] / 255f);
+        }
+
+        public static string ArxPathToPlatformPath(string arxPath)
+        {
+            string[] parts = arxPath.Split('\\');
+            return Path.Combine(parts);
+        }
+
+        public static string PlatformPathToArxPath(string platformPath)
+        {
+            string[] parts = platformPath.Split(Path.DirectorySeparatorChar);
+            return string.Join("\\", parts);
         }
     }
 }

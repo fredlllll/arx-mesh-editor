@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts.Data;
+using Assets.Scripts.DataSync;
 using Assets.Scripts.Shared_IO;
 using Assets.Scripts.Util;
 using System;
@@ -14,6 +15,10 @@ namespace Assets.Scripts
     public class ArxLevel
     {
         private DLF_IO.DLF_IO dlf;
+        public DLF_IO.DLF_IO DLF
+        {
+            get { return dlf; }
+        }
 
         public Vector3 EditCameraPos
         {
@@ -42,7 +47,15 @@ namespace Assets.Scripts
         }
 
         private LLF_IO.LLF_IO llf;
+        public LLF_IO.LLF_IO LLF
+        {
+            get { return llf; }
+        }
         private FTS_IO.FTS_IO fts;
+        public FTS_IO.FTS_IO FTS
+        {
+            get { return fts; }
+        }
 
         string name;
 
@@ -109,14 +122,11 @@ namespace Assets.Scripts
         {
             for (int i = 0; i < dlf.inters.Length; i++)
             {
-                var inter = dlf.inters[i];
-                //TODO: add inter script that keeps reference to this
-
-                var interObject = new GameObject(ArxIOHelper.GetString(inter.name));
+                var interObject = new GameObject();
                 interObject.transform.SetParent(intersObject.transform);
 
-                interObject.transform.localPosition = inter.pos.ToVector3();
-                interObject.transform.localEulerAngles = inter.angle.ToEuler();
+                var inter = interObject.AddComponent<Inter>();
+                inter.LoadFrom(this, i);
             }
         }
 
@@ -214,7 +224,7 @@ namespace Assets.Scripts
             this.name = name;
 
             LevelObject = new GameObject(name);
-            
+
             intersObject = new GameObject(name + "_inters");
             intersObject.transform.SetParent(LevelObject.transform);
             lightsObject = new GameObject(name + "_lights");
