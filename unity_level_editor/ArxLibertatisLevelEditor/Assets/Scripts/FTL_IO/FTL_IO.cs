@@ -13,10 +13,9 @@ namespace Assets.Scripts.FTL_IO
         public FTL_IO_PRIMARY_HEADER header;
         public FTL_IO_SECONDARY_HEADER secondaryHeader;
 
-        public FTL_IO_3D_DATA_HEADER _3DDataHeader;
-        public EERIE_OLD_VERTEX[] vertexList;
-        public EERIE_FACE_FTL[] faceList;
-        public FTL_IO_TEXTURE_CONTAINER[] textureContainers;
+        public FTL_IO_3D_DATA_SECTION? _3DDataSection = null;
+        //apparently all the other sections are unused and undocumented, saving other contents of file into arrays, this will break values in secondary header if modified (for now)
+        byte[] dataTill3Ddata, dataTillFileEnd;
 
         public void ReadFrom(Stream s)
         {
@@ -26,35 +25,69 @@ namespace Assets.Scripts.FTL_IO
 
             secondaryHeader = reader.ReadStruct<FTL_IO_SECONDARY_HEADER>();
 
+            long till3Ddata = secondaryHeader.offset_3Ddata - s.Position;
+            if (till3Ddata > 0)
+            {
+                dataTill3Ddata = reader.ReadBytes((int)till3Ddata);
+            }
+            else
+            {
+                dataTill3Ddata = null;
+            }
+
+
             if (secondaryHeader.offset_3Ddata != -1)
             {
                 s.Position = secondaryHeader.offset_3Ddata;
 
-                _3DDataHeader = reader.ReadStruct<FTL_IO_3D_DATA_HEADER>();
-                vertexList = new EERIE_OLD_VERTEX[_3DDataHeader.nb_vertex];
-                faceList = new EERIE_FACE_FTL[_3DDataHeader.nb_faces];
-                textureContainers = new FTL_IO_TEXTURE_CONTAINER[_3DDataHeader.nb_maps];
+                _3DDataSection = new FTL_IO_3D_DATA_SECTION();
+                _3DDataSection?.ReadFrom(reader);
+            }
 
-                for (int i = 0; i < vertexList.Length; i++)
-                {
-                    vertexList[i] = reader.ReadStruct<EERIE_OLD_VERTEX>();
-                }
-
-                for (int i = 0; i < faceList.Length; i++)
-                {
-                    faceList[i] = reader.ReadStruct<EERIE_FACE_FTL>();
-                }
-
-                for (int i = 0; i < textureContainers.Length; i++)
-                {
-                    textureContainers[i] = reader.ReadStruct<FTL_IO_TEXTURE_CONTAINER>();
-                }
+            long tillFileEnd = s.Length - s.Position;
+            if (tillFileEnd > 0)
+            {
+                dataTillFileEnd = reader.ReadBytes((int)tillFileEnd);
+            }
+            else
+            {
+                dataTillFileEnd = null;
             }
         }
 
         public void WriteTo(Stream s)
         {
+            StructWriter writer = new StructWriter(s, Encoding.ASCII, true);
 
+            writer.WriteStruct(header);
+
+            var secondaryHeaderPosition = s.Position;
+            writer.WriteStruct(secondaryHeader); //write header with old values for now
+
+            if(dataTill3Ddata != null)
+            {
+                writer.Write(dataTill3Ddata);
+            }
+
+            if (_3DDataSection.HasValue)
+            {
+                secondaryHeader.offset_3Ddata = (int)s.Position;
+                writer.WriteStruct(_3DDataSection);
+            }
+            else
+            {
+                secondaryHeader.offset_3Ddata = -1;
+            }
+            
+            if(dataTillFileEnd != null)
+            {
+                writer.Write(dataTillFileEnd);
+            }
+
+            var end = s.Position;
+            s.Position = secondaryHeaderPosition;
+            writer.WriteStruct(secondaryHeader); //update offsets
+            s.Position = end; //go back to end, in case user wants to do more with the stream
         }
 
         public static Stream EnsureUnpacked(Stream s)
