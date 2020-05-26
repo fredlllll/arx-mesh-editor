@@ -8,6 +8,6 @@ namespace Assets.Scripts.FTS_IO
         public int tc;
         public int temp;
         [MarshalAs(UnmanagedType.ByValArray, SizeConst = 256)]
-        public char[] fic;
+        public byte[] fic;
     }
 }

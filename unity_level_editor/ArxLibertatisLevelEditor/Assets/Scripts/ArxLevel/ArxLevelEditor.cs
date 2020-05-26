@@ -2,7 +2,7 @@
 using System.IO;
 using UnityEngine;
 
-namespace Assets.Scripts
+namespace Assets.Scripts.ArxLevel
 {
     public class ArxLevelEditor : MonoBehaviour
     {

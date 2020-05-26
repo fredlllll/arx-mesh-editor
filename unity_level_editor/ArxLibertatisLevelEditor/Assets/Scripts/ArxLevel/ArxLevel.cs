@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace Assets.Scripts
+namespace Assets.Scripts.ArxLevel
 {
     public class ArxLevel
     {
@@ -67,7 +67,7 @@ namespace Assets.Scripts
         GameObject fogsObject;
         GameObject pathsObject;
 
-        ArxLevelMesh levelMesh;
+        ArxLevelBigMesh levelBigMesh;
 
         void LoadFiles()
         {
@@ -76,26 +76,26 @@ namespace Assets.Scripts
             var ftsPath = Path.Combine(ArxDirs.FTSDir, name, "fast.fts");
 
             //DEBUG: use unpacked versions of files for now
-            dlfPath += ".unpacked";
-            llfPath += ".unpacked";
-            ftsPath += ".unpacked";
+            //dlfPath += ".unpacked";
+            //llfPath += ".unpacked";
+            //ftsPath += ".unpacked";
 
             dlf = new DLF_IO.DLF_IO();
             using (FileStream fs = new FileStream(dlfPath, FileMode.Open, FileAccess.Read))
             {
-                dlf.LoadFrom(fs);
+                dlf.LoadFrom(DLF_IO.DLF_IO.EnsureUnpacked(fs));
             }
 
             llf = new LLF_IO.LLF_IO();
             using (FileStream fs = new FileStream(llfPath, FileMode.Open, FileAccess.Read))
             {
-                llf.LoadFrom(fs);
+                llf.LoadFrom(LLF_IO.LLF_IO.EnsureUnpacked(fs));
             }
 
             fts = new FTS_IO.FTS_IO();
             using (FileStream fs = new FileStream(ftsPath, FileMode.Open, FileAccess.Read))
             {
-                fts.LoadFrom(fs);
+                fts.LoadFrom(FTS_IO.FTS_IO.EnsureUnpacked(fs));
             }
         }
 
@@ -215,8 +215,8 @@ namespace Assets.Scripts
 
         void CreateMesh()
         {
-            levelMesh = new ArxLevelMesh(this);
-            levelMesh.CreateMesh(fts, llf);
+            levelBigMesh = new ArxLevelBigMesh(this);
+            levelBigMesh.CreateMesh();
         }
 
         public void Load(string name)
@@ -245,10 +245,9 @@ namespace Assets.Scripts
             Vector3 sceneOffset = fts.sceneHeader.Mscenepos.ToVector3();
             sceneOffset.y = -sceneOffset.y; //of god why is y flipped everywhere??
             //edit cam pos = sceneOffset + dlf.header.positionEdit
-            intersObject.transform.localScale = new Vector3(1, -1, 1); //flipped y too
             intersObject.transform.localPosition = sceneOffset;
 
-            LevelObject.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f); //1 unit is 1 cm in arx, so scale down so one unit is one meter (at least perceived)
+            LevelObject.transform.localScale = new Vector3(0.01f, -0.01f, 0.01f); //1 unit is 1 cm in arx, so scale down so one unit is one meter (at least perceived)
         }
     }
 }
