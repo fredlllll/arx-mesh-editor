@@ -243,7 +243,10 @@ namespace Assets.Scripts
             ProcessFTS();
 
             Vector3 sceneOffset = fts.sceneHeader.Mscenepos.ToVector3();
+            sceneOffset.y = -sceneOffset.y; //of god why is y flipped everywhere??
             //edit cam pos = sceneOffset + dlf.header.positionEdit
+            intersObject.transform.localScale = new Vector3(1, -1, 1); //flipped y too
+            intersObject.transform.localPosition = sceneOffset;
 
             LevelObject.transform.localScale = new Vector3(0.01f, 0.01f, 0.01f); //1 unit is 1 cm in arx, so scale down so one unit is one meter (at least perceived)
         }

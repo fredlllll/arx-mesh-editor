@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace Assets.Scripts.FTL_IO
 {
@@ -13,7 +14,8 @@ namespace Assets.Scripts.FTL_IO
         public FTL_IO_PRIMARY_HEADER header;
         public FTL_IO_SECONDARY_HEADER secondaryHeader;
 
-        public FTL_IO_3D_DATA_SECTION? _3DDataSection = null;
+        public bool has3DDataSection = false;
+        public FTL_IO_3D_DATA_SECTION _3DDataSection;
         //apparently all the other sections are unused and undocumented, saving other contents of file into arrays, this will break values in secondary header if modified (for now)
         byte[] dataTill3Ddata, dataTillFileEnd;
 
@@ -36,12 +38,17 @@ namespace Assets.Scripts.FTL_IO
             }
 
 
-            if (secondaryHeader.offset_3Ddata != -1)
+            if (secondaryHeader.offset_3Ddata >= 0)
             {
                 s.Position = secondaryHeader.offset_3Ddata;
 
                 _3DDataSection = new FTL_IO_3D_DATA_SECTION();
-                _3DDataSection?.ReadFrom(reader);
+                _3DDataSection.ReadFrom(reader);
+                has3DDataSection = true;
+            }
+            else
+            {
+                Debug.LogWarning("invalid 3d offset: " + secondaryHeader.offset_3Ddata);
             }
 
             long tillFileEnd = s.Length - s.Position;
@@ -64,12 +71,12 @@ namespace Assets.Scripts.FTL_IO
             var secondaryHeaderPosition = s.Position;
             writer.WriteStruct(secondaryHeader); //write header with old values for now
 
-            if(dataTill3Ddata != null)
+            if (dataTill3Ddata != null)
             {
                 writer.Write(dataTill3Ddata);
             }
 
-            if (_3DDataSection.HasValue)
+            if (has3DDataSection)
             {
                 secondaryHeader.offset_3Ddata = (int)s.Position;
                 writer.WriteStruct(_3DDataSection);
@@ -78,8 +85,8 @@ namespace Assets.Scripts.FTL_IO
             {
                 secondaryHeader.offset_3Ddata = -1;
             }
-            
-            if(dataTillFileEnd != null)
+
+            if (dataTillFileEnd != null)
             {
                 writer.Write(dataTillFileEnd);
             }
@@ -88,6 +95,51 @@ namespace Assets.Scripts.FTL_IO
             s.Position = secondaryHeaderPosition;
             writer.WriteStruct(secondaryHeader); //update offsets
             s.Position = end; //go back to end, in case user wants to do more with the stream
+        }
+
+        public Mesh CreateMesh()
+        {
+            Mesh m = new Mesh();
+
+            if (has3DDataSection)
+            {
+                Vector3[] verts = new Vector3[_3DDataSection.vertexList.Length];
+                Vector3[] norms = new Vector3[verts.Length];
+                Vector2[] uvs = new Vector2[verts.Length];
+                Color[] colors = new Color[verts.Length]; //blender plugin says always 0, skip for now cause i dunno if its argb, or rgba
+
+                //TODO: basically this is using the faces list to create seperate faces. i have to copy the vertex for the faces because the normals & uv are redefined in every face
+
+                List<int> indices = new List<int>();
+
+                for (int i = 0; i < verts.Length; i++)
+                {
+                    var vert = _3DDataSection.vertexList[i];
+                    verts[i] = vert.vert.ToVector3();
+                    norms[i] = vert.norm.ToVector3();
+                }
+
+                foreach (var face in _3DDataSection.faceList)
+                {
+                    for (int i = 0; i < 3; i++)
+                    {
+                        ushort vertIndex = face.vid[i];
+
+                        uvs[vertIndex] = new Vector2(face.u[i], face.v[i]);
+                        indices.Add(vertIndex);
+                    }
+                }
+
+                m.vertices = verts;
+                m.triangles = indices.ToArray();
+                m.normals = norms;
+
+                m.RecalculateBounds();
+                m.RecalculateTangents();
+                m.Optimize();
+            }
+
+            return m;
         }
 
         public static Stream EnsureUnpacked(Stream s)

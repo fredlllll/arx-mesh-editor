@@ -11,9 +11,13 @@ namespace Assets.Scripts
     {
         static string dataDir = @"F:\Program Files\Arx Libertatis\paks\"; //for testing
 
-        public static void SetDataDir(string dir)
+        public static string DataDir
         {
-            dataDir = dir;
+            get { return dataDir; }
+            set
+            {
+                dataDir = value;
+            }
         }
 
         public static string DLFDir

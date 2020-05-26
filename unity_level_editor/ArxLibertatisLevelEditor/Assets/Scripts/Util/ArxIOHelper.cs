@@ -28,6 +28,12 @@ namespace Assets.Scripts.Util
             return new Color(bytes[2] / 255f, bytes[1] / 255f, bytes[0] / 255f);
         }
 
+        public static Color FromRGB(uint rgba)
+        {
+            byte[] bytes = BitConverter.GetBytes(rgba);
+            return new Color(bytes[0] / 255f, bytes[1] / 255f, bytes[2] / 255f);
+        }
+
         public static string ArxPathToPlatformPath(string arxPath)
         {
             string[] parts = arxPath.Split('\\');

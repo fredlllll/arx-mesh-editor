@@ -9,11 +9,14 @@ namespace Assets.Scripts
 {
     public static class MaterialsDatabase
     {
+        public static Material TEST { get; private set; }
+
         public static Material ArxLevelBackground { get; private set; }
 
         static MaterialsDatabase()
         {
             ArxLevelBackground = UnityEngine.Object.Instantiate(Resources.Load<Material>("Materials/ArxLevelBackground"));
+            TEST = UnityEngine.Object.Instantiate(Resources.Load<Material>("Materials/TEST"));
         }
     }
 }
