@@ -15,8 +15,7 @@ namespace Assets.Scripts.DLF_IO
             paths = new DLF_IO_PATHWAYS[header.numPathways];
             for (int i = 0; i < header.numPathways; i++)
             {
-                var path = reader.ReadStruct<DLF_IO_PATHWAYS>();
-                paths[i] = path;
+                paths[i] = reader.ReadStruct<DLF_IO_PATHWAYS>();
             }
         }
 

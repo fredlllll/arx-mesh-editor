@@ -25,7 +25,6 @@ namespace Assets.Scripts.DataSync
             interPath = interPath.Substring(0, lastDot);
 
             var ftlPath = Path.Combine(ArxDirs.DataDir,"game", ArxIOHelper.ArxPathToPlatformPath(interPath + ".ftl"));
-            Debug.Log(ftlPath);
             if (File.Exists(ftlPath))
             {
                 FTL_IO.FTL_IO ftl = new FTL_IO.FTL_IO();

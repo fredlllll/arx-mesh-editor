@@ -46,13 +46,15 @@ namespace Assets.Scripts.ArxLevel
                 tcToIndex[fts.textureContainers[i].tc] = i;
             }
 
-            List<Vector3>[] subMeshVerts = new List<Vector3>[fts.textureContainers.Length];
-            List<Vector3>[] subMeshNorms = new List<Vector3>[subMeshVerts.Length];
-            List<Color>[] subMeshColors = new List<Color>[subMeshVerts.Length];
-            List<int>[] subMeshIndices = new List<int>[subMeshVerts.Length];
-            for (int i = 0; i < subMeshVerts.Length; i++)
+            List<Vector3>[] subMeshVerts = new List<Vector3>[materials.Length];
+            List<Vector2>[] subMeshUvs = new List<Vector2>[materials.Length];
+            List<Vector3>[] subMeshNorms = new List<Vector3>[materials.Length];
+            List<Color>[] subMeshColors = new List<Color>[materials.Length];
+            List<int>[] subMeshIndices = new List<int>[materials.Length];
+            for (int i = 0; i < materials.Length; i++)
             {
                 subMeshVerts[i] = new List<Vector3>();
+                subMeshUvs[i] = new List<Vector2>();
                 subMeshNorms[i] = new List<Vector3>();
                 subMeshColors[i] = new List<Color>();
                 subMeshIndices[i] = new List<int>();
@@ -70,9 +72,11 @@ namespace Assets.Scripts.ArxLevel
                     if (!tcToIndex.TryGetValue(poly.tex, out ind))
                     {
                         Debug.Log("not found: " + poly.tex);
+                        ind = 0; //use 0 as default for now, gotta add a seperate one for that
                     }
 
                     var verts = subMeshVerts[ind];
+                    var uvs = subMeshUvs[ind];
                     var norms = subMeshNorms[ind];
                     var colors = subMeshColors[ind];
                     var indices = subMeshIndices[ind];
@@ -82,7 +86,9 @@ namespace Assets.Scripts.ArxLevel
                     { //QUAD
                         for (int i = 0; i < 4; i++)
                         {
-                            verts.Add(new Vector3(poly.vertices[i].posX, poly.vertices[i].posY, poly.vertices[i].posZ));
+                            var vert = poly.vertices[i];
+                            verts.Add(new Vector3(vert.posX, vert.posY, vert.posZ));
+                            uvs.Add(new Vector2(vert.texU, -vert.texV));
                             norms.Add(poly.normals[i].ToVector3());
                             colors.Add(ArxIOHelper.FromBGRA(llf.lightColors[lightIndex++]));
                         }
@@ -98,7 +104,9 @@ namespace Assets.Scripts.ArxLevel
                     { //TRIANGLE
                         for (int i = 0; i < 3; i++)
                         {
-                            verts.Add(new Vector3(poly.vertices[i].posX, poly.vertices[i].posY, poly.vertices[i].posZ));
+                            var vert = poly.vertices[i];
+                            verts.Add(new Vector3(vert.posX, vert.posY, vert.posZ));
+                            uvs.Add(new Vector2(vert.texU, vert.texV));
                             norms.Add(poly.normals[i].ToVector3());
                             colors.Add(ArxIOHelper.FromBGRA(llf.lightColors[lightIndex++]));
                         }
@@ -110,39 +118,45 @@ namespace Assets.Scripts.ArxLevel
                 }
             }
 
-            Mesh m = new Mesh();
-            List<Vector3> meshVerts = new List<Vector3>();
+            GameObject lvl = new GameObject(level.Name + "_mesh");
+
+            /*List<Vector3> meshVerts = new List<Vector3>();
+            List<Vector2> meshUvs = new List<Vector2>();
             List<Vector3> meshNorms = new List<Vector3>();
             List<Color> meshColors = new List<Color>();
-            List<int> meshIndices = new List<int>();
-            m.subMeshCount = subMeshVerts.Length;
             for (int i = 0; i < subMeshVerts.Length; i++)
             {
                 int indexOffset = meshVerts.Count;
 
                 var verts = subMeshVerts[i];
+                var uvs = subMeshUvs[i];
                 var norms = subMeshNorms[i];
                 var colors = subMeshColors[i];
                 var indices = subMeshIndices[i];
 
-                SubMeshDescriptor smd = new SubMeshDescriptor(meshIndices.Count, indices.Count, MeshTopology.Triangles);
-                //m.SetSubMesh(i, smd);
-
                 for (int j = 0; j < verts.Count; j++)
                 {
                     meshVerts.Add(verts[j]);
+                    meshUvs.Add(uvs[j]);
                     meshNorms.Add(norms[j]);
                     meshColors.Add(colors[j]);
-                    meshIndices.Add(indices[j] + indexOffset);
+                    indices[j] += indexOffset;
                 }
             }
 
+            Mesh m = new Mesh();
             m.vertices = meshVerts.ToArray();
+            m.uv = meshUvs.ToArray();
             m.normals = meshNorms.ToArray();
             m.colors = meshColors.ToArray();
-            m.triangles = meshIndices.ToArray();
 
-            GameObject lvl = new GameObject(level.Name + "_mesh");
+            m.subMeshCount = materials.Length;
+            for (int i = 0; i < materials.Length; i++)
+            {
+                var indices = subMeshIndices[i];
+                m.SetIndices(indices.ToArray(), MeshTopology.Triangles, i);
+            }
+
             var mf = lvl.AddComponent<MeshFilter>();
             mf.sharedMesh = m;
             var mr = lvl.AddComponent<MeshRenderer>();
@@ -150,6 +164,27 @@ namespace Assets.Scripts.ArxLevel
             m.RecalculateBounds();
             m.RecalculateTangents();
             m.Optimize();
+            */
+
+            for (int i = 0; i < materials.Length; i++)
+            {
+                GameObject matObj = new GameObject();
+
+                Mesh m = new Mesh();
+
+                m.vertices = subMeshVerts[i].ToArray();
+                m.uv = subMeshUvs[i].ToArray();
+                m.normals = subMeshNorms[i].ToArray();
+                m.colors = subMeshColors[i].ToArray();
+                m.triangles = subMeshIndices[i].ToArray();
+
+                var mf = matObj.AddComponent<MeshFilter>();
+                mf.sharedMesh = m;
+                var mr = matObj.AddComponent<MeshRenderer>();
+                mr.sharedMaterial = materials[i];
+
+                matObj.transform.SetParent(lvl.transform);
+            }
 
             lvl.transform.SetParent(level.LevelObject.transform);
             lvl.transform.localPosition = Vector3.zero;
