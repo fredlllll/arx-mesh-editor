@@ -92,7 +92,7 @@ namespace Assets.Scripts.ArxLevel
                         {
                             var vert = poly.vertices[i];
                             verts.Add(new Vector3(vert.posX, vert.posY, vert.posZ));
-                            uvs.Add(new Vector2(vert.texU, -vert.texV));
+                            uvs.Add(new Vector2(vert.texU, 1 - vert.texV));
                             norms.Add(poly.normals[i].ToVector3());
                             colors.Add(ArxIOHelper.FromBGRA(llf.lightColors[lightIndex++]));
                         }
@@ -110,7 +110,7 @@ namespace Assets.Scripts.ArxLevel
                         {
                             var vert = poly.vertices[i];
                             verts.Add(new Vector3(vert.posX, vert.posY, vert.posZ));
-                            uvs.Add(new Vector2(vert.texU, vert.texV));
+                            uvs.Add(new Vector2(vert.texU, 1 - vert.texV));
                             norms.Add(poly.normals[i].ToVector3());
                             colors.Add(ArxIOHelper.FromBGRA(llf.lightColors[lightIndex++]));
                         }
