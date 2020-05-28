@@ -32,17 +32,7 @@ namespace Assets.Scripts.ArxLevel
             Dictionary<int, int> tcToIndex = new Dictionary<int, int>();
             for (int i = 0; i < fts.textureContainers.Length; i++)
             {
-                string matPath = Path.Combine(ArxDirs.DataDir, ArxIOHelper.GetString(fts.textureContainers[i].fic));
-                matPath = matPath.Substring(0, matPath.Length - 3);
-                if (File.Exists(matPath + "jpg"))
-                {
-                    matPath += "jpg";
-                }
-                else if (File.Exists(matPath + "bmp"))
-                {
-                    matPath += "bmp";
-                }
-                materials[i] = ArxLevelMeshMaterials.GetMaterial(matPath);
+                materials[i] = ArxLevelMeshShared.GetMaterial(ArxIOHelper.GetString(fts.textureContainers[i].fic));
                 tcToIndex[fts.textureContainers[i].tc] = i;
             }
 
