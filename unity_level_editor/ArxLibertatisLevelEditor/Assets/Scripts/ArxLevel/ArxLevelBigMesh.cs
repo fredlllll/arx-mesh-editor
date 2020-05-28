@@ -28,9 +28,9 @@ namespace Assets.Scripts.ArxLevel
             var fts = level.FTS;
             var llf = level.LLF;
 
-            Material[] materials = new Material[fts.textureContainers.Length];
+            Material[] materials = new Material[fts.textureContainers.Length + 1];
             Dictionary<int, int> tcToIndex = new Dictionary<int, int>();
-            for (int i = 0; i < materials.Length; i++)
+            for (int i = 0; i < fts.textureContainers.Length; i++)
             {
                 string matPath = Path.Combine(ArxDirs.DataDir, ArxIOHelper.GetString(fts.textureContainers[i].fic));
                 matPath = matPath.Substring(0, matPath.Length - 3);
@@ -45,6 +45,10 @@ namespace Assets.Scripts.ArxLevel
                 materials[i] = ArxLevelMeshMaterials.GetMaterial(matPath);
                 tcToIndex[fts.textureContainers[i].tc] = i;
             }
+
+            //add material for tex = 0
+            materials[materials.Length - 1] = MaterialsDatabase.NotFound;
+            tcToIndex[0] = materials.Length - 1;
 
             List<Vector3>[] subMeshVerts = new List<Vector3>[materials.Length];
             List<Vector2>[] subMeshUvs = new List<Vector2>[materials.Length];
@@ -72,7 +76,7 @@ namespace Assets.Scripts.ArxLevel
                     if (!tcToIndex.TryGetValue(poly.tex, out ind))
                     {
                         Debug.Log("not found: " + poly.tex);
-                        ind = 0; //use 0 as default for now, gotta add a seperate one for that
+                        ind = materials.Length - 1; //use the not found material, which is last in materials
                     }
 
                     var verts = subMeshVerts[ind];
