@@ -16,6 +16,22 @@ namespace Assets.Scripts.ArxLevel
     /// </summary>
     public class ArxLevelBigMesh
     {
+        class SubMeshData
+        {
+            public Material material;
+
+            public List<Vector3> verts = new List<Vector3>();
+            public List<Vector2> uvs = new List<Vector2>();
+            public List<Vector3> norms = new List<Vector3>();
+            public List<Color> colors = new List<Color>();
+            public List<int> indices = new List<int>();
+
+            public SubMeshData(Material material)
+            {
+                this.material = material;
+            }
+        }
+
         readonly ArxLevel level;
 
         public ArxLevelBigMesh(ArxLevel level)
@@ -28,31 +44,18 @@ namespace Assets.Scripts.ArxLevel
             var fts = level.FTS;
             var llf = level.LLF;
 
-            Material[] materials = new Material[fts.textureContainers.Length + 1];
+            Dictionary<ArxMaterialManager.ArxMaterialKey, SubMeshData> subMeshes = new Dictionary<ArxMaterialManager.ArxMaterialKey, SubMeshData>();
+            SubMeshData notFoundSubMesh = new SubMeshData(MaterialsDatabase.NotFound);
+            subMeshes[new ArxMaterialManager.ArxMaterialKey("", PolyType.GLOW)] = notFoundSubMesh; //so we can use it in a for over subMeshes later
+
+            string[] texArxPaths = new string[fts.textureContainers.Length];
             Dictionary<int, int> tcToIndex = new Dictionary<int, int>();
             for (int i = 0; i < fts.textureContainers.Length; i++)
             {
-                materials[i] = ArxLevelMeshShared.GetMaterial(ArxIOHelper.GetString(fts.textureContainers[i].fic));
+                texArxPaths[i] = ArxIOHelper.GetString(fts.textureContainers[i].fic);
                 tcToIndex[fts.textureContainers[i].tc] = i;
             }
 
-            //add material for tex = 0
-            materials[materials.Length - 1] = MaterialsDatabase.NotFound;
-            tcToIndex[0] = materials.Length - 1;
-
-            List<Vector3>[] subMeshVerts = new List<Vector3>[materials.Length];
-            List<Vector2>[] subMeshUvs = new List<Vector2>[materials.Length];
-            List<Vector3>[] subMeshNorms = new List<Vector3>[materials.Length];
-            List<Color>[] subMeshColors = new List<Color>[materials.Length];
-            List<int>[] subMeshIndices = new List<int>[materials.Length];
-            for (int i = 0; i < materials.Length; i++)
-            {
-                subMeshVerts[i] = new List<Vector3>();
-                subMeshUvs[i] = new List<Vector2>();
-                subMeshNorms[i] = new List<Vector3>();
-                subMeshColors[i] = new List<Color>();
-                subMeshIndices[i] = new List<int>();
-            }
 
             int lightIndex = 0;
             for (int c = 0; c < fts.cells.Length; c++)
@@ -62,21 +65,33 @@ namespace Assets.Scripts.ArxLevel
                 {
                     var poly = cell.polygons[p];
 
-                    var ind = 0;
-                    if (!tcToIndex.TryGetValue(poly.tex, out ind))
+                    SubMeshData subMesh;
+                    if (tcToIndex.TryGetValue(poly.tex, out int textureIndex))
                     {
-                        Debug.Log("not found: " + poly.tex);
-                        ind = materials.Length - 1; //use the not found material, which is last in materials
+                        var key = new ArxMaterialManager.ArxMaterialKey(texArxPaths[textureIndex], poly.type);
+                        if (!subMeshes.TryGetValue(key, out subMesh))
+                        {
+                            subMesh = new SubMeshData(ArxMaterialManager.GetArxLevelMaterial(texArxPaths[textureIndex], poly.type));
+                            subMeshes[key] = subMesh;
+                        }
+                    }
+                    else
+                    {
+                        if (poly.tex != 0)
+                        {
+                            Debug.Log("not found: " + poly.tex);
+                        }
+                        subMesh = notFoundSubMesh; //use not found submesh
                     }
 
-                    var verts = subMeshVerts[ind];
-                    var uvs = subMeshUvs[ind];
-                    var norms = subMeshNorms[ind];
-                    var colors = subMeshColors[ind];
-                    var indices = subMeshIndices[ind];
+                    var verts = subMesh.verts;
+                    var uvs = subMesh.uvs;
+                    var norms = subMesh.norms;
+                    var colors = subMesh.colors;
+                    var indices = subMesh.indices;
 
                     int firstVert = verts.Count;
-                    if ((poly.type & PolyType.POLY_QUAD) != 0)
+                    if (poly.type.HasFlag(PolyType.QUAD))
                     { //QUAD
                         for (int i = 0; i < 4; i++)
                         {
@@ -160,22 +175,24 @@ namespace Assets.Scripts.ArxLevel
             m.Optimize();
             */
 
-            for (int i = 0; i < materials.Length; i++)
+            foreach (var kv in subMeshes)
             {
+                var subMesh = kv.Value;
+
                 GameObject matObj = new GameObject();
 
                 Mesh m = new Mesh();
 
-                m.vertices = subMeshVerts[i].ToArray();
-                m.uv = subMeshUvs[i].ToArray();
-                m.normals = subMeshNorms[i].ToArray();
-                m.colors = subMeshColors[i].ToArray();
-                m.triangles = subMeshIndices[i].ToArray();
+                m.vertices = subMesh.verts.ToArray();
+                m.uv = subMesh.uvs.ToArray();
+                m.normals = subMesh.norms.ToArray();
+                m.colors = subMesh.colors.ToArray();
+                m.triangles = subMesh.indices.ToArray();
 
                 var mf = matObj.AddComponent<MeshFilter>();
                 mf.sharedMesh = m;
                 var mr = matObj.AddComponent<MeshRenderer>();
-                mr.sharedMaterial = materials[i];
+                mr.sharedMaterial = subMesh.material;
 
                 matObj.transform.SetParent(lvl.transform);
             }

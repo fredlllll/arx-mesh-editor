@@ -16,7 +16,7 @@ namespace Assets.Scripts.FTS_IO
         public SavedVec3[] normals;
         public float transval;
         public float area;
-        public int type;
+        public PolyType type;
         public short room;
         public short paddy;
     }
