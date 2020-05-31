@@ -7,7 +7,7 @@ namespace Assets.Scripts.FTS_IO
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
     public struct EERIE_IO_EERIEPOLY
     {
-        public int type; // at least 16 bits
+        public int type;
         public SavedVec3 min;
         public SavedVec3 max;
         public SavedVec3 norm;

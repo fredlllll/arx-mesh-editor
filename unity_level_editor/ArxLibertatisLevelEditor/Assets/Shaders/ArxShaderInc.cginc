@@ -61,7 +61,7 @@ fixed4 frag(v2f i) : SV_Target
 #ifdef TRANSPARENT
 	float collAdd = col.r + col.g + col.b;
 	if (collAdd == 0) {
-		col.a = 0;
+		col.a = 0;//TODO: transparency types ugh
 	}
 #endif
 

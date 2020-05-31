@@ -53,13 +53,13 @@ namespace Assets.Scripts.Shared_IO
         public SavedAnglef(Vector3 euler)
         {
             a = euler.x; //TODO: check if this is rads or degrees and if its flipped or anything
-            b = euler.y;
+            b = euler.y+90;
             g = euler.z;
         }
 
         public Vector3 ToEuler()
         {
-            return new Vector3(a, b, g);
+            return new Vector3(a, b-90, g); //TODO: seems that rotation is handled differently depending on what type of object its used on...
         }
     }
 
