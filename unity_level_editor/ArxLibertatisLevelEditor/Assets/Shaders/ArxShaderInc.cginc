@@ -38,7 +38,7 @@ v2f vert(appdata v)
 	o.uv.y += _Time.y;
 #endif
 #if defined(LAVA) && defined(FALL)
-	o.uv.y += _Time.y / 12f;
+	o.uv.y += _Time.y / 12;
 #endif
 
 #ifdef GLOW

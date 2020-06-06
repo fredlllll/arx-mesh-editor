@@ -68,6 +68,7 @@ namespace Assets.Scripts.ArxLevel
         GameObject pathsObject;
 
         ArxLevelBigMesh levelBigMesh;
+        ArxLevelAnchors levelAnchors;
         ArxLevelCellMesh levelCellMesh;
 
         void LoadFiles()
@@ -216,10 +217,14 @@ namespace Assets.Scripts.ArxLevel
 
         void CreateMesh()
         {
-            //levelBigMesh = new ArxLevelBigMesh(this);
-            //levelBigMesh.CreateMesh();
-            levelCellMesh = new ArxLevelCellMesh(this);
-            levelCellMesh.CreateMesh();
+            levelBigMesh = new ArxLevelBigMesh(this);
+            levelBigMesh.CreateMesh();
+
+            levelAnchors = new ArxLevelAnchors(this);
+            var anchors = levelAnchors.CreateAnchors();
+            anchors.transform.SetParent(LevelObject.transform);
+            /*levelCellMesh = new ArxLevelCellMesh(this);
+            levelCellMesh.CreateMesh();*/
         }
 
         public void Load(string name)
