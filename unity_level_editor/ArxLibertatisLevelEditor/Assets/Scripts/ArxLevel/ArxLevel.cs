@@ -14,52 +14,44 @@ namespace Assets.Scripts.ArxLevel
 {
     public class ArxLevel
     {
-        private DLF_IO.DLF_IO dlf;
-        public DLF_IO.DLF_IO DLF
-        {
-            get { return dlf; }
-        }
-
         public Vector3 EditCameraPos
         {
-            get { return dlf.header.positionEdit.ToVector3(); }
-            set { dlf.header.positionEdit = new SavedVec3(value); }
+            get;
+            set;
         }
         public Vector3 EditCameraEuler
         {
-            get { return dlf.header.angleEdit.ToEuler(); }
-            set { dlf.header.angleEdit = new SavedAnglef(value); }
+            get;
+            set;
         }
+        private Vector3 levelOffset;
         public Vector3 LevelOffset
         {
-            get { return dlf.header.offset.ToVector3(); }
+            get { return levelOffset; }
             set
             {
-                dlf.header.offset = new SavedVec3(value);
+                levelOffset = value;
                 LevelObject.transform.localPosition = value;
             }
         }
 
-        public string SceneName
+        /*public string SceneName
         {
             get { return ArxIOHelper.GetString(dlf.scenes[0].name); }
             set { dlf.scenes[0].name = ArxIOHelper.GetBytes(value, 512); }
-        }
+        }*/
 
-        private LLF_IO.LLF_IO llf;
-        public LLF_IO.LLF_IO LLF
+        public string Name
         {
-            get { return llf; }
+            get;
+            private set;
         }
-        private FTS_IO.FTS_IO fts;
-        public FTS_IO.FTS_IO FTS
+
+        public ArxLevelNative ArxLevelNative
         {
-            get { return fts; }
+            get;
+            private set;
         }
-
-        string name;
-
-        public string Name { get { return name; } }
 
         public GameObject LevelObject { get; private set; }
         GameObject intersObject;
@@ -70,36 +62,6 @@ namespace Assets.Scripts.ArxLevel
         ArxLevelBigMesh levelBigMesh;
         ArxLevelAnchors levelAnchors;
         ArxLevelCellMesh levelCellMesh;
-
-        void LoadFiles()
-        {
-            var dlfPath = Path.Combine(ArxDirs.DLFDir, name, name + ".dlf");
-            var llfPath = Path.Combine(ArxDirs.LLFDir, name, name + ".llf");
-            var ftsPath = Path.Combine(ArxDirs.FTSDir, name, "fast.fts");
-
-            //DEBUG: use unpacked versions of files for now
-            //dlfPath += ".unpacked";
-            //llfPath += ".unpacked";
-            //ftsPath += ".unpacked";
-
-            dlf = new DLF_IO.DLF_IO();
-            using (FileStream fs = new FileStream(dlfPath, FileMode.Open, FileAccess.Read))
-            {
-                dlf.LoadFrom(DLF_IO.DLF_IO.EnsureUnpacked(fs));
-            }
-
-            llf = new LLF_IO.LLF_IO();
-            using (FileStream fs = new FileStream(llfPath, FileMode.Open, FileAccess.Read))
-            {
-                llf.LoadFrom(LLF_IO.LLF_IO.EnsureUnpacked(fs));
-            }
-
-            fts = new FTS_IO.FTS_IO();
-            using (FileStream fs = new FileStream(ftsPath, FileMode.Open, FileAccess.Read))
-            {
-                fts.LoadFrom(FTS_IO.FTS_IO.EnsureUnpacked(fs));
-            }
-        }
 
         void ProcessDLF()
         {
@@ -122,7 +84,7 @@ namespace Assets.Scripts.ArxLevel
 
         void CreateInters()
         {
-            for (int i = 0; i < dlf.inters.Length; i++)
+            for (int i = 0; i < ArxLevelNative.DLF.inters.Length; i++)
             {
                 var interObject = new GameObject();
                 interObject.transform.SetParent(intersObject.transform);
@@ -135,16 +97,16 @@ namespace Assets.Scripts.ArxLevel
         void CreateLightingDLF()
         {
             //because lighting has been moved to LLF this will most likely never be used
-            if (dlf.header.lighting == 0) { return; }
+            if (ArxLevelNative.DLF.header.lighting == 0) { return; }
 
             Debug.Log("if you see this, lighting is present in DLF, write code for it!");
         }
 
         void CreateLightsDLF()
         {
-            for (int i = 0; i < dlf.lights.Length; i++)
+            for (int i = 0; i < ArxLevelNative.DLF.lights.Length; i++)
             {
-                var light = dlf.lights[i];
+                var light = ArxLevelNative.DLF.lights[i];
                 var lightObject = new GameObject("light " + i);
                 lightObject.transform.SetParent(lightsObject.transform);
 
@@ -163,7 +125,7 @@ namespace Assets.Scripts.ArxLevel
 
         void CreateFogs()
         {
-            for (int i = 0; i < dlf.fogs.Length; i++)
+            for (int i = 0; i < ArxLevelNative.DLF.fogs.Length; i++)
             {
                 //TODO: fogs are apparently points where fog particles are spawned in an interval
                 //fog extent depends on type. if its directional, no extent, otherwise extent 100
@@ -172,9 +134,9 @@ namespace Assets.Scripts.ArxLevel
 
         void CreatePaths()
         {
-            for (int i = 0; i < dlf.paths.Length; i++)
+            for (int i = 0; i < ArxLevelNative.DLF.paths.Length; i++)
             {
-                var path = dlf.paths[i];
+                var path = ArxLevelNative.DLF.paths[i];
                 var pathObject = new GameObject(ArxIOHelper.GetString(path.header.name));
                 pathObject.transform.SetParent(pathsObject.transform);
 
@@ -185,12 +147,12 @@ namespace Assets.Scripts.ArxLevel
 
         void CreateLightsLLF()
         {
-            Debug.Log("numLights: " + llf.lights.Length);
+            Debug.Log("numLights: " + ArxLevelNative.LLF.lights.Length);
         }
 
         void CreateLighting()
         {
-            Debug.Log("numLightings: " + llf.lightColors.Length);
+            Debug.Log("numLightings: " + ArxLevelNative.LLF.lightColors.Length);
         }
 
         void CreateLights(DANAE_IO_LIGHT[] lights)
@@ -229,7 +191,10 @@ namespace Assets.Scripts.ArxLevel
 
         public void Load(string name)
         {
-            this.name = name;
+            ArxLevelNative = new ArxLevelNative();
+            ArxLevelNative.LoadLevel(name);
+
+            Name = name;
 
             LevelObject = new GameObject(name);
 
@@ -242,18 +207,25 @@ namespace Assets.Scripts.ArxLevel
             pathsObject = new GameObject(name + "_paths");
             pathsObject.transform.SetParent(LevelObject.transform);
 
-            LoadFiles();
-
-            LevelObject.transform.localPosition = dlf.header.offset.ToVector3();
+            EditCameraPos = ArxLevelNative.DLF.header.positionEdit.ToVector3();
+            EditCameraEuler = ArxLevelNative.DLF.header.angleEdit.ToEuler();
+            LevelOffset = ArxLevelNative.DLF.header.offset.ToVector3();
 
             ProcessDLF();
             ProcessLLF();
             ProcessFTS();
 
-            Vector3 sceneOffset = fts.sceneHeader.Mscenepos.ToVector3();
+            Vector3 sceneOffset = ArxLevelNative.FTS.sceneHeader.Mscenepos.ToVector3();
             intersObject.transform.localPosition = sceneOffset;
 
             LevelObject.transform.localScale = new Vector3(0.01f, -0.01f, 0.01f); //1 unit is 1 cm in arx, so scale down so one unit is one meter (at least perceived)
+        }
+
+        public void Save(string name)
+        {
+            //TODO: set values on arx level native
+
+            ArxLevelNative.SaveLevel(name);
         }
     }
 }

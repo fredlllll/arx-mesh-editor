@@ -14,7 +14,7 @@ namespace Assets.Scripts.DataSync
     {
         public void LoadFrom(ArxLevel.ArxLevel level, int index)
         {
-            DLF_IO_INTER inter = level.DLF.inters[index];
+            DLF_IO_INTER inter = level.ArxLevelNative.DLF.inters[index];
 
             name = ArxIOHelper.GetString(inter.name);
 

@@ -48,13 +48,15 @@ namespace Assets.Scripts.ArxLevel
 
         public void CreateMesh()
         {
-            cells = new GameObject[level.FTS.sceneHeader.sizex][];
+            var fts = level.ArxLevelNative.FTS;
+
+            cells = new GameObject[fts.sceneHeader.sizex][];
             CellMeshData[][] cellMeshDatas = new CellMeshData[cells.Length][];
             for (int i = 0; i < cells.Length; i++)
             {
-                cells[i] = new GameObject[level.FTS.sceneHeader.sizez];
-                cellMeshDatas[i] = new CellMeshData[level.FTS.sceneHeader.sizez];
-                for (int j = 0; j < level.FTS.sceneHeader.sizez; j++)
+                cells[i] = new GameObject[fts.sceneHeader.sizez];
+                cellMeshDatas[i] = new CellMeshData[fts.sceneHeader.sizez];
+                for (int j = 0; j < fts.sceneHeader.sizez; j++)
                 {
                     var tmp = cells[i][j] = new GameObject();
                     tmp.transform.SetParent(cellMesh.transform);
@@ -65,13 +67,13 @@ namespace Assets.Scripts.ArxLevel
             LoadTextures();
 
             //TODO: could parallelize this
-            for (int x = 0; x < level.FTS.sceneHeader.sizex; x++)
+            for (int x = 0; x < fts.sceneHeader.sizex; x++)
             {
-                for (int z = 0; z < level.FTS.sceneHeader.sizez; z++)
+                for (int z = 0; z < fts.sceneHeader.sizez; z++)
                 {
-                    int cellIndex = x * level.FTS.sceneHeader.sizez + z;
+                    int cellIndex = x * fts.sceneHeader.sizez + z;
 
-                    var cell = level.FTS.cells[cellIndex];
+                    var cell = fts.cells[cellIndex];
                     var cellMeshData = cellMeshDatas[x][z];
 
                     for (int i = 0; i < cell.polygons.Length; i++)
@@ -98,9 +100,9 @@ namespace Assets.Scripts.ArxLevel
             }
 
             //make meshes
-            for (int x = 0; x < level.FTS.sceneHeader.sizex; x++)
+            for (int x = 0; x < fts.sceneHeader.sizex; x++)
             {
-                for (int z = 0; z < level.FTS.sceneHeader.sizez; z++)
+                for (int z = 0; z < fts.sceneHeader.sizez; z++)
                 {
                     var cellObject = cells[x][z];
                     var cellData = cellMeshDatas[x][z];

@@ -29,12 +29,14 @@ namespace Assets.Scripts.ArxLevel
 
         protected void LoadTextures()
         {
-            texArxPaths = new string[level.FTS.textureContainers.Length];
+            var fts = level.ArxLevelNative.FTS;
+
+            texArxPaths = new string[fts.textureContainers.Length];
             tcToIndex = new Dictionary<int, int>();
-            for (int i = 0; i < level.FTS.textureContainers.Length; i++)
+            for (int i = 0; i < fts.textureContainers.Length; i++)
             {
-                texArxPaths[i] = ArxIOHelper.GetString(level.FTS.textureContainers[i].fic);
-                tcToIndex[level.FTS.textureContainers[i].tc] = i;
+                texArxPaths[i] = ArxIOHelper.GetString(fts.textureContainers[i].fic);
+                tcToIndex[fts.textureContainers[i].tc] = i;
             }
         }
 
@@ -49,7 +51,7 @@ namespace Assets.Scripts.ArxLevel
                     data.verts.Add(new Vector3(vert.posX, vert.posY, vert.posZ));
                     data.uvs.Add(new Vector2(vert.texU, 1 - vert.texV));
                     data.norms.Add(poly.normals[i].ToVector3());
-                    data.colors.Add(ArxIOHelper.FromBGRA(level.LLF.lightColors[lightIndex++]));
+                    data.colors.Add(ArxIOHelper.FromBGRA(level.ArxLevelNative.LLF.lightColors[lightIndex++]));
                 }
 
                 data.indices.Add(firstVert);
@@ -67,7 +69,7 @@ namespace Assets.Scripts.ArxLevel
                     data.verts.Add(new Vector3(vert.posX, vert.posY, vert.posZ));
                     data.uvs.Add(new Vector2(vert.texU, 1 - vert.texV));
                     data.norms.Add(poly.normals[i].ToVector3());
-                    data.colors.Add(ArxIOHelper.FromBGRA(level.LLF.lightColors[lightIndex++]));
+                    data.colors.Add(ArxIOHelper.FromBGRA(level.ArxLevelNative.LLF.lightColors[lightIndex++]));
                 }
 
                 data.indices.Add(firstVert);

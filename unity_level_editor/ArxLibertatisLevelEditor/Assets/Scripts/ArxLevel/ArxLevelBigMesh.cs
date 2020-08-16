@@ -18,7 +18,7 @@ namespace Assets.Scripts.ArxLevel
         {
             CreateMeshBegin();
 
-            var fts = level.FTS;
+            var fts = level.ArxLevelNative.FTS;
 
             Dictionary<ArxMaterialKey, SubMeshData> subMeshes = new Dictionary<ArxMaterialKey, SubMeshData>();
             SubMeshData notFoundSubMesh = new SubMeshData(MaterialsDatabase.NotFound);
