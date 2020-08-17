@@ -1,4 +1,7 @@
-﻿using Assets.Scripts.DLF_IO;
+﻿using Assets.Scripts.ArxNative;
+using Assets.Scripts.ArxNative.IO;
+using Assets.Scripts.ArxNative.IO.DLF;
+using Assets.Scripts.ArxNative.IO.FTL;
 using Assets.Scripts.Util;
 using System;
 using System.Collections.Generic;
@@ -27,9 +30,9 @@ namespace Assets.Scripts.DataSync
             var ftlPath = Path.Combine(ArxDirs.DataDir,"game", ArxIOHelper.ArxPathToPlatformPath(interPath + ".ftl"));
             if (File.Exists(ftlPath))
             {
-                FTL_IO.FTL_IO ftl = new FTL_IO.FTL_IO();
+                FTL_IO ftl = new FTL_IO();
                 using(var fs = new FileStream(ftlPath, FileMode.Open, FileAccess.Read))
-                using(var unp = FTL_IO.FTL_IO.EnsureUnpacked(fs))
+                using(var unp = FTL_IO.EnsureUnpacked(fs))
                 {
                     ftl.ReadFrom(unp);
                 }

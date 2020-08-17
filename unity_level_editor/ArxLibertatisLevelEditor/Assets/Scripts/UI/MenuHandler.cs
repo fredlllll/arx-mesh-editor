@@ -1,4 +1,7 @@
 ﻿using Assets.Scripts.ArxLevel;
+using Assets.Scripts.ArxNative.IO.DLF;
+using Assets.Scripts.ArxNative.IO.FTS;
+using Assets.Scripts.ArxNative.IO.LLF;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,7 +15,7 @@ namespace Assets.Scripts.UI
 {
     public class MenuHandler : MonoBehaviour
     {
-        public ArxLevelEditor editor;
+        public ArxLevelEditor.ArxLevelEditor editor;
 
         public InputField levelName;
 
@@ -57,7 +60,7 @@ namespace Assets.Scripts.UI
             llf += ".unpacked";
             fts += ".unpacked";
 
-            var DLF = new DLF_IO.DLF_IO();
+            var DLF = new DLF_IO();
             byte[] dlfBytesIn;
             using (FileStream fs = new FileStream(dlf, FileMode.Open, FileAccess.Read))
             {
@@ -75,7 +78,7 @@ namespace Assets.Scripts.UI
                 dlfOut.CopyTo(fs);
             }
 
-            var LLF = new LLF_IO.LLF_IO();
+            var LLF = new LLF_IO();
             byte[] llfBytesIn;
             using (FileStream fs = new FileStream(llf, FileMode.Open, FileAccess.Read))
             {
@@ -88,7 +91,7 @@ namespace Assets.Scripts.UI
             LLF.WriteTo(llfOut);
             byte[] llfBytesOut = llfOut.ToArray();
 
-            var FTS = new FTS_IO.FTS_IO();
+            var FTS = new FTS_IO();
             byte[] ftsBytesIn;
             using (FileStream fs = new FileStream(fts, FileMode.Open, FileAccess.Read))
             {

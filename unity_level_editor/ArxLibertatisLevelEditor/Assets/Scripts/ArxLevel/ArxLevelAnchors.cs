@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.Util;
+﻿using Assets.Scripts.ArxLevel.Mesh;
+using Assets.Scripts.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,7 +48,7 @@ namespace Assets.Scripts.ArxLevel
                 }
             }
 
-            var m = new Mesh();
+            var m = new UnityEngine.Mesh();
             m.SetVertices(vertices);
             m.SetColors(colors);
             m.subMeshCount = 1;

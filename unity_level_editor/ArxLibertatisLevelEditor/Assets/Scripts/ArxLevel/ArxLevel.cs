@@ -1,6 +1,8 @@
-﻿using Assets.Scripts.Data;
+﻿using Assets.Scripts.ArxNative;
+using Assets.Scripts.ArxNative.IO;
+using Assets.Scripts.ArxNative.IO.Shared_IO;
+using Assets.Scripts.Data;
 using Assets.Scripts.DataSync;
-using Assets.Scripts.Shared_IO;
 using Assets.Scripts.Util;
 using System;
 using System.Collections.Generic;
@@ -59,9 +61,9 @@ namespace Assets.Scripts.ArxLevel
         GameObject fogsObject;
         GameObject pathsObject;
 
-        ArxLevelBigMesh levelBigMesh;
+        Mesh.BigMesh levelBigMesh;
         ArxLevelAnchors levelAnchors;
-        ArxLevelCellMesh levelCellMesh;
+        Mesh.CellMesh levelCellMesh;
 
         void ProcessDLF()
         {
@@ -179,7 +181,7 @@ namespace Assets.Scripts.ArxLevel
 
         void CreateMesh()
         {
-            levelBigMesh = new ArxLevelBigMesh(this);
+            levelBigMesh = new Mesh.BigMesh(this);
             levelBigMesh.CreateMesh();
 
             levelAnchors = new ArxLevelAnchors(this);

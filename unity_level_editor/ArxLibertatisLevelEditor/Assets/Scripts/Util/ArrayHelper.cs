@@ -8,6 +8,14 @@ namespace Assets.Scripts.Util
 {
     public static class ArrayHelper
     {
+        /// <summary>
+        /// changes an arrays length if necessary. filling up empty spaces with filler, or truncating extra items
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="arr"></param>
+        /// <param name="length"></param>
+        /// <param name="filler"></param>
+        /// <returns></returns>
         public static T[] FixArrayLength<T>(T[] arr, int length, T filler = default(T))
         {
             if (arr.Length == length)
@@ -15,7 +23,7 @@ namespace Assets.Scripts.Util
                 return arr;
             }
             var retval = new T[length];
-            int i = 0;
+            int i;
             for (i = 0; i < length && i < arr.Length; i++)
             {
                 retval[i] = arr[i];
@@ -28,6 +36,13 @@ namespace Assets.Scripts.Util
             return retval;
         }
 
+        /// <summary>
+        /// trimming the last elements matching trim from the array
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="arr"></param>
+        /// <param name="trim"></param>
+        /// <returns></returns>
         public static T[] TrimEnd<T>(T[] arr, T trim)
         {
             int end = arr.Length - 1;

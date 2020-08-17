@@ -1,4 +1,6 @@
-﻿using Assets.Scripts.Util;
+﻿using Assets.Scripts.ArxNative;
+using Assets.Scripts.ArxNative.IO;
+using Assets.Scripts.Util;
 using External;
 using System.Collections.Generic;
 using System.IO;
@@ -8,7 +10,8 @@ namespace Assets.Scripts
 {
     public static class TexturesCache
     {
-        static Dictionary<string, Texture2D> textures = new Dictionary<string, Texture2D>();
+        private static readonly Dictionary<string, Texture2D> textures = new Dictionary<string, Texture2D>();
+        private static readonly BMPLoader bmpLoader = new BMPLoader();
 
         public static Texture2D GetTexture(string arxPath)
         {
@@ -37,14 +40,9 @@ namespace Assets.Scripts
             else if (File.Exists(absPathNoExt + ".bmp"))
             {
                 absPath = absPathNoExt + ".bmp";
-
-                var loader = new BMPLoader();
-
-                var bmp = loader.LoadBMP(absPath);
+                var bmp = bmpLoader.LoadBMP(absPath);
                 retval = bmp.ToTexture2D();
             }
-
-           
 
             textures[absPathNoExt] = retval;
 
