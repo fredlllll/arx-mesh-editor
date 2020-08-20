@@ -1,0 +1,56 @@
+/*somehow give the structs color*/
+.struct:nth-child(1n){
+    background-color:red;
+}
+.struct:nth-child(2n){
+    background-color:yellow;
+}
+.struct:nth-child(3n){
+    background-color:green;
+}
+.struct:nth-child(4n){
+    background-color:cyan;
+}
+.struct:nth-child(5n){
+    background-color:blue;
+}
+.struct:nth-child(6n){
+    background-color:pink;
+}
+.struct:nth-child(7n){
+    background-color:purple;
+}
+
+.struct{
+border:2px solid black;
+position:relative;
+}
+.struct > span{ /*TODO: use the first selector*/
+display:inline-block;
+border:1px dotted black;
+}
+.struct > .struct{
+margin-left:10px;
+margin-top:5px;
+border-right:none;
+}
+.struct > .struct:nth-last-child(1) {
+border-bottom:none;
+}
+.fields{
+margin-left:10px;
+display: grid;
+grid-template-columns:auto auto auto;
+margin-top:5px;
+border-bottom:2px solid black;
+}
+.fields:nth-last-child(1){
+border-bottom:none;
+}
+.fields span{
+border-left:1px solid grey;
+border-top:2px solid black;
+}
+.fields span:nth-child(3n+1){
+border-left:2px solid black;
+}

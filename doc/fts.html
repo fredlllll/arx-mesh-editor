@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>FTS file layout</title>
+<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+<div class="struct red">
+    <span>FTS File[1]</span>
+    <div class="struct yellow">
+        <span>UNIQUE_HEADER1[1]</span>
+        <div class="fields">
+            <span>char[256]</span><span>path</span><span>path to this file</span>
+            <span>s32</span><span>count</span><span>number of UNIQUE_HEADER2 that follow</span>
+            <span>f32</span><span>version</span><span>version of this file</span>
+            <span>s32</span><span>uncompressedsize</span><span>uncompressed size of file</span>
+            <span>s32[3]</span><span>pad</span><span>padding</span>
+        </div>
+    </div>
+    <div class="struct green">
+        <span>UNIQUE_HEADER2[+]</span>
+        <div class="fields">
+            <span>char[256]</span><span>path</span><span>???</span>
+            <span>char[512]</span><span>check</span><span>???</span>
+        </div>
+    </div>
+    <div class="struct cyan">
+        <span>SCENE_HEADER[1]</span>
+        <div class="fields">
+            <span>f32</span><span>version</span><span></span>
+            <span>s32</span><span>sizex</span><span>cell grid x size</span>
+            <span>s32</span><span>sizez</span><span>cell grid z size</span>
+            <span>s32</span><span>nb_textures</span><span>number of TEXTURE_CONTAINER following this</span>
+            <span>s32</span><span>nb_polys</span><span>total number of polys</span>
+            <span>s32</span><span>nb_anchors</span><span>number of anchors following this</span>
+            <span><a href="savedvec3.html">SavedVec3</a></span><span>playerpos</span><span>player position</span>
+            <span><a href="savedvec3.html">SavedVec3</a></span><span>Mscenepos</span><span>offset of the mesh in the virtual world</span>
+            <span>s32</span><span>nb_portals</span><span>number of portals following this</span>
+            <span>s32</span><span>nb_rooms</span><span>number of rooms following this</span>
+        </div>
+    </div>
+    <div class="struct blue">
+        <span>TEXTURE_CONTAINER[SCENE_HEADER.nb_textures]</span>
+        <div class="fields">
+            <span>s32</span><span>tc</span><span>texture container index</span>
+            <span>s32</span><span>temp</span><span>unused</span>
+            <span>char[256]</span><span>fic</span><span>texture arx path</span>
+        </div>
+    </div>
+    <div class="struct pink">
+        <span>Cell[SCENE_HEADER.sizex*SCENE_HEADER.sizez]</span>
+        <div class="struct purple">
+            <span>SCENE_INFO[1]</span>
+            <div class="fields">
+                <span>s32</span><span>nbpoly</span><span>number of EERIEPOLY following this</span>
+                <span>s32</span><span>nbianchors</span><span>number of anchors in this cell</span>
+            </div>
+        </div>
+        <div class="fields">
+            <span><a href="eeriepoly.html">EERIEPOLY</a>[SCENE_INFO.nbpoly]</span><span>polygons</span><span>polygons belonging to this cell</span>
+            <span>s32[SCENE_INFO.nbianchors]</span><span>anchors</span><span>indices of the anchors in this cell</span>
+        </div>
+    </div>
+    <div class="struct green">
+        <span>ANCHOR[SCENE_HEADER.nb_anchors]</span>
+        <div class="struct green">
+            <span>ANCHOR_DATA[1]</span>
+            <div class="fields">
+                <span><a href="savedvec3.html">SavedVec3</a></span><span>pos</span><span>position in the virtual world</span>
+                <span>f32</span><span>radius</span><span>??</span>
+                <span>f32</span><span>height</span><span>??</span>
+                <span>s16</span><span>nb_linked</span><span>number of linked anchors</span>
+                <span>s16</span><span>flags</span><span>??</span>
+            </div>
+        </div>
+        <div class="fields">
+            <span>s32[ANCHOR_DATA.nb_linked]</span><span>linkedAnchors</span><span>indices of the linked anchors</span>
+        </div>
+    </div>
+    <div class="struct cyan">
+        <span>PORTAL[SCENE_HEADER.nb_portals]</span>
+        <div class="fields">
+            <span><a href="eeriepoly.html">EERIEPOLY</a></span><span>poly</span><span>polygon that represents this portal</span>
+            <span>s32</span><span>room_1</span><span>index of room 1 this portal is connected to</span>
+            <span>s32</span><span>room_2</span><span>index of room 2 this portal is connected to</span>
+            <span>s16</span><span>useportal</span><span>??</span>
+            <span>s16</span><span>paddy</span><span>padding??</span>
+        </div>
+    </div>
+    <div class="struct">
+        <span>ROOM[SCENE_HEADER.nb_rooms + 1]</span>
+        <div class="struct">
+            <span>ROOM_DATA[1]</span>
+            <div class="fields">
+                <span>s32</span><span>nb_portals</span><span>number of portals connected to this room</span>
+                <span>s32</span><span>nb_polys</span><span>total numbers of polys in this room</span>
+                <span>s32[6]</span><span>padd</span><span>padding</span>
+            </div>
+        </div>
+        <div class="fields">
+            <span>s32[ROOM_DATA.nb_portals]</span><span>portals</span><span>indices of portals connected to this room</span>
+        </div>
+        <div class="struct">
+            <span>EP_DATA[1]</span>
+            <div class="fields">
+                <span>s16</span><span>px</span><span>??</span>
+                <span>s16</span><span>py</span><span>??</span>
+                <span>s16</span><span>idx</span><span>??</span>
+                <span>s16</span><span>padd</span><span>padding??</span>
+            </div>
+        </div>
+    </div>
+    <div class="struct">
+        <span>ROOM_DIST_DATA[(SCENE_HEADER.nb_rooms + 1)^2]</span>
+        <div class="fields">
+            <span>f32</span><span>distance</span><span>distance between two rooms, -1 means you should just calc flight distance</span>
+            <span><a href="savedvec3.html">SavedVec3</a></span><span>startpos</span><span>first room position</span>
+            <span><a href="savedvec3.html">SavedVec3</a></span><span>endpos</span><span>second room position</span>
+        </div>
+    </div>
+</div>
+</body>
+</html>

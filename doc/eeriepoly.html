@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>EERIEPOLY struct</title>
+<link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+<div class="struct red">
+    <span>EERIEPOLY</span>
+    <div class="struct yellow">
+        <span>VERTEX[4]</span>
+        <div class="fields">
+            <span>f32</span><span>posY</span><span></span>
+            <span>f32</span><span>posX</span><span></span>
+            <span>f32</span><span>posZ</span><span></span>
+            <span>f32</span><span>texU</span><span></span>
+            <span>f32</span><span>texV</span><span></span>
+        </div>
+    </div>
+    <div class="fields">
+        <span>s32</span><span>tex</span><span>texture container index (tc)</span>
+        <span><a href="savedvec3.html">SavedVec3</a></span><span>norm</span><span>poly normal</span>
+        <span><a href="savedvec3.html">SavedVec3</a></span><span>norm2</span><span>maybe normal for second poly if its a quad??</span>
+        <span><a href="savedvec3.html">SavedVec3</a>[4]</span><span>normals</span><span>normals for each of the vertices, making the poly norms redundant??</span>
+        <span>f32</span><span>transval</span><span>transparency value, determines if its transparent cutout or actually transparent etc</span>
+        <span>f32</span><span>area</span><span>area of the poly??</span>
+        <span>PolyType(s32)</span><span>type</span><span>type of the poly as flags</span>
+        <span>s16</span><span>room</span><span>index of the room this cell belongs to</span>
+        <span>s16</span><span>paddy</span><span>padding???</span>
+    </div>
+</div>
+</body>
+</html>
