@@ -1,5 +1,4 @@
 ﻿using Assets.Scripts.Util;
-using System.Collections.ObjectModel;
 
 namespace Assets.Scripts.ArxNative.IO.FTS
 {

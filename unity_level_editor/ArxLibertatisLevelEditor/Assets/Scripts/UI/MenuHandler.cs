@@ -1,13 +1,8 @@
-﻿using Assets.Scripts.ArxLevel;
+﻿using Assets.Scripts.ArxLevelEditor;
 using Assets.Scripts.ArxNative.IO.DLF;
 using Assets.Scripts.ArxNative.IO.FTS;
 using Assets.Scripts.ArxNative.IO.LLF;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -15,13 +10,11 @@ namespace Assets.Scripts.UI
 {
     public class MenuHandler : MonoBehaviour
     {
-        public ArxLevelEditor.ArxLevelEditor editor;
-
         public InputField levelName;
 
         public void OpenMenuClicked()
         {
-            editor.OpenLevel(levelName.text);
+            LevelEditor.OpenLevel(levelName.text);
             gameObject.SetActive(false);
         }
 

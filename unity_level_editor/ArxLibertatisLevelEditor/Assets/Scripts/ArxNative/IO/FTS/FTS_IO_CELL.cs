@@ -1,6 +1,4 @@
 ﻿using Assets.Scripts.Util;
-using System.Collections.ObjectModel;
-using UnityEngine;
 
 namespace Assets.Scripts.ArxNative.IO.FTS
 {

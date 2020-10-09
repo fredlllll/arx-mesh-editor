@@ -1,9 +1,6 @@
-﻿using Assets.Scripts.Data;
+﻿using Assets.Scripts.ArxNative;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Assets.Scripts
@@ -78,7 +75,7 @@ namespace Assets.Scripts
             }
             mat = UnityEngine.Object.Instantiate(mat);
             mat.name = System.IO.Path.GetFileNameWithoutExtension(TextureArxPath); //TODO: probably breaks on linux cause of dir seperator
-            mat.mainTexture = TexturesCache.GetTexture(TextureArxPath);
+            mat.mainTexture = null;// TexturesCache.GetTexture(TextureArxPath);
             if (transparent)
             {//transparents look better with point filtering
                 //TODO: check transval
@@ -104,6 +101,9 @@ namespace Assets.Scripts
         }
     }
 
+    /// <summary>
+    /// a key to identify a material
+    /// </summary>
     public class ArxMaterialKey : ArxMaterialBase, IEquatable<ArxMaterialKey>
     {
         public ArxMaterialKey(string texArxPath, PolyType polyType, float transVal)

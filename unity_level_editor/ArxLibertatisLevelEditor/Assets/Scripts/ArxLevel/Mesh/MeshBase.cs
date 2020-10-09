@@ -1,24 +1,19 @@
-﻿using Assets.Scripts.ArxNative.IO;
+﻿using Assets.Scripts.ArxNative;
+using Assets.Scripts.ArxNative.IO;
 using Assets.Scripts.ArxNative.IO.FTS;
-using Assets.Scripts.Data;
-using Assets.Scripts.Util;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Assets.Scripts.ArxLevel.Mesh
 {
     public abstract class MeshBase
     {
-        public readonly ArxLevel level;
+        public readonly Level level;
 
         protected string[] texArxPaths;
         protected Dictionary<int, int> tcToIndex;
 
-        public MeshBase(ArxLevel level)
+        public MeshBase(Level level)
         {
             this.level = level;
         }

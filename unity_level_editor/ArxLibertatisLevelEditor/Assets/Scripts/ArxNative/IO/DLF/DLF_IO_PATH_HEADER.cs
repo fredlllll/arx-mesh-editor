@@ -1,6 +1,4 @@
 ﻿using Assets.Scripts.ArxNative.IO.Shared_IO;
-using Assets.Scripts.Data;
-using Assets.Scripts.Util;
 using System.Runtime.InteropServices;
 
 namespace Assets.Scripts.ArxNative.IO.DLF

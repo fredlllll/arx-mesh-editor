@@ -1,6 +1,5 @@
 ﻿using Assets.Scripts.ArxNative.IO.Shared_IO;
 using Assets.Scripts.Util;
-using System.Collections.ObjectModel;
 using System.IO;
 
 namespace Assets.Scripts.ArxNative.IO.LLF

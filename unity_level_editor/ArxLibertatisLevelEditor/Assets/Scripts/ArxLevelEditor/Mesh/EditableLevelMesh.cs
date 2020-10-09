@@ -1,0 +1,39 @@
+﻿using Assets.Scripts.ArxLevelEditor.Material;
+using System.Collections.Generic;
+using UnityEngine;
+
+namespace Assets.Scripts.ArxLevelEditor.Mesh
+{
+    public class EditableLevelMesh : MonoBehaviour
+    {
+        readonly Dictionary<EditorMaterialKey, MaterialMesh> materialMeshes = new Dictionary<EditorMaterialKey, MaterialMesh>();
+
+        public IEnumerable<KeyValuePair<EditorMaterialKey, MaterialMesh>> MaterialMeshes
+        {
+            get
+            {
+                return materialMeshes;
+            }
+        }
+
+        public MaterialMesh GetMaterialMesh(EditorMaterialKey key)
+        {
+            if (!materialMeshes.TryGetValue(key, out var retval))
+            {
+                var go = new GameObject();
+                go.transform.SetParent(gameObject.transform);
+                go.transform.localPosition = Vector3.zero;
+                go.transform.localEulerAngles = Vector3.zero;
+                go.transform.localScale = Vector3.one;
+
+                retval = go.AddComponent<MaterialMesh>();
+                retval.Material = EditorMaterial.CreateMaterial(key);
+                
+                materialMeshes[key] = retval;
+            }
+            return retval;
+        }
+
+        
+    }
+}

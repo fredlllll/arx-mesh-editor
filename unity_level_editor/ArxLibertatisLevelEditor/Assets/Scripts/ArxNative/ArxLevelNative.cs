@@ -1,12 +1,7 @@
 ﻿using Assets.Scripts.ArxNative.IO.DLF;
 using Assets.Scripts.ArxNative.IO.FTS;
 using Assets.Scripts.ArxNative.IO.LLF;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Assets.Scripts.ArxNative
 {

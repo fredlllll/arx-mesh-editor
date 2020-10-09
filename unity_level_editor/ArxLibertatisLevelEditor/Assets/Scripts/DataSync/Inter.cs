@@ -1,21 +1,15 @@
-﻿using Assets.Scripts.ArxNative;
+﻿using Assets.Scripts.ArxLevelEditor;
 using Assets.Scripts.ArxNative.IO;
 using Assets.Scripts.ArxNative.IO.DLF;
 using Assets.Scripts.ArxNative.IO.FTL;
-using Assets.Scripts.Util;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Assets.Scripts.DataSync
 {
     public class Inter : MonoBehaviour
     {
-        public void LoadFrom(ArxLevel.ArxLevel level, int index)
+        public void LoadFrom(ArxLevel.Level level, int index)
         {
             DLF_IO_INTER inter = level.ArxLevelNative.DLF.inters[index];
 
@@ -27,12 +21,12 @@ namespace Assets.Scripts.DataSync
             int lastDot = interPath.LastIndexOf('.');
             interPath = interPath.Substring(0, lastDot);
 
-            var ftlPath = Path.Combine(ArxDirs.DataDir,"game", ArxIOHelper.ArxPathToPlatformPath(interPath + ".ftl"));
+            var ftlPath = Path.Combine(EditorSettings.DataDir, "game", ArxIOHelper.ArxPathToPlatformPath(interPath + ".ftl"));
             if (File.Exists(ftlPath))
             {
                 FTL_IO ftl = new FTL_IO();
-                using(var fs = new FileStream(ftlPath, FileMode.Open, FileAccess.Read))
-                using(var unp = FTL_IO.EnsureUnpacked(fs))
+                using (var fs = new FileStream(ftlPath, FileMode.Open, FileAccess.Read))
+                using (var unp = FTL_IO.EnsureUnpacked(fs))
                 {
                     ftl.ReadFrom(unp);
                 }

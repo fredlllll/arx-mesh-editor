@@ -1,10 +1,5 @@
 ﻿using Assets.Scripts.ArxNative.IO.Shared_IO;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Assets.Scripts.ArxNative.IO.FTL
 {

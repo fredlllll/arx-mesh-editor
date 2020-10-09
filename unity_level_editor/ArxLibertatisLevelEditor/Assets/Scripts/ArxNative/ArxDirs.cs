@@ -1,30 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Assets.Scripts.ArxLevelEditor;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Assets.Scripts.ArxNative
 {
     public static class ArxDirs
     {
-        static string dataDir = @"F:\Program Files\Arx Libertatis\paks\"; //for testing
-
-        public static string DataDir
-        {
-            get { return dataDir; }
-            set
-            {
-                dataDir = value;
-            }
-        }
 
         public static string DLFDir
         {
             get
             {
-                return Path.Combine(dataDir, "graph", "levels");
+                return Path.Combine(EditorSettings.DataDir, "graph", "levels");
             }
         }
 
@@ -40,7 +26,7 @@ namespace Assets.Scripts.ArxNative
         {
             get
             {
-                return Path.Combine(dataDir, "game", "graph", "levels");
+                return Path.Combine(EditorSettings.DataDir, "game", "graph", "levels");
             }
         }
     }

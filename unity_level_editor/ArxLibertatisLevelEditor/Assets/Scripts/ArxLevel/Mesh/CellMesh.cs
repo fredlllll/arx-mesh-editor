@@ -1,9 +1,5 @@
-﻿using Assets.Scripts.Data;
-using System;
+﻿using Assets.Scripts.ArxNative;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Assets.Scripts.ArxLevel.Mesh
@@ -41,7 +37,7 @@ namespace Assets.Scripts.ArxLevel.Mesh
         public GameObject[][] cells;
 
 
-        public CellMesh(ArxLevel level) : base(level)
+        public CellMesh(Level level) : base(level)
         {
 
         }

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Assets.Scripts.Data
+namespace Assets.Scripts.ArxNative
 {
     [Flags]
     public enum PolyType : int

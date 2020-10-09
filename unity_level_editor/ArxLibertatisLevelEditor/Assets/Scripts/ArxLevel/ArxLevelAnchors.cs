@@ -1,19 +1,14 @@
 ﻿using Assets.Scripts.ArxLevel.Mesh;
-using Assets.Scripts.Util;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Assets.Scripts.ArxLevel
 {
     public class ArxLevelAnchors
     {
-        private ArxLevel level;
+        private Level level;
 
-        public ArxLevelAnchors(ArxLevel level)
+        public ArxLevelAnchors(Level level)
         {
             this.level = level;
         }

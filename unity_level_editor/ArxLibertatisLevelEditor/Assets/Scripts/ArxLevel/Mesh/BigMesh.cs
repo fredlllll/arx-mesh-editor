@@ -1,5 +1,4 @@
-﻿using Assets.Scripts.Data;
-using Assets.Scripts.Util;
+﻿using Assets.Scripts.ArxNative;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,7 +9,7 @@ namespace Assets.Scripts.ArxLevel.Mesh
     /// </summary>
     public class BigMesh : MeshBase
     {
-        public BigMesh(ArxLevel level) : base(level)
+        public BigMesh(Level level) : base(level)
         {
         }
 
