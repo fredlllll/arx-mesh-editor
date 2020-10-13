@@ -23,9 +23,8 @@ namespace Assets.Scripts.ArxLevelEditor
                     //Load texture if it doesnt exist
                     retval = LoadTexture(path);
                     textures[path] = retval;
-                    return retval;
                 }
-                return null;
+                return retval;
             }
         }
 

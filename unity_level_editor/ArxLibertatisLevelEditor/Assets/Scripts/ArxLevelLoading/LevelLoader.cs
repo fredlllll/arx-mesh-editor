@@ -38,7 +38,8 @@ namespace Assets.Scripts.ArxLevelLoading
                 tcToIndex[fts.textureContainers[i].tc] = i;
             }
 
-            var notFoundMaterialKey = new EditorMaterialKey("", PolyType.GLOW, 0);
+            //TODO: use external placeholder texture so it can be set to 0 on export
+            var notFoundMaterialKey = new EditorMaterialKey(EditorSettings.DataDir + "graph\\interface\\misc\\default[icon].bmp", PolyType.GLOW, 0);
 
             for (int c = 0; c < fts.cells.Length; c++)
             {
@@ -69,7 +70,7 @@ namespace Assets.Scripts.ArxLevelLoading
                                 new Vector2(vert.texU, 1 - vert.texV),
                                 poly.normals[i].ToVector3(),
                                 ArxIOHelper.FromBGRA(lvl.ArxLevelNative.LLF.lightColors[lightIndex++]));
-                            prim.AddVertex(evert);
+                            prim.vertices[i] = evert;
                         }
                     }
                     else
@@ -83,9 +84,16 @@ namespace Assets.Scripts.ArxLevelLoading
                                 new Vector2(vert.texU, 1 - vert.texV),
                                 poly.normals[i].ToVector3(),
                                 ArxIOHelper.FromBGRA(lvl.ArxLevelNative.LLF.lightColors[lightIndex++]));
-                            prim.AddVertex(evert);
+                            prim.vertices[i] = evert;
                         }
                     }
+
+                    prim.norm = poly.norm.ToVector3();
+                    prim.norm2 = poly.norm2.ToVector3();
+                    prim.area = poly.area;
+                    prim.room = poly.room;
+                    prim.paddy = poly.paddy;
+
                     mm.AddPrimitive(prim);
                 }
             }
