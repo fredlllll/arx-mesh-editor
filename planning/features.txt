@@ -1,0 +1,5 @@
+phase 1:
+load level, modify mesh vertices, add vertices, change material properties, save level
+phase 2:
+import external mesh, position, merge into level mesh
+edit nav graph

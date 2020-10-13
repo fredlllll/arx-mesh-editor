@@ -1,0 +1,48 @@
+dlf contains:
+	scenes (just a string of a file like x.scn)
+	interactive objects 
+	potentially level mesh lighting in older versions
+	potentially level light sources that were used to compute level mesh lighting, some are dynamic like torches
+	fogs, an area that spawns fog particles
+	"nodes" that have no documentation about their data structure, and are thus unused
+	paths, dunno what they are used for
+
+fts contains:
+	sceneheader, info about the size of the grid, how many textures polys etc
+	textures
+	cells
+		polys
+			positions, several normals, uvs, type flags, transparency etc
+		anchors
+			position etc, neighbours
+	portals
+		room 1 and 2, polygon forming its shape
+	rooms
+		num of portals and polys
+		indices of portals connected to this room (data duplication)
+		a weird thing called polygon, but it doesnt have enough data to form one
+	room dist data, precalculated distances between rooms
+
+llf contains:
+	lights similar to dlf
+	level mesh lighting
+
+goal: changing fts polys, adding or removing them
+
+things modified by that:
+	potentially dlf lighting, but its all in llf anyway
+	texture list (should form this from cells instead of a loaded database to prevent adding unneeded textures)
+	cell polys (determining what poly belongs to which cell has to be done on save, dont need to edit mesh in cell based mode)
+	rooms polys probably (have to find out what its data actually means)
+
+notes:
+	editing mesh should be one big mesh per material for selecting polygon to edit. (have to figure out what polygon has been clicked)
+	every such submesh needs to maintain a list of polygon properties and a way to associate it with its polygon
+	Maybe:(for ease of removing and adding polygons should always be quads, just that the last vertex gets the same data as the previous one to hide it?)
+	the polygon that is being edited should be removed from its mesh upon selection, and added to the right mesh upon deselection
+
+saving:
+	polygons will be put into one big list, then seperated into cells
+	from this lighting data will be extracted and written to llf
+	then cell polys will be written to fts, and simultaneously the textures
+	might have to change stuff in rooms too, depending on what its data actually means
