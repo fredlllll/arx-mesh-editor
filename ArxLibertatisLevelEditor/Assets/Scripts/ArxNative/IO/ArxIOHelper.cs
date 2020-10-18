@@ -43,5 +43,23 @@ namespace Assets.Scripts.ArxNative.IO
             string[] parts = platformPath.Split(Path.DirectorySeparatorChar);
             return string.Join("\\", parts);
         }
+
+        public static int XZToCellIndex(int x, int z, int sizex, int sizez)
+        {
+            return z * sizex + x;
+        }
+
+        public static uint ToBGRA(Color color)
+        {
+            byte[] bytes = new byte[]
+            {
+                (byte)(color.b*255),
+                (byte)(color.g*255),
+                (byte)(color.r*255),
+                (byte)(color.a*255),
+            };
+
+            return BitConverter.ToUInt32(bytes, 0);
+        }
     }
 }

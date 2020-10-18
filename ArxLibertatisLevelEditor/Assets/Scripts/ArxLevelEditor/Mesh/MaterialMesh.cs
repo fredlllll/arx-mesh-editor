@@ -19,6 +19,19 @@ namespace Assets.Scripts.ArxLevelEditor.Mesh
             }
         }
 
+        public int PrimitiveCount
+        {
+            get
+            {
+                return primitives.Count;
+            }
+        }
+
+        public IEnumerable<EditablePrimitive> Primitives
+        {
+            get { return primitives; }
+        }
+
         readonly List<EditablePrimitive> primitives = new List<EditablePrimitive>();
 
         readonly List<Vector3> verts = new List<Vector3>();
