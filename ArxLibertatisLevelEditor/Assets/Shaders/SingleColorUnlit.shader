@@ -45,6 +45,7 @@
 		fixed4 frag(v2f i) : SV_Target
 		{
 			fixed4 col = i.color;//vertex color
+			col *= _Color;
 			return col;
 		}
 			ENDCG
