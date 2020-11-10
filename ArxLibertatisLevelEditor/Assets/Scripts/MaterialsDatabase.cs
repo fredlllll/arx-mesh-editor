@@ -10,6 +10,7 @@ namespace Assets.Scripts
         public static Material ArxMatTransparent { get; private set; }
         public static Material ArxMatDoubleSidedTransparent { get; private set; }
         public static Material NotFound { get; private set; }
+        public static Material GizmoMaterial { get; private set; }
 
         static MaterialsDatabase()
         {
@@ -20,6 +21,7 @@ namespace Assets.Scripts
 
             NotFound = UnityEngine.Object.Instantiate(Resources.Load<Material>("Materials/NotFound"));
             TEST = UnityEngine.Object.Instantiate(Resources.Load<Material>("Materials/TEST"));
+            GizmoMaterial = Object.Instantiate(Resources.Load<Material>("Materials/Gizmo"));
         }
     }
 }

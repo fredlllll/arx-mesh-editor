@@ -14,7 +14,7 @@ struct v2f
 	float3 normal: NORMAL;
 	float2 uv : TEXCOORD0;
 	UNITY_FOG_COORDS(1)
-		float4 color:COLOR;
+	float4 color:COLOR;
 };
 
 sampler2D _MainTex;
