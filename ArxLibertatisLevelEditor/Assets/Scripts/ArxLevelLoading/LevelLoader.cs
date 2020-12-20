@@ -18,7 +18,9 @@ namespace Assets.Scripts.ArxLevelLoading
 
             Level lvl = new Level(name, lvln);
 
-            LevelEditor.EditorCamera.transform.position = lvln.DLF.header.positionEdit.ToVector3();
+            Vector3 camPos = lvln.DLF.header.positionEdit.ToVector3() / 100;
+            camPos.y *= -1;
+            LevelEditor.EditorCamera.transform.position = camPos;
             LevelEditor.EditorCamera.transform.eulerAngles = lvln.DLF.header.angleEdit.ToEuler();
             lvl.LevelOffset = lvln.DLF.header.offset.ToVector3();
 

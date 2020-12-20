@@ -19,7 +19,9 @@ namespace Assets.Scripts.ArxLevelLoading
         {
             var lvln = level.ArxLevelNative;
 
-            lvln.DLF.header.positionEdit = new SavedVec3(LevelEditor.EditorCamera.transform.position);
+            Vector3 camPos = LevelEditor.EditorCamera.transform.position * 100;
+            camPos.y *= -1;
+            lvln.DLF.header.positionEdit = new SavedVec3(camPos);
             lvln.DLF.header.angleEdit = new SavedAnglef(LevelEditor.EditorCamera.transform.eulerAngles);
             lvln.DLF.header.offset = new SavedVec3(level.LevelOffset);
 
@@ -171,7 +173,7 @@ namespace Assets.Scripts.ArxLevelLoading
             llf.lightingHeader.numLights = lightColors.Count;
             llf.lightColors = new uint[lightColors.Count];
             //update llf
-            for(i =0; i< lightColors.Count; i++)
+            for (i = 0; i < lightColors.Count; i++)
             {
                 llf.lightColors[i] = lightColors[i];
             }
