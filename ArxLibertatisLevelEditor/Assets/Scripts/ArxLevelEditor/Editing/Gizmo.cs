@@ -2,342 +2,86 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Gizmo : MonoBehaviour
+namespace Assets.Scripts.ArxLevelEditor.Editing
 {
-    GameObject moveGameObject, rotateGameObject, scaleGameObject;
-    Mesh move, rotate, scale;
-
-    Material gizmoMaterial;
-
-    void CreateMoveMesh()
+    public class Gizmo : MonoBehaviour
     {
-        move = new Mesh();
-
-        List<Vector3> positions = new List<Vector3>();
-        List<Color> colors = new List<Color>();
-        List<int> indices = new List<int>();
-
-        //x
-        //main arrow part
-        positions.Add(Vector3.zero);
-        positions.Add(Vector3.right);
-
-        //arrow tip
-        positions.Add(Vector3.right);
-        positions.Add(0.9f * Vector3.right + 0.1f * Vector3.up);
-        positions.Add(Vector3.right);
-        positions.Add(0.9f * Vector3.right + 0.1f * Vector3.down);
-        positions.Add(Vector3.right);
-        positions.Add(0.9f * Vector3.right + 0.1f * Vector3.forward);
-        positions.Add(Vector3.right);
-        positions.Add(0.9f * Vector3.right + 0.1f * Vector3.back);
-
-        int vertsPerArrow = positions.Count;
-        for (int i = 0; i < vertsPerArrow; i++)
+        public static Gizmo Instance
         {
-            colors.Add(Color.red);
+            get;
+            private set;
         }
 
-        //y
-        //main arrow part
-        positions.Add(Vector3.zero);
-        positions.Add(Vector3.up);
+        GameObject moveGameObject, rotateGameObject, scaleGameObject;
+        Transform target = null;
 
-        //arrow tip
-        positions.Add(Vector3.up);
-        positions.Add(0.9f * Vector3.up + 0.1f * Vector3.right);
-        positions.Add(Vector3.up);
-        positions.Add(0.9f * Vector3.up + 0.1f * Vector3.left);
-        positions.Add(Vector3.up);
-        positions.Add(0.9f * Vector3.up + 0.1f * Vector3.forward);
-        positions.Add(Vector3.up);
-        positions.Add(0.9f * Vector3.up + 0.1f * Vector3.back);
+        UnityEngine.Material gizmoMaterial;
 
-
-        for (int i = 0; i < vertsPerArrow; i++)
+        void CreateMove()
         {
-            colors.Add(Color.green);
+            moveGameObject = new GameObject();
+            moveGameObject.transform.SetParent(transform);
+            moveGameObject.transform.localPosition = Vector3.zero;
+
+            GizmoCreator.CreateMove(moveGameObject, gizmoMaterial);
         }
 
-        //z
-        //main arrow part
-        positions.Add(Vector3.zero);
-        positions.Add(Vector3.forward);
-
-        //arrow tip
-        positions.Add(Vector3.forward);
-        positions.Add(0.9f * Vector3.forward + 0.1f * Vector3.up);
-        positions.Add(Vector3.forward);
-        positions.Add(0.9f * Vector3.forward + 0.1f * Vector3.down);
-        positions.Add(Vector3.forward);
-        positions.Add(0.9f * Vector3.forward + 0.1f * Vector3.right);
-        positions.Add(Vector3.forward);
-        positions.Add(0.9f * Vector3.forward + 0.1f * Vector3.left);
-
-        for (int i = 0; i < vertsPerArrow; i++)
+        void CreateRotate()
         {
-            colors.Add(Color.blue);
+            rotateGameObject = new GameObject();
+            rotateGameObject.transform.SetParent(transform);
+            rotateGameObject.transform.localPosition = Vector3.zero;
+
+            GizmoCreator.CreateRotate(rotateGameObject, gizmoMaterial);
         }
 
-        //its a simple gizmo, lets not go overboard with the index list till we have way too much time and can actually be smart about it
-        for (int i = 0; i < positions.Count; i++)
+        void CreateScale()
         {
-            indices.Add(i);
+            scaleGameObject = new GameObject();
+            scaleGameObject.transform.SetParent(transform);
+            scaleGameObject.transform.localPosition = Vector3.zero;
+
+            GizmoCreator.CreateScale(scaleGameObject, gizmoMaterial);
         }
 
-        move.vertices = positions.ToArray();
-        move.colors = colors.ToArray();
-        move.SetIndices(indices.ToArray(), MeshTopology.Lines, 0);
-
-        moveGameObject = new GameObject();
-        moveGameObject.transform.SetParent(transform);
-        moveGameObject.transform.localPosition = Vector3.zero;
-        var mf = moveGameObject.AddComponent<MeshFilter>();
-        mf.sharedMesh = move;
-        var mr = moveGameObject.AddComponent<MeshRenderer>();
-        mr.sharedMaterial = gizmoMaterial;
-    }
-
-    void CreateRotateMesh()
-    {
-        rotate = new Mesh();
-
-        List<Vector3> positions = new List<Vector3>();
-        List<Color> colors = new List<Color>();
-        List<int> indices = new List<int>();
-        int circleSteps = 90;
-
-        //x circle
-        Vector3 currentPos = Vector3.up;
-        for (int i = 1; i <= circleSteps; i++)
+        private void Awake()
         {
-            float perc = (float)i / circleSteps;
-
-            float y = Mathf.Cos(perc * Mathf.PI * 2);
-            float z = Mathf.Sin(perc * Mathf.PI * 2);
-            indices.Add(positions.Count);
-            positions.Add(currentPos);
-            indices.Add(positions.Count);
-            positions.Add(currentPos = new Vector3(0, y, z));
-            colors.Add(Color.red);
-            colors.Add(Color.red);
+            Instance = this;
         }
 
-        //y circle
-        currentPos = Vector3.right;
-        for (int i = 1; i <= circleSteps; i++)
+        void Start()
         {
-            float perc = (float)i / circleSteps;
+            gizmoMaterial = Instantiate(MaterialsDatabase.GizmoMaterial); //copy material so we can modify it
 
-            float x = Mathf.Cos(perc * Mathf.PI * 2);
-            float z = Mathf.Sin(perc * Mathf.PI * 2);
-            indices.Add(positions.Count);
-            positions.Add(currentPos);
-            indices.Add(positions.Count);
-            positions.Add(currentPos = new Vector3(x, 0, z));
-            colors.Add(Color.green);
-            colors.Add(Color.green);
+            CreateMove();
+            CreateRotate();
+            CreateScale();
         }
 
-        //z circle
-        currentPos = Vector3.up;
-        for (int i = 1; i <= circleSteps; i++)
+        // Update is called once per frame
+        void Update()
         {
-            float perc = (float)i / circleSteps;
-
-            float y = Mathf.Cos(perc * Mathf.PI * 2);
-            float x = Mathf.Sin(perc * Mathf.PI * 2);
-            indices.Add(positions.Count);
-            positions.Add(currentPos);
-            indices.Add(positions.Count);
-            positions.Add(currentPos = new Vector3(x, y, 0));
-            colors.Add(Color.blue);
-            colors.Add(Color.blue);
+            //Do raycasting from mouse pointer and monitor dragging to do stuff
         }
 
-        rotate.vertices = positions.ToArray();
-        rotate.colors = colors.ToArray();
-        rotate.SetIndices(indices.ToArray(), MeshTopology.Lines, 0);
-
-        rotateGameObject = new GameObject();
-        rotateGameObject.transform.SetParent(transform);
-        rotateGameObject.transform.localPosition = Vector3.zero;
-        var mf = rotateGameObject.AddComponent<MeshFilter>();
-        mf.sharedMesh = rotate;
-        var mr = rotateGameObject.AddComponent<MeshRenderer>();
-        mr.sharedMaterial = gizmoMaterial;
-    }
-
-    void CreateScaleMesh()
-    {
-        scale = new Mesh();
-
-        List<Vector3> positions = new List<Vector3>();
-        List<Color> colors = new List<Color>();
-        List<int> indices = new List<int>();
-
-        //x
-        positions.Add(Vector3.zero);
-        positions.Add(Vector3.right);
-
-        //box
-        positions.Add(0.9f * Vector3.right + 0.1f * Vector3.up + 0.1f * Vector3.forward);
-        positions.Add(0.9f * Vector3.right - 0.1f * Vector3.up + 0.1f * Vector3.forward);
-        positions.Add(0.9f * Vector3.right - 0.1f * Vector3.up + 0.1f * Vector3.forward);
-        positions.Add(0.9f * Vector3.right - 0.1f * Vector3.up - 0.1f * Vector3.forward);
-        positions.Add(0.9f * Vector3.right - 0.1f * Vector3.up - 0.1f * Vector3.forward);
-        positions.Add(0.9f * Vector3.right + 0.1f * Vector3.up - 0.1f * Vector3.forward);
-        positions.Add(0.9f * Vector3.right + 0.1f * Vector3.up - 0.1f * Vector3.forward);
-        positions.Add(0.9f * Vector3.right + 0.1f * Vector3.up + 0.1f * Vector3.forward);
-
-        positions.Add(1.1f * Vector3.right + 0.1f * Vector3.up + 0.1f * Vector3.forward);
-        positions.Add(1.1f * Vector3.right - 0.1f * Vector3.up + 0.1f * Vector3.forward);
-        positions.Add(1.1f * Vector3.right - 0.1f * Vector3.up + 0.1f * Vector3.forward);
-        positions.Add(1.1f * Vector3.right - 0.1f * Vector3.up - 0.1f * Vector3.forward);
-        positions.Add(1.1f * Vector3.right - 0.1f * Vector3.up - 0.1f * Vector3.forward);
-        positions.Add(1.1f * Vector3.right + 0.1f * Vector3.up - 0.1f * Vector3.forward);
-        positions.Add(1.1f * Vector3.right + 0.1f * Vector3.up - 0.1f * Vector3.forward);
-        positions.Add(1.1f * Vector3.right + 0.1f * Vector3.up + 0.1f * Vector3.forward);
-
-        positions.Add(0.9f * Vector3.right + 0.1f * Vector3.up + 0.1f * Vector3.forward);
-        positions.Add(1.1f * Vector3.right + 0.1f * Vector3.up + 0.1f * Vector3.forward);
-        positions.Add(0.9f * Vector3.right - 0.1f * Vector3.up + 0.1f * Vector3.forward);
-        positions.Add(1.1f * Vector3.right - 0.1f * Vector3.up + 0.1f * Vector3.forward);
-        positions.Add(0.9f * Vector3.right - 0.1f * Vector3.up - 0.1f * Vector3.forward);
-        positions.Add(1.1f * Vector3.right - 0.1f * Vector3.up - 0.1f * Vector3.forward);
-        positions.Add(0.9f * Vector3.right + 0.1f * Vector3.up - 0.1f * Vector3.forward);
-        positions.Add(1.1f * Vector3.right + 0.1f * Vector3.up - 0.1f * Vector3.forward);
-
-        int vertsPerArrow = positions.Count;
-        for (int i = 0; i < vertsPerArrow; i++)
+        public static void HighlightX()
         {
-            colors.Add(Color.red);
+            Instance.gizmoMaterial.color = new Color(1, 0.75f, 0.75f);
+        }
+        public static void HighlightY()
+        {
+            Instance.gizmoMaterial.color = new Color(0.75f, 1, 0.75f);
+        }
+        public static void HighlightZ()
+        {
+            Instance.gizmoMaterial.color = new Color(0.75f, 0.75f, 1);
         }
 
-        //y
-        positions.Add(Vector3.zero);
-        positions.Add(Vector3.up);
-
-        //box
-        positions.Add(0.9f * Vector3.up + 0.1f * Vector3.right + 0.1f * Vector3.forward);
-        positions.Add(0.9f * Vector3.up - 0.1f * Vector3.right + 0.1f * Vector3.forward);
-        positions.Add(0.9f * Vector3.up - 0.1f * Vector3.right + 0.1f * Vector3.forward);
-        positions.Add(0.9f * Vector3.up - 0.1f * Vector3.right - 0.1f * Vector3.forward);
-        positions.Add(0.9f * Vector3.up - 0.1f * Vector3.right - 0.1f * Vector3.forward);
-        positions.Add(0.9f * Vector3.up + 0.1f * Vector3.right - 0.1f * Vector3.forward);
-        positions.Add(0.9f * Vector3.up + 0.1f * Vector3.right - 0.1f * Vector3.forward);
-        positions.Add(0.9f * Vector3.up + 0.1f * Vector3.right + 0.1f * Vector3.forward);
-
-        positions.Add(1.1f * Vector3.up + 0.1f * Vector3.right + 0.1f * Vector3.forward);
-        positions.Add(1.1f * Vector3.up - 0.1f * Vector3.right + 0.1f * Vector3.forward);
-        positions.Add(1.1f * Vector3.up - 0.1f * Vector3.right + 0.1f * Vector3.forward);
-        positions.Add(1.1f * Vector3.up - 0.1f * Vector3.right - 0.1f * Vector3.forward);
-        positions.Add(1.1f * Vector3.up - 0.1f * Vector3.right - 0.1f * Vector3.forward);
-        positions.Add(1.1f * Vector3.up + 0.1f * Vector3.right - 0.1f * Vector3.forward);
-        positions.Add(1.1f * Vector3.up + 0.1f * Vector3.right - 0.1f * Vector3.forward);
-        positions.Add(1.1f * Vector3.up + 0.1f * Vector3.right + 0.1f * Vector3.forward);
-
-        positions.Add(0.9f * Vector3.up + 0.1f * Vector3.right + 0.1f * Vector3.forward);
-        positions.Add(1.1f * Vector3.up + 0.1f * Vector3.right + 0.1f * Vector3.forward);
-        positions.Add(0.9f * Vector3.up - 0.1f * Vector3.right + 0.1f * Vector3.forward);
-        positions.Add(1.1f * Vector3.up - 0.1f * Vector3.right + 0.1f * Vector3.forward);
-        positions.Add(0.9f * Vector3.up - 0.1f * Vector3.right - 0.1f * Vector3.forward);
-        positions.Add(1.1f * Vector3.up - 0.1f * Vector3.right - 0.1f * Vector3.forward);
-        positions.Add(0.9f * Vector3.up + 0.1f * Vector3.right - 0.1f * Vector3.forward);
-        positions.Add(1.1f * Vector3.up + 0.1f * Vector3.right - 0.1f * Vector3.forward);
-
-        for (int i = 0; i < vertsPerArrow; i++)
+        public static void Attach(Transform target)
         {
-            colors.Add(Color.green);
+            Instance.target = target;
+            Instance.transform.SetParent(target);
+            Instance.transform.localPosition = Vector3.zero;
         }
-
-        //z
-        positions.Add(Vector3.zero);
-        positions.Add(Vector3.forward);
-
-        //box
-        positions.Add(0.9f * Vector3.forward + 0.1f * Vector3.up + 0.1f * Vector3.right);
-        positions.Add(0.9f * Vector3.forward - 0.1f * Vector3.up + 0.1f * Vector3.right);
-        positions.Add(0.9f * Vector3.forward - 0.1f * Vector3.up + 0.1f * Vector3.right);
-        positions.Add(0.9f * Vector3.forward - 0.1f * Vector3.up - 0.1f * Vector3.right);
-        positions.Add(0.9f * Vector3.forward - 0.1f * Vector3.up - 0.1f * Vector3.right);
-        positions.Add(0.9f * Vector3.forward + 0.1f * Vector3.up - 0.1f * Vector3.right);
-        positions.Add(0.9f * Vector3.forward + 0.1f * Vector3.up - 0.1f * Vector3.right);
-        positions.Add(0.9f * Vector3.forward + 0.1f * Vector3.up + 0.1f * Vector3.right);
-
-        positions.Add(1.1f * Vector3.forward + 0.1f * Vector3.up + 0.1f * Vector3.right);
-        positions.Add(1.1f * Vector3.forward - 0.1f * Vector3.up + 0.1f * Vector3.right);
-        positions.Add(1.1f * Vector3.forward - 0.1f * Vector3.up + 0.1f * Vector3.right);
-        positions.Add(1.1f * Vector3.forward - 0.1f * Vector3.up - 0.1f * Vector3.right);
-        positions.Add(1.1f * Vector3.forward - 0.1f * Vector3.up - 0.1f * Vector3.right);
-        positions.Add(1.1f * Vector3.forward + 0.1f * Vector3.up - 0.1f * Vector3.right);
-        positions.Add(1.1f * Vector3.forward + 0.1f * Vector3.up - 0.1f * Vector3.right);
-        positions.Add(1.1f * Vector3.forward + 0.1f * Vector3.up + 0.1f * Vector3.right);
-
-        positions.Add(0.9f * Vector3.forward + 0.1f * Vector3.up + 0.1f * Vector3.right);
-        positions.Add(1.1f * Vector3.forward + 0.1f * Vector3.up + 0.1f * Vector3.right);
-        positions.Add(0.9f * Vector3.forward - 0.1f * Vector3.up + 0.1f * Vector3.right);
-        positions.Add(1.1f * Vector3.forward - 0.1f * Vector3.up + 0.1f * Vector3.right);
-        positions.Add(0.9f * Vector3.forward - 0.1f * Vector3.up - 0.1f * Vector3.right);
-        positions.Add(1.1f * Vector3.forward - 0.1f * Vector3.up - 0.1f * Vector3.right);
-        positions.Add(0.9f * Vector3.forward + 0.1f * Vector3.up - 0.1f * Vector3.right);
-        positions.Add(1.1f * Vector3.forward + 0.1f * Vector3.up - 0.1f * Vector3.right);
-
-        for (int i = 0; i < vertsPerArrow; i++)
-        {
-            colors.Add(Color.blue);
-        }
-
-        //its a simple gizmo, lets not go overboard with the index list till we have way too much time and can actually be smart about it
-        for (int i = 0; i < positions.Count; i++)
-        {
-            indices.Add(i);
-        }
-
-        scale.vertices = positions.ToArray();
-        scale.colors = colors.ToArray();
-        scale.SetIndices(indices.ToArray(), MeshTopology.Lines, 0);
-
-        scaleGameObject = new GameObject();
-        scaleGameObject.transform.SetParent(transform);
-        scaleGameObject.transform.localPosition = Vector3.zero;
-        var mf = scaleGameObject.AddComponent<MeshFilter>();
-        mf.sharedMesh = scale;
-        var mr = scaleGameObject.AddComponent<MeshRenderer>();
-        mr.sharedMaterial = gizmoMaterial;
-    }
-
-    void CreateMeshes()
-    {
-        gizmoMaterial = Instantiate(MaterialsDatabase.GizmoMaterial); //copy material so we can modify it
-
-        CreateMoveMesh();
-        CreateRotateMesh();
-        CreateScaleMesh();
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        CreateMeshes();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        //Do raycasting from mouse pointer
-    }
-
-    void HighlightX()
-    {
-        gizmoMaterial.color = new Color(1, 0.75f, 0.75f);
-    }
-    void HighlightY()
-    {
-        gizmoMaterial.color = new Color(0.75f, 1, 0.75f);
-    }
-    void HighlightZ()
-    {
-        gizmoMaterial.color = new Color(0.75f, 0.75f, 1);
     }
 }

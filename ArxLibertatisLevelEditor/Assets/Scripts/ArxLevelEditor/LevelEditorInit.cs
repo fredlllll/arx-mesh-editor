@@ -4,7 +4,7 @@ namespace Assets.Scripts.ArxLevelEditor
 {
     public class LevelEditorInit : MonoBehaviour
     {
-        private void Start()
+        private void Awake()
         {
             LevelEditor.EditorCamera = Camera.main;
         }

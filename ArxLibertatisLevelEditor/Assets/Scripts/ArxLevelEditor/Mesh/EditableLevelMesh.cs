@@ -25,6 +25,7 @@ namespace Assets.Scripts.ArxLevelEditor.Mesh
                 go.transform.localPosition = Vector3.zero;
                 go.transform.localEulerAngles = Vector3.zero;
                 go.transform.localScale = Vector3.one;
+                go.layer = gameObject.layer;
 
                 retval = go.AddComponent<MaterialMesh>();
                 retval.Material = EditorMaterial.CreateMaterial(key);
@@ -34,6 +35,9 @@ namespace Assets.Scripts.ArxLevelEditor.Mesh
             return retval;
         }
 
-        
+        private void Awake()
+        {
+            gameObject.layer = LayerMask.NameToLayer("EditableLevelMesh");
+        }
     }
 }

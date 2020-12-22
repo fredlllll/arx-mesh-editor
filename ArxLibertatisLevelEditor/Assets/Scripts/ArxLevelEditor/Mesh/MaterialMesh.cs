@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Scripts.ArxLevelEditor.Mesh
@@ -6,8 +7,10 @@ namespace Assets.Scripts.ArxLevelEditor.Mesh
     public class MaterialMesh : MonoBehaviour
     {
         UnityEngine.Mesh mesh;
+        UnityEngine.Mesh collisionMesh;
         MeshFilter filter;
         MeshRenderer meshRenderer;
+        MeshCollider meshCollider;
 
         public UnityEngine.Material Material
         {
@@ -44,9 +47,12 @@ namespace Assets.Scripts.ArxLevelEditor.Mesh
         private void Awake()
         {
             mesh = new UnityEngine.Mesh();
+            collisionMesh = new UnityEngine.Mesh();
             filter = gameObject.AddComponent<MeshFilter>();
             filter.sharedMesh = mesh;
             meshRenderer = gameObject.AddComponent<MeshRenderer>();
+            meshCollider = gameObject.AddComponent<MeshCollider>();
+            meshCollider.sharedMesh = collisionMesh;
         }
 
         public void AddPrimitive(EditablePrimitive primitive)
@@ -109,6 +115,17 @@ namespace Assets.Scripts.ArxLevelEditor.Mesh
             mesh.normals = normals.ToArray();
             mesh.colors = colors.ToArray();
             mesh.triangles = indices.ToArray();
+
+            int[] normalPlusReverseIndices = new int[mesh.triangles.Length*2];
+            Array.Copy(mesh.triangles, normalPlusReverseIndices, mesh.triangles.Length);
+            for(int i = mesh.triangles.Length, j = mesh.triangles.Length-1; i< normalPlusReverseIndices.Length; i++,j--)
+            {
+                normalPlusReverseIndices[i] = mesh.triangles[j];
+            }
+
+            collisionMesh.vertices = mesh.vertices;
+            collisionMesh.triangles = normalPlusReverseIndices;
+            meshCollider.sharedMesh = collisionMesh;
         }
     }
 }
