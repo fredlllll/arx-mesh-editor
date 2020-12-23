@@ -232,6 +232,7 @@ GameObject:
   - component: {fileID: 26935077}
   - component: {fileID: 26935079}
   - component: {fileID: 26935078}
+  - component: {fileID: 26935080}
   m_Layer: 5
   m_Name: TopBar
   m_TagString: Untagged
@@ -301,6 +302,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 26935076}
   m_CullTransparentMesh: 0
+--- !u!114 &26935080
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 26935076}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e480074b3f1a674894fe67da779ca39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  polygonsButton: {fileID: 934127313}
+  verticesButton: {fileID: 851021863}
 --- !u!1 &62532861
 GameObject:
   m_ObjectHideFlags: 0
@@ -962,7 +977,6 @@ GameObject:
   - component: {fileID: 448660757}
   - component: {fileID: 448660756}
   - component: {fileID: 448660755}
-  - component: {fileID: 448660754}
   m_Layer: 5
   m_Name: Save
   m_TagString: Untagged
@@ -990,19 +1004,6 @@ RectTransform:
   m_AnchoredPosition: {x: 105, y: -5}
   m_SizeDelta: {x: 45, y: 30}
   m_Pivot: {x: 0, y: 1}
---- !u!114 &448660754
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 448660752}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e3b28934c3f424d4e8801ecbe0a31949, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  target: {fileID: 1775222631}
 --- !u!114 &448660755
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1046,8 +1047,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 448660754}
-        m_MethodName: Unhide
+      - m_Target: {fileID: 26935080}
+        m_MethodName: SaveClicked
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1106,7 +1107,6 @@ GameObject:
   - component: {fileID: 463824140}
   - component: {fileID: 463824139}
   - component: {fileID: 463824138}
-  - component: {fileID: 463824137}
   m_Layer: 5
   m_Name: Move
   m_TagString: Untagged
@@ -1134,19 +1134,6 @@ RectTransform:
   m_AnchoredPosition: {x: 370, y: -5}
   m_SizeDelta: {x: 45, y: 30}
   m_Pivot: {x: 0, y: 1}
---- !u!114 &463824137
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 463824135}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e3b28934c3f424d4e8801ecbe0a31949, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  target: {fileID: 1775222631}
 --- !u!114 &463824138
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1190,7 +1177,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 463824137}
+      - m_Target: {fileID: 0}
         m_MethodName: Unhide
         m_Mode: 1
         m_Arguments:
@@ -1995,7 +1982,6 @@ GameObject:
   - component: {fileID: 851021868}
   - component: {fileID: 851021867}
   - component: {fileID: 851021866}
-  - component: {fileID: 851021865}
   m_Layer: 5
   m_Name: VertexMode
   m_TagString: Untagged
@@ -2023,19 +2009,6 @@ RectTransform:
   m_AnchoredPosition: {x: 235, y: -5}
   m_SizeDelta: {x: 65, y: 30}
   m_Pivot: {x: 0, y: 1}
---- !u!114 &851021865
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 851021863}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e3b28934c3f424d4e8801ecbe0a31949, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  target: {fileID: 1775222631}
 --- !u!114 &851021866
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2079,8 +2052,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 851021865}
-        m_MethodName: Unhide
+      - m_Target: {fileID: 26935080}
+        m_MethodName: VerticesClicked
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2139,7 +2112,6 @@ GameObject:
   - component: {fileID: 934127318}
   - component: {fileID: 934127317}
   - component: {fileID: 934127316}
-  - component: {fileID: 934127315}
   m_Layer: 5
   m_Name: PolyMode
   m_TagString: Untagged
@@ -2167,19 +2139,6 @@ RectTransform:
   m_AnchoredPosition: {x: 160, y: -5}
   m_SizeDelta: {x: 70, y: 30}
   m_Pivot: {x: 0, y: 1}
---- !u!114 &934127315
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 934127313}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e3b28934c3f424d4e8801ecbe0a31949, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  target: {fileID: 1775222631}
 --- !u!114 &934127316
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2218,13 +2177,13 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 934127317}
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 934127315}
-        m_MethodName: Unhide
+      - m_Target: {fileID: 26935080}
+        m_MethodName: PolygonsClicked
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2947,8 +2906,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1452024516}
   - component: {fileID: 1452024515}
+  - component: {fileID: 1452024517}
   m_Layer: 0
-  m_Name: PolygonSelector
+  m_Name: Selectors
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2980,6 +2940,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1452024517
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1452024514}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cb19b856359b34448db3257209dc1f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1612306096
 GameObject:
   m_ObjectHideFlags: 0
@@ -4062,7 +4034,6 @@ GameObject:
   - component: {fileID: 2120608715}
   - component: {fileID: 2120608714}
   - component: {fileID: 2120608713}
-  - component: {fileID: 2120608712}
   m_Layer: 5
   m_Name: Select
   m_TagString: Untagged
@@ -4090,19 +4061,6 @@ RectTransform:
   m_AnchoredPosition: {x: 310, y: -5}
   m_SizeDelta: {x: 55, y: 30}
   m_Pivot: {x: 0, y: 1}
---- !u!114 &2120608712
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2120608710}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e3b28934c3f424d4e8801ecbe0a31949, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  target: {fileID: 1775222631}
 --- !u!114 &2120608713
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4146,7 +4104,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2120608712}
+      - m_Target: {fileID: 0}
         m_MethodName: Unhide
         m_Mode: 1
         m_Arguments:

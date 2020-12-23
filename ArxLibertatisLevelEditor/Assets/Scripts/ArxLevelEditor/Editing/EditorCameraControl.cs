@@ -79,7 +79,7 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
 
         public void Update()
         {
-            if (EditWindowState.MouseInEditWindow)
+            if (EditWindow.MouseInEditWindow)
             {
                 //only capture clicks when in edit window
                 if (Input.GetMouseButtonDown(1))

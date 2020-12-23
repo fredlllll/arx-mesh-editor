@@ -20,45 +20,58 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
             selectLayer = 1 << LayerMask.NameToLayer("EditableLevelMesh");
         }
 
+        void Deselect()
+        {
+            Gizmo.Detach();
+            Gizmo.Visible = false;
+
+            //place currently selected back into mesh
+            if (currentlySelected != null)
+            {
+                var selectedPrimitive = currentlySelected.GetComponent<EditablePrimitive>();
+                var editableMesh = LevelEditor.CurrentLevel.EditableLevelMesh.GetMaterialMesh(selectedPrimitive.material);
+                editableMesh.AddPrimitive(selectedPrimitive.info);
+                editableMesh.UpdateMesh();
+                Destroy(currentlySelected);
+                currentlySelected = null;
+            }
+        }
+
         private void Update()
         {
-            if (EditWindowState.MouseInEditWindow)
+            if (EditWindow.MouseInEditWindow)
             {
-                if (Input.GetMouseButtonDown(0))
+                if (LevelEditor.EditState == EditState.Polygons && Input.GetMouseButtonDown(0))
                 {
                     //convert mouse position to viewport position
-                    var ray = EditWindowState.GetRayFromMousePosition();
+                    var ray = EditWindow.GetRayFromMousePosition();
                     //raycast with levelmeshes to see what polygon was clicked
                     if (Physics.Raycast(ray, out RaycastHit hitInfo, float.MaxValue, selectLayer))
                     {
                         var mesh = hitInfo.transform.gameObject.GetComponent<MaterialMesh>();
                         if (mesh != null)
                         {
-                            //place currently selected back into mesh
-                            if (currentlySelected != null)
-                            {
-                                var selectedPrimitive = currentlySelected.GetComponent<EditablePrimitive>();
-                                var editableMesh = LevelEditor.CurrentLevel.EditableLevelMesh.GetMaterialMesh(selectedPrimitive.material);
-                                editableMesh.AddPrimitive(selectedPrimitive.info);
-                                Destroy(selectedPrimitive.gameObject);
-                            }
+                            Deselect();
 
+                            //remove newly selected from mesh
                             var primitive = mesh.GetByTriangleIndex(hitInfo.triangleIndex);
                             mesh.RemovePrimitive(primitive);
                             mesh.UpdateMesh();
 
                             var go = new GameObject();
+                            currentlySelected = go;
                             go.transform.SetParent(mesh.gameObject.transform);
                             go.transform.localPosition = Vector3.zero;
                             go.transform.localScale = Vector3.one;
                             var editablePrimitive = go.AddComponent<EditablePrimitive>();
                             editablePrimitive.UpdatePrimitive(primitive, mesh.EditorMaterial);
 
-                            Vector3 localPos = hitInfo.point * 100;
-                            localPos.y *= -1;
-                            Gizmo.Attach(editablePrimitive.transform, localPos);
+                            //TODO: add some indicator this poly is selected
                         }
-                        //Gizmo.Instance.transform.position = hitInfo.point;
+                    }
+                    else
+                    {
+                        Deselect();
                     }
                 }
             }

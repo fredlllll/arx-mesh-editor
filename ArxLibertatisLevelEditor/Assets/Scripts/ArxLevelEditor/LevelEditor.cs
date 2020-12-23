@@ -4,6 +4,12 @@ using Assets.Scripts.ArxLevelLoading;
 
 namespace Assets.Scripts.ArxLevelEditor
 {
+    public enum EditState
+    {
+        Polygons,
+        Vertices
+    }
+
     public static class LevelEditor
     {
         public static Camera EditorCamera { get; set; }
@@ -11,6 +17,8 @@ namespace Assets.Scripts.ArxLevelEditor
         public static Level CurrentLevel { get;set; }
 
         public static TextureDatabase TextureDatabase { get; } = new TextureDatabase();
+
+        public static EditState EditState { get; set; } = EditState.Polygons;
 
         public static void OpenLevel(string name)
         {

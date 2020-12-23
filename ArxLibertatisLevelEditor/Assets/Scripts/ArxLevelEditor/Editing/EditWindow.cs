@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace Assets.Scripts.ArxLevelEditor.Editing
 {
-    public class EditWindowState : MonoBehaviour
+    public class EditWindow : MonoBehaviour
     {
         public static RectTransform WindowTransform
         {
@@ -63,7 +63,7 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
 
         public void EventMouseLeave()
         {
-            MouseInEditWindow = true;
+            MouseInEditWindow = false;
         }
     }
 }
