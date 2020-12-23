@@ -111,11 +111,11 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
             Instance.gizmoMaterial.color = new Color(0.75f, 0.75f, 1);
         }
 
-        public static void Attach(Transform target)
+        public static void Attach(Transform target, Vector3 localPosition)
         {
             Instance.target = target;
             Instance.transform.SetParent(target);
-            Instance.transform.localPosition = Vector3.zero;
+            Instance.transform.localPosition = localPosition;
         }
     }
 }

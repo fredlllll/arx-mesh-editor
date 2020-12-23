@@ -35,9 +35,18 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
                             mesh.RemovePrimitive(primitive);
                             mesh.UpdateMesh();
 
+                            var go = new GameObject();
+                            go.transform.SetParent(mesh.gameObject.transform);
+                            go.transform.localPosition = Vector3.zero;
+                            go.transform.localScale = Vector3.one;
+                            var editablePrimitive = go.AddComponent<EditablePrimitive>();
+                            editablePrimitive.UpdatePrimitive(primitive, mesh.Material);
 
+                            Vector3 localPos = hitInfo.point * 100;
+                            localPos.y *= -1;
+                            Gizmo.Attach(editablePrimitive.transform, localPos);
                         }
-                        Gizmo.Instance.transform.position = hitInfo.point;
+                        //Gizmo.Instance.transform.position = hitInfo.point;
                     }
                 }
             }
