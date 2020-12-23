@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Assets.Scripts.ArxLevelEditor.Material;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,8 +13,8 @@ namespace Assets.Scripts.ArxLevelEditor.Mesh
         MeshFilter meshFilter;
         MeshRenderer meshRenderer;
         UnityEngine.Mesh mesh;
-        EditablePrimitiveInfo info;
-        UnityEngine.Material material;
+        public EditablePrimitiveInfo info;
+        public EditorMaterial material;
 
         private void Awake()
         {
@@ -23,11 +24,11 @@ namespace Assets.Scripts.ArxLevelEditor.Mesh
             meshFilter.sharedMesh = mesh;
         }
 
-        public void UpdatePrimitive(EditablePrimitiveInfo info, UnityEngine.Material mat)
+        public void UpdatePrimitive(EditablePrimitiveInfo info, EditorMaterial mat)
         {
             this.info = info;
             this.material = mat;
-            this.meshRenderer.sharedMaterial = mat;
+            this.meshRenderer.sharedMaterial = mat.Material;
 
             List<Vector3> verts = new List<Vector3>();
             List<Vector2> uvs = new List<Vector2>();

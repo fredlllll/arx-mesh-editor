@@ -8,6 +8,7 @@ namespace Assets.Scripts.ArxLevelEditor
     public class TextureDatabase
     {
         readonly Dictionary<string, Texture2D> textures = new Dictionary<string, Texture2D>();
+        readonly Dictionary<Texture2D, string> paths = new Dictionary<Texture2D, string>();
 
         public Texture2D this[string path]
         {
@@ -23,9 +24,19 @@ namespace Assets.Scripts.ArxLevelEditor
                     //Load texture if it doesnt exist
                     retval = LoadTexture(path);
                     textures[path] = retval;
+                    paths[retval] = path;
                 }
                 return retval;
             }
+        }
+
+        public string GetTexturePath(Texture2D tex)
+        {
+            if (!paths.TryGetValue(tex, out string retval))
+            {
+                return null;
+            }
+            return retval;
         }
 
 

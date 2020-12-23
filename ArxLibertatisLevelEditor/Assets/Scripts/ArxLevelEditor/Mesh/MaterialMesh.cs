@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Assets.Scripts.ArxLevelEditor.Material;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,14 +12,24 @@ namespace Assets.Scripts.ArxLevelEditor.Mesh
         MeshFilter filter;
         MeshRenderer meshRenderer;
         MeshCollider meshCollider;
+        EditorMaterial mat;
 
-        public UnityEngine.Material Material
+        public EditorMaterial EditorMaterial
         {
-            get { return meshRenderer.sharedMaterial; }
+            get { return mat; }
             set
             {
-                meshRenderer.sharedMaterial = value;
-                if (value != null) { gameObject.name = value.name; }
+                mat = value;
+                if (value == null)
+                {
+                    gameObject.name = "NULL";
+                    meshRenderer.sharedMaterial = null;
+                }
+                else
+                {
+                    gameObject.name = value.Material.name;
+                    meshRenderer.sharedMaterial = value.Material;
+                }
             }
         }
 

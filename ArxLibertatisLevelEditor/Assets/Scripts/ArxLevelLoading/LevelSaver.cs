@@ -33,7 +33,7 @@ namespace Assets.Scripts.ArxLevelLoading
         class LevelCell
         {
             public readonly int x, z;
-            public readonly List<Tuple<EditorMaterialKey, EditablePrimitiveInfo>> primitives = new List<Tuple<EditorMaterialKey, EditablePrimitiveInfo>>();
+            public readonly List<Tuple<EditorMaterial, EditablePrimitiveInfo>> primitives = new List<Tuple<EditorMaterial, EditablePrimitiveInfo>>();
 
             public LevelCell(int x, int z)
             {
@@ -41,9 +41,9 @@ namespace Assets.Scripts.ArxLevelLoading
                 this.z = z;
             }
 
-            public void AddPrimitive(EditorMaterialKey mat, EditablePrimitiveInfo prim)
+            public void AddPrimitive(EditorMaterial mat, EditablePrimitiveInfo prim)
             {
-                primitives.Add(new Tuple<EditorMaterialKey, EditablePrimitiveInfo>(mat, prim));
+                primitives.Add(new Tuple<EditorMaterial, EditablePrimitiveInfo>(mat, prim));
             }
         }
 

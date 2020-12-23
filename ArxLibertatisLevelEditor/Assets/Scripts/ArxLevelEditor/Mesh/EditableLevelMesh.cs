@@ -6,9 +6,9 @@ namespace Assets.Scripts.ArxLevelEditor.Mesh
 {
     public class EditableLevelMesh : MonoBehaviour
     {
-        readonly Dictionary<EditorMaterialKey, MaterialMesh> materialMeshes = new Dictionary<EditorMaterialKey, MaterialMesh>();
+        readonly Dictionary<EditorMaterial, MaterialMesh> materialMeshes = new Dictionary<EditorMaterial, MaterialMesh>();
 
-        public IEnumerable<KeyValuePair<EditorMaterialKey, MaterialMesh>> MaterialMeshes
+        public IEnumerable<KeyValuePair<EditorMaterial, MaterialMesh>> MaterialMeshes
         {
             get
             {
@@ -16,7 +16,7 @@ namespace Assets.Scripts.ArxLevelEditor.Mesh
             }
         }
 
-        public MaterialMesh GetMaterialMesh(EditorMaterialKey key)
+        public MaterialMesh GetMaterialMesh(EditorMaterial key)
         {
             if (!materialMeshes.TryGetValue(key, out var retval))
             {
@@ -28,8 +28,8 @@ namespace Assets.Scripts.ArxLevelEditor.Mesh
                 go.layer = gameObject.layer;
 
                 retval = go.AddComponent<MaterialMesh>();
-                retval.Material = EditorMaterial.CreateMaterial(key);
-                
+                retval.EditorMaterial = key;
+
                 materialMeshes[key] = retval;
             }
             return retval;

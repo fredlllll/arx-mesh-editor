@@ -1,16 +1,18 @@
 ﻿using Assets.Scripts.ArxNative;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Scripts.ArxLevelEditor.Material
 {
-    public class EditorMaterial : EditorMaterialBase
+    public class EditorMaterial : IEquatable<EditorMaterial>
     {
-        private UnityEngine.Material mat;
+        UnityEngine.Material mat = null;
         public UnityEngine.Material Material
         {
             get
             {
-                if (mat == null)
+                if(mat == null)
                 {
                     mat = CreateMaterial(this);
                 }
@@ -18,14 +20,62 @@ namespace Assets.Scripts.ArxLevelEditor.Material
             }
         }
 
-        public EditorMaterial(string texPath, PolyType polyType, float transVal)
+        public string TexturePath
         {
-            TexturePath = texPath;
-            PolygonType = polyType;
+            get;
+            protected set;
+        }
+
+        public PolyType PolygonType
+        {
+            get;
+            protected set;
+        }
+
+        public float TransVal
+        {
+            get;
+            protected set;
+        }
+
+        //only these types will be used to differentiate between materials. for example QUAD has nothing to do with the material
+        const PolyType materialPolyTypes = PolyType.DOUBLESIDED | PolyType.FALL | PolyType.GLOW | PolyType.LAVA | PolyType.TRANS | PolyType.WATER;
+
+        public EditorMaterial(string texArxPath, PolyType polyType, float transVal)
+        {
+            TexturePath = texArxPath;
+            PolygonType = polyType & materialPolyTypes;
             TransVal = transVal;
         }
 
-        public static UnityEngine.Material CreateMaterial(EditorMaterialBase editorMat)
+        public EditorMaterial(UnityEngine.Material mat)
+        {
+            //TODO:
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as EditorMaterial);
+        }
+
+        public bool Equals(EditorMaterial other)
+        {
+            return other != null &&
+                   TexturePath == other.TexturePath &&
+                   PolygonType == other.PolygonType &&
+                   TransVal == other.TransVal;
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = 1482638751;
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(TexturePath);
+            hashCode = hashCode * -1521134295 + PolygonType.GetHashCode();
+            hashCode = hashCode * -1521134295 + TransVal.GetHashCode();
+            return hashCode;
+        }
+
+        private static UnityEngine.Material CreateMaterial(EditorMaterial editorMat)
         {
             bool doubleSided = editorMat.PolygonType.HasFlag(PolyType.DOUBLESIDED);
             bool transparent = editorMat.PolygonType.HasFlag(PolyType.TRANS);

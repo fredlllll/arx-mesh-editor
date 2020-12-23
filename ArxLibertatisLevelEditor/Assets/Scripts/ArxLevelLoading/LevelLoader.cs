@@ -47,7 +47,7 @@ namespace Assets.Scripts.ArxLevelLoading
             }
 
             //TODO: use external placeholder texture so it can be set to 0 on export
-            var notFoundMaterialKey = new EditorMaterialKey(EditorSettings.DataDir + "graph\\interface\\misc\\default[icon].bmp", PolyType.GLOW, 0);
+            var notFoundMaterialKey = new EditorMaterial(EditorSettings.DataDir + "graph\\interface\\misc\\default[icon].bmp", PolyType.GLOW, 0);
 
             for (int c = 0; c < fts.cells.Length; c++)
             {
@@ -62,7 +62,7 @@ namespace Assets.Scripts.ArxLevelLoading
                     {
                         string texArxPath = ArxIOHelper.GetString(fts.textureContainers[textureIndex].fic);
                         string texPath = TextureDatabase.GetRealTexturePath(EditorSettings.DataDir + texArxPath);
-                        matKey = new EditorMaterialKey(texPath, poly.type, poly.transval); //TODO: speed up by using a pool of some sort?
+                        matKey = new EditorMaterial(texPath, poly.type, poly.transval); //TODO: speed up by using a pool of some sort?
                     }
 
                     MaterialMesh mm = lvl.EditableLevelMesh.GetMaterialMesh(matKey);
