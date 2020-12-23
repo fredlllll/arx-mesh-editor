@@ -23,17 +23,26 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
                 Destroy(viewport);
             }
 
-            var desc = new RenderTextureDescriptor();
-            desc.autoGenerateMips = false;
-            desc.bindMS = false;
-            desc.colorFormat = RenderTextureFormat.ARGB32;
-            desc.depthBufferBits = 24;
-            desc.dimension = UnityEngine.Rendering.TextureDimension.Tex2D;
-            desc.enableRandomWrite = false;
-            desc.height = Screen.height + heightOffset;
-            desc.msaaSamples = 1;
-            desc.volumeDepth = 1;
-            desc.width = Screen.width + widthOffset;
+            var desc = new RenderTextureDescriptor
+            {
+                autoGenerateMips = false,
+                bindMS = false,
+                colorFormat = RenderTextureFormat.Default,
+                depthBufferBits = 24,
+                dimension = UnityEngine.Rendering.TextureDimension.Tex2D,
+                enableRandomWrite = false,
+                height = Screen.height + heightOffset,
+                memoryless = RenderTextureMemoryless.None,
+                mipCount = 0,
+                msaaSamples = 1,
+                shadowSamplingMode = UnityEngine.Rendering.ShadowSamplingMode.CompareDepths,
+                sRGB = false,
+                stencilFormat = UnityEngine.Experimental.Rendering.GraphicsFormat.None,
+                useDynamicScale = false,
+                useMipMap = false,
+                volumeDepth = 1,
+                width = Screen.width + widthOffset
+            };
             viewport = new RenderTexture(desc);
 
             targetImage.texture = viewport;

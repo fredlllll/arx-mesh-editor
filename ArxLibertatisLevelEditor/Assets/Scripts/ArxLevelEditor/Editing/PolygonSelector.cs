@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Assets.Scripts.ArxLevelEditor.Mesh;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -27,6 +28,15 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
                     //TODO: raycast with levelmeshes to see what polygon was clicked
                     if (Physics.Raycast(ray, out RaycastHit hitInfo, float.MaxValue, selectLayer))
                     {
+                        var mesh = hitInfo.transform.gameObject.GetComponent<MaterialMesh>();
+                        if (mesh != null)
+                        {
+                            var primitive = mesh.GetByTriangleIndex(hitInfo.triangleIndex);
+                            mesh.RemovePrimitive(primitive);
+                            mesh.UpdateMesh();
+
+
+                        }
                         Gizmo.Instance.transform.position = hitInfo.point;
                     }
                 }

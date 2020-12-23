@@ -1,21 +1,19 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using UnityEngine;
 
 namespace Assets.Scripts.ArxLevelEditor.Mesh
 {
-    public abstract class EditablePrimitive
+    public class EditablePrimitive :MonoBehaviour
     {
-        public readonly EditableVertex[] vertices;
 
-        //additional fields that need to be kept track of
-        public Vector3 norm;
-        public Vector3 norm2;
-        public float area;
-        public short room;
-        public short paddy;
 
-        public EditablePrimitive(byte size)
+        private void Awake()
         {
-            vertices = new EditableVertex[size];
+            
         }
     }
 }

@@ -5,7 +5,9 @@ using Assets.Scripts.ArxLevelEditor.Mesh;
 using Assets.Scripts.ArxNative;
 using Assets.Scripts.ArxNative.IO;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
+using UnityEngine.Profiling;
 
 namespace Assets.Scripts.ArxLevelLoading
 {
@@ -31,6 +33,10 @@ namespace Assets.Scripts.ArxLevelLoading
 
         static void LoadMesh(Level lvl)
         {
+            int loadedPolys = 0;
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+
             int lightIndex = 0;
             var fts = lvl.ArxLevelNative.FTS;
             Dictionary<int, int> tcToIndex = new Dictionary<int, int>();
@@ -46,6 +52,7 @@ namespace Assets.Scripts.ArxLevelLoading
             for (int c = 0; c < fts.cells.Length; c++)
             {
                 var cell = fts.cells[c];
+                loadedPolys += cell.polygons.Length;
                 for (int p = 0; p < cell.polygons.Length; p++)
                 {
                     var poly = cell.polygons[p];
@@ -55,20 +62,20 @@ namespace Assets.Scripts.ArxLevelLoading
                     {
                         string texArxPath = ArxIOHelper.GetString(fts.textureContainers[textureIndex].fic);
                         string texPath = TextureDatabase.GetRealTexturePath(EditorSettings.DataDir + texArxPath);
-                        matKey = new EditorMaterialKey(texPath, poly.type, poly.transval);
+                        matKey = new EditorMaterialKey(texPath, poly.type, poly.transval); //TODO: speed up by using a pool of some sort?
                     }
 
                     MaterialMesh mm = lvl.EditableLevelMesh.GetMaterialMesh(matKey);
 
-                    EditablePrimitive prim;
+                    EditablePrimitiveInfo prim = new EditablePrimitiveInfo();
                     if (poly.type.HasFlag(PolyType.QUAD))
                     { //QUAD
-                        prim = new EditableQuad();
+                        prim.type = EditablePrimitiveType.Quad;
 
                         for (int i = 0; i < 4; i++)
                         {
                             var vert = poly.vertices[i];
-                            var evert = new EditableVertex(new Vector3(vert.posX, vert.posY, vert.posZ),
+                            var evert = new EditableVertexInfo(new Vector3(vert.posX, vert.posY, vert.posZ),
                                 new Vector2(vert.texU, 1 - vert.texV),
                                 poly.normals[i].ToVector3(),
                                 ArxIOHelper.FromBGRA(lvl.ArxLevelNative.LLF.lightColors[lightIndex++]));
@@ -77,12 +84,12 @@ namespace Assets.Scripts.ArxLevelLoading
                     }
                     else
                     { //TRIANGLE
-                        prim = new EditableTriangle();
+                        prim.type = EditablePrimitiveType.Triangle;
 
                         for (int i = 0; i < 3; i++)
                         {
                             var vert = poly.vertices[i];
-                            var evert = new EditableVertex(new Vector3(vert.posX, vert.posY, vert.posZ),
+                            var evert = new EditableVertexInfo(new Vector3(vert.posX, vert.posY, vert.posZ),
                                 new Vector2(vert.texU, 1 - vert.texV),
                                 poly.normals[i].ToVector3(),
                                 ArxIOHelper.FromBGRA(lvl.ArxLevelNative.LLF.lightColors[lightIndex++]));
@@ -104,6 +111,8 @@ namespace Assets.Scripts.ArxLevelLoading
             {
                 kv.Value.UpdateMesh();
             }
+            UnityEngine.Debug.Log("total load time: " + sw.Elapsed);
+            UnityEngine.Debug.Log("Loaded polys: " + loadedPolys);
         }
     }
 }

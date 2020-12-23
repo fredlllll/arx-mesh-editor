@@ -33,7 +33,7 @@ namespace Assets.Scripts.ArxLevelLoading
         class LevelCell
         {
             public readonly int x, z;
-            public readonly List<Tuple<EditorMaterialKey, EditablePrimitive>> primitives = new List<Tuple<EditorMaterialKey, EditablePrimitive>>();
+            public readonly List<Tuple<EditorMaterialKey, EditablePrimitiveInfo>> primitives = new List<Tuple<EditorMaterialKey, EditablePrimitiveInfo>>();
 
             public LevelCell(int x, int z)
             {
@@ -41,21 +41,23 @@ namespace Assets.Scripts.ArxLevelLoading
                 this.z = z;
             }
 
-            public void AddPrimitive(EditorMaterialKey mat, EditablePrimitive prim)
+            public void AddPrimitive(EditorMaterialKey mat, EditablePrimitiveInfo prim)
             {
-                primitives.Add(new Tuple<EditorMaterialKey, EditablePrimitive>(mat, prim));
+                primitives.Add(new Tuple<EditorMaterialKey, EditablePrimitiveInfo>(mat, prim));
             }
         }
 
-        static Vector2Int GetPrimitiveCellPos(EditablePrimitive prim)
+        static Vector2Int GetPrimitiveCellPos(EditablePrimitiveInfo prim)
         {
             Vector2 pos = Vector2.zero;
 
-            foreach (var v in prim.vertices)
+            int vertCount = prim.vertexCount;
+            for(int i =0; i< vertCount; i++)
             {
+                var v = prim.vertices[i];
                 pos += new Vector2(v.position.x, v.position.z);
             }
-            pos /= prim.vertices.Length;
+            pos /= vertCount;
             return new Vector2Int((int)(pos.x / 100), (int)(pos.y / 100));
         }
 
@@ -142,7 +144,8 @@ namespace Assets.Scripts.ArxLevelLoading
                         //copy vertices
                         poly.vertices = new ArxNative.IO.FTS.FTS_IO_VERTEX[4];
                         poly.normals = new SavedVec3[4];
-                        for (int j = 0; j < prim.vertices.Length; j++)
+                        int vertCount = prim.vertexCount;
+                        for (int j = 0; j < vertCount; j++)
                         {
                             var vert = prim.vertices[j];
                             var natVert = new ArxNative.IO.FTS.FTS_IO_VERTEX();
@@ -162,6 +165,10 @@ namespace Assets.Scripts.ArxLevelLoading
                         poly.tex = texPathToTc[mat.TexturePath];//keyerrors should not be possible on this
                         poly.transval = mat.TransVal;
                         poly.type = mat.PolygonType;
+                        if (prim.type == EditablePrimitiveType.Quad)
+                        {
+                            poly.type |= ArxNative.PolyType.QUAD; // force quad if editable primitive type was changed
+                        }
 
                         ftsCell.polygons[i] = poly;
                     }

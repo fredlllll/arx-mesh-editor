@@ -10,12 +10,32 @@ namespace Assets.Scripts.ArxNative.IO
     {
         public static string GetString(byte[] bytes)
         {
-            return Encoding.ASCII.GetString(ArrayHelper.TrimEnd<byte>(bytes, 0));
+            int strlen = 0;
+            for (int i = bytes.Length - 1; i >= 0; i--)
+            {
+                if (bytes[i] != 0)
+                {
+                    strlen = i + 1;
+                    break;
+                }
+            }
+            string retval =  Encoding.ASCII.GetString(bytes, 0, strlen);
+            return retval;
         }
 
         public static byte[] GetBytes(string str, int bytesLength)
         {
-            return ArrayHelper.FixArrayLength<byte>(Encoding.ASCII.GetBytes(str), bytesLength, 0);
+            byte[] retval = new byte[bytesLength];
+            try
+            {
+                Encoding.ASCII.GetBytes(str, 0, str.Length, retval, 0);
+            }
+            catch (ArgumentException) //not enough space in retval for the string
+            {
+                byte[] bytes = Encoding.ASCII.GetBytes(str);
+                Array.Copy(bytes, retval, bytesLength);
+            }
+            return retval;
         }
 
         public static Color FromBGRA(uint bgra)

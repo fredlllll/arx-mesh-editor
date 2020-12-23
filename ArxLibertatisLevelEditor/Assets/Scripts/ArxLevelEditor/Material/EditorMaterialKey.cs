@@ -6,10 +6,13 @@ namespace Assets.Scripts.ArxLevelEditor.Material
 {
     public class EditorMaterialKey : EditorMaterialBase, IEquatable<EditorMaterialKey>
     {
+        //only these types will be used to differentiate between materials. for example QUAD has nothing to do with the material
+        const PolyType materialPolyTypes = PolyType.DOUBLESIDED | PolyType.FALL | PolyType.GLOW | PolyType.LAVA | PolyType.TRANS | PolyType.WATER;
+
         public EditorMaterialKey(string texArxPath, PolyType polyType, float transVal)
         {
             TexturePath = texArxPath;
-            PolygonType = polyType;
+            PolygonType = polyType & materialPolyTypes;
             TransVal = transVal;
         }
 

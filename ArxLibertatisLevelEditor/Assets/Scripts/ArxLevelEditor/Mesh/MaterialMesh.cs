@@ -30,19 +30,19 @@ namespace Assets.Scripts.ArxLevelEditor.Mesh
             }
         }
 
-        public IEnumerable<EditablePrimitive> Primitives
+        public IEnumerable<EditablePrimitiveInfo> Primitives
         {
             get { return primitives; }
         }
 
-        readonly List<EditablePrimitive> primitives = new List<EditablePrimitive>();
+        readonly List<EditablePrimitiveInfo> primitives = new List<EditablePrimitiveInfo>();
 
         readonly List<Vector3> verts = new List<Vector3>();
         readonly List<Vector2> uvs = new List<Vector2>();
         readonly List<Vector3> normals = new List<Vector3>();
         readonly List<Color> colors = new List<Color>();
         readonly List<int> indices = new List<int>();
-        readonly Dictionary<int, EditablePrimitive> indexToPrimitive = new Dictionary<int, EditablePrimitive>();
+        readonly Dictionary<int, EditablePrimitiveInfo> triangleIndexToPrimitive = new Dictionary<int, EditablePrimitiveInfo>();
 
         private void Awake()
         {
@@ -55,20 +55,21 @@ namespace Assets.Scripts.ArxLevelEditor.Mesh
             meshCollider.sharedMesh = collisionMesh;
         }
 
-        public void AddPrimitive(EditablePrimitive primitive)
+        public void AddPrimitive(EditablePrimitiveInfo primitive)
         {
             primitives.Add(primitive);
         }
 
-        public void RemovePrimitive(EditablePrimitive primitive)
+        public void RemovePrimitive(EditablePrimitiveInfo primitive)
         {
             primitives.Remove(primitive);
         }
 
-        private void ProcessPrimitive(EditablePrimitive primitive)
+        private void ProcessPrimitive(EditablePrimitiveInfo primitive)
         {
             int firstVert = verts.Count;
-            for (int i = 0; i < primitive.vertices.Length; i++)
+            int vertCount = primitive.vertexCount;
+            for (int i = 0; i < vertCount; i++)
             {
                 var vert = primitive.vertices[i];
                 verts.Add(vert.position);
@@ -77,22 +78,17 @@ namespace Assets.Scripts.ArxLevelEditor.Mesh
                 colors.Add(vert.color);
             }
 
-            int firstIndex = indices.Count;
-
+            int triIndex = indices.Count / 3;
+            triangleIndexToPrimitive[triIndex++] = primitive;
             indices.Add(firstVert);
-            indexToPrimitive[firstIndex++] = primitive;
             indices.Add(firstVert + 1);
-            indexToPrimitive[firstIndex++] = primitive;
             indices.Add(firstVert + 2);
-            indexToPrimitive[firstIndex++] = primitive;
-            if (primitive.vertices.Length > 3)
+            if (vertCount > 3)
             {
+                triangleIndexToPrimitive[triIndex] = primitive;
                 indices.Add(firstVert + 2);
-                indexToPrimitive[firstIndex++] = primitive;
                 indices.Add(firstVert + 1);
-                indexToPrimitive[firstIndex++] = primitive;
                 indices.Add(firstVert + 3);
-                indexToPrimitive[firstIndex++] = primitive;
             }
         }
 
@@ -103,29 +99,47 @@ namespace Assets.Scripts.ArxLevelEditor.Mesh
             normals.Clear();
             colors.Clear();
             indices.Clear();
-            indexToPrimitive.Clear();
+            triangleIndexToPrimitive.Clear();
 
             foreach (var ep in primitives)
             {
                 ProcessPrimitive(ep);
             }
 
+            mesh.triangles = null; //to prevent out of bounds issues when vertices is smaller than before
             mesh.vertices = verts.ToArray();
             mesh.uv = uvs.ToArray();
             mesh.normals = normals.ToArray();
             mesh.colors = colors.ToArray();
             mesh.triangles = indices.ToArray();
 
-            int[] normalPlusReverseIndices = new int[mesh.triangles.Length*2];
-            Array.Copy(mesh.triangles, normalPlusReverseIndices, mesh.triangles.Length);
-            for(int i = mesh.triangles.Length, j = mesh.triangles.Length-1; i< normalPlusReverseIndices.Length; i++,j--)
+            var meshTris = mesh.triangles; //the getter of triangles is slow, cache its result here
+            int[] normalPlusReverseIndices = new int[meshTris.Length * 2];
+            Array.Copy(meshTris, normalPlusReverseIndices, meshTris.Length);
+            for (int i = meshTris.Length, j = meshTris.Length - 1; i < normalPlusReverseIndices.Length; i++, j--)
             {
-                normalPlusReverseIndices[i] = mesh.triangles[j];
+                normalPlusReverseIndices[i] = meshTris[j];
             }
 
+            collisionMesh.triangles = null;
             collisionMesh.vertices = mesh.vertices;
             collisionMesh.triangles = normalPlusReverseIndices;
             meshCollider.sharedMesh = collisionMesh;
+        }
+
+        public EditablePrimitiveInfo GetByTriangleIndex(int triangleIndex)
+        {
+            int triCount = indices.Count / 3;
+            if (triangleIndex >= triCount)
+            {
+                //backface collision
+                triangleIndex = triCount - (triangleIndex - triCount);
+            }
+            if (!triangleIndexToPrimitive.TryGetValue(triangleIndex, out EditablePrimitiveInfo retval))
+            {
+                return null;
+            }
+            return retval;
         }
     }
 }

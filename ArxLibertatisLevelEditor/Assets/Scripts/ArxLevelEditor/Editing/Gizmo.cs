@@ -4,6 +4,13 @@ using UnityEngine;
 
 namespace Assets.Scripts.ArxLevelEditor.Editing
 {
+    public enum GizmoMode
+    {
+        Move,
+        Rotate,
+        Scale,
+    }
+
     public class Gizmo : MonoBehaviour
     {
         public static Gizmo Instance
@@ -16,6 +23,31 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
         Transform target = null;
 
         UnityEngine.Material gizmoMaterial;
+
+        GizmoMode mode;
+        public GizmoMode Mode
+        {
+            get { return mode; }
+            set
+            {
+                moveGameObject.SetActive(false);
+                rotateGameObject.SetActive(false);
+                scaleGameObject.SetActive(false);
+                mode = value;
+                switch (mode)
+                {
+                    case GizmoMode.Move:
+                        moveGameObject.SetActive(true);
+                        break;
+                    case GizmoMode.Rotate:
+                        rotateGameObject.SetActive(true);
+                        break;
+                    case GizmoMode.Scale:
+                        scaleGameObject.SetActive(true);
+                        break;
+                }
+            }
+        }
 
         void CreateMove()
         {
@@ -56,6 +88,8 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
             CreateMove();
             CreateRotate();
             CreateScale();
+
+            Mode = GizmoMode.Move;
         }
 
         // Update is called once per frame
