@@ -1,6 +1,5 @@
 ﻿using Assets.Scripts.ArxLevel;
 using Assets.Scripts.ArxLevelEditor;
-using Assets.Scripts.ArxLevelEditor.Material;
 using Assets.Scripts.ArxLevelEditor.Mesh;
 using Assets.Scripts.ArxNative;
 using Assets.Scripts.ArxNative.IO;

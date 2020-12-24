@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Assets.Scripts.ArxLevelEditor.Material
+namespace Assets.Scripts.ArxLevelEditor
 {
     public class EditorMaterial : IEquatable<EditorMaterial>
     {

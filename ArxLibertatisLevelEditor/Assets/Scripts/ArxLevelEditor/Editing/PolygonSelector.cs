@@ -1,4 +1,4 @@
-﻿using Assets.Scripts.ArxLevelEditor.Material;
+﻿using Assets.Scripts.ArxLevelEditor;
 using Assets.Scripts.ArxLevelEditor.Mesh;
 using System;
 using System.Collections.Generic;
