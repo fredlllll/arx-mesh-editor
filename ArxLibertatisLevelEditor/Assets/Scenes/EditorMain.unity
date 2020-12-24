@@ -1236,7 +1236,7 @@ GameObject:
   - component: {fileID: 527204701}
   - component: {fileID: 527204700}
   m_Layer: 0
-  m_Name: LevelEditorInit
+  m_Name: LevelEditor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1251,7 +1251,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 527204699}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 89056d175bc438445af31ccac61edd5c, type: 3}
+  m_Script: {fileID: 11500000, guid: df277198a1b65774284510c5300f28d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!4 &527204701

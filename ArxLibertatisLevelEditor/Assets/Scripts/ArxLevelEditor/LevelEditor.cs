@@ -10,11 +10,11 @@ namespace Assets.Scripts.ArxLevelEditor
         Vertices
     }
 
-    public static class LevelEditor
+    public class LevelEditor : MonoBehaviour
     {
         public static Camera EditorCamera { get; set; }
 
-        public static Level CurrentLevel { get;set; }
+        public static Level CurrentLevel { get; set; }
 
         public static TextureDatabase TextureDatabase { get; } = new TextureDatabase();
 
@@ -22,7 +22,7 @@ namespace Assets.Scripts.ArxLevelEditor
 
         public static void OpenLevel(string name)
         {
-            if(CurrentLevel != null)
+            if (CurrentLevel != null)
             {
                 Object.Destroy(CurrentLevel.LevelObject);
             }
@@ -30,6 +30,11 @@ namespace Assets.Scripts.ArxLevelEditor
             TextureDatabase.Clear();
 
             CurrentLevel = LevelLoader.LoadLevel(name);
+        }
+
+        private void Awake()
+        {
+            EditorCamera = Camera.main;
         }
     }
 }
