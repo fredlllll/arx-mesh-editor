@@ -9,7 +9,7 @@ namespace Assets.Scripts.DataSync
 {
     public class Inter : MonoBehaviour
     {
-        public void LoadFrom(ArxLevel.Level level, int index)
+        public void LoadFrom(Level level, int index)
         {
             DLF_IO_INTER inter = level.ArxLevelNative.DLF.inters[index];
 

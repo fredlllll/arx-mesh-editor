@@ -2,7 +2,7 @@
 using Assets.Scripts.ArxNative;
 using UnityEngine;
 
-namespace Assets.Scripts.ArxLevel
+namespace Assets.Scripts.ArxLevelEditor
 {
     public class Level
     {
