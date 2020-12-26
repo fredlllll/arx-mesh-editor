@@ -27,7 +27,7 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
             {
                 autoGenerateMips = false,
                 bindMS = false,
-                colorFormat = RenderTextureFormat.Default,
+                colorFormat = RenderTextureFormat.RGB111110Float,
                 depthBufferBits = 24,
                 dimension = UnityEngine.Rendering.TextureDimension.Tex2D,
                 enableRandomWrite = false,

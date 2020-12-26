@@ -28,7 +28,7 @@ namespace Assets.Scripts.ArxNative.IO.LLF
             lightColors = new uint[lightingHeader.numLights];
             for (int i = 0; i < lightingHeader.numLights; i++)
             {
-                lightColors[i] = reader.ReadUInt32(); //TODO is apparently BGRA if its in compact mode.
+                lightColors[i] = reader.ReadUInt32(); //is apparently BGRA if its in compact mode, which it always is
             }
         }
 
