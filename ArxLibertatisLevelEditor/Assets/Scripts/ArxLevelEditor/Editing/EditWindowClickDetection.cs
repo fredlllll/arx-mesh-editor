@@ -19,18 +19,18 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
 
         public static EditWindowClickDetection Instance { get; private set; } = null;
 
-        public static PriorityList<ClickHandler> clickHandlers = new PriorityList<ClickHandler>();
-        public static PriorityList<MouseDownHandler> mouseDownHandlers = new PriorityList<MouseDownHandler>();
-        public static PriorityList<MouseUpHandler> mouseUpHandlers = new PriorityList<MouseUpHandler>();
-        public static PriorityList<BeginDragHandler> beginDragHandlers = new PriorityList<BeginDragHandler>();
-        public static PriorityList<DragHandler> dragHandlers = new PriorityList<DragHandler>();
-        public static PriorityList<EndDragHandler> endDragHandlers = new PriorityList<EndDragHandler>();
+        public static readonly PriorityList<ClickHandler> clickHandlers = new PriorityList<ClickHandler>();
+        public static readonly PriorityList<MouseDownHandler> mouseDownHandlers = new PriorityList<MouseDownHandler>();
+        public static readonly PriorityList<MouseUpHandler> mouseUpHandlers = new PriorityList<MouseUpHandler>();
+        public static readonly PriorityList<BeginDragHandler> beginDragHandlers = new PriorityList<BeginDragHandler>();
+        public static readonly PriorityList<DragHandler> dragHandlers = new PriorityList<DragHandler>();
+        public static readonly PriorityList<EndDragHandler> endDragHandlers = new PriorityList<EndDragHandler>();
 
-        private static Vector3[] lastPosition = new Vector3[3];
-        private static Vector3[] mouseDownPosition = new Vector3[3];
-        private static bool[] mouseButtonDown = new bool[] { false, false, false };
-        private static bool[] mouseButtonMoved = new bool[] { false, false, false };
-        private static bool[] isDragging = new bool[] { false, false, false };
+        private static readonly Vector3[] lastPosition = new Vector3[3];
+        private static readonly Vector3[] mouseDownPosition = new Vector3[3];
+        private static readonly bool[] mouseButtonDown = new bool[] { false, false, false };
+        private static readonly bool[] mouseButtonMoved = new bool[] { false, false, false };
+        private static readonly bool[] isDragging = new bool[] { false, false, false };
 
         public float distanceTillDrag = 3; //3 pixels of movement till it actually counts as drag
 
@@ -41,18 +41,15 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
                 throw new Exception("Only one instance of edit window click detection allowed");
             }
             Instance = this;
-            Vector3 posLocal = MouseGlobalToLocal(Input.mousePosition);
+        }
+
+        private void Start()
+        {
+            Vector3 posLocal = EditWindow.MouseGlobalToLocal(Input.mousePosition);
             for (int i = 0; i < lastPosition.Length; i++)
             {
                 lastPosition[i] = posLocal;
             }
-        }
-
-        private Vector3 MouseGlobalToLocal(Vector3 globalPos)
-        {
-            globalPos.x -= EditWindow.X;
-            globalPos.y -= EditWindow.Y;
-            return globalPos;
         }
 
         private void FireEvent<T1, T2>(PriorityList<Func<T1, T2, bool>> prioList, T1 t1, T2 t2)
@@ -129,7 +126,7 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
 
         private void UpdateButton(int btn)
         {
-            var mousePosLocal = MouseGlobalToLocal(Input.mousePosition);
+            var mousePosLocal = EditWindow.MouseGlobalToLocal(Input.mousePosition);
             if (EditWindow.MouseInEditWindow)
             {
                 if (Input.GetMouseButtonDown(btn))
@@ -168,7 +165,8 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
                     var distanceSinceDown = offsetSinceDown.magnitude;
                     if (distanceSinceDown >= distanceTillDrag)
                     {
-                        FireBeginDrag(mousePosLocal, btn);
+                        mouseButtonMoved[btn] = true;
+                        FireBeginDrag(mouseDownPosition[btn], btn);
                         isDragging[btn] = true;
                         FireDrag(mouseDownPosition[btn], mousePosLocal, offsetSinceDown, btn);
                     }

@@ -4,8 +4,6 @@ using UnityEngine;
 
 namespace Assets.Scripts.ArxLevelEditor.Editing
 {
-
-
     public enum GizmoMode
     {
         Move,
@@ -16,6 +14,7 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
     public class Gizmo : MonoBehaviour
     {
         static int gizmoLayer = 0;
+        static int gizmoLayerMask = 0;
 
         public static Gizmo Instance
         {
@@ -106,6 +105,7 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
         {
             Instance = this;
             gizmoLayer = LayerMask.NameToLayer("Gizmo");
+            gizmoLayerMask = 1 << gizmoLayer;
         }
 
         void Start()
@@ -117,60 +117,66 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
             CreateScale();
 
             Mode = GizmoMode.Move;
+
+            EditWindowClickDetection.beginDragHandlers.Add(HandleBeginDrag, 0);
+            EditWindowClickDetection.dragHandlers.Add(HandleDrag, 0);
+            EditWindowClickDetection.endDragHandlers.Add(HandleEndDrag, 0);
         }
 
         bool dragging = false;
-        public bool Dragging
-        {
-            get { return dragging; }
-        }
-        Vector3 dragLast;
         GameObject dragObject;
 
-        // Update is called once per frame
-        void Update()
+        bool HandleBeginDrag(Vector3 localPos, int btn)
         {
-            //Do raycasting from mouse pointer and monitor dragging to do stuff
-            if (LevelEditor.EditState == EditState.Vertices)
+            if (LevelEditor.EditState == EditState.Vertices && btn == EditWindowClickDetection.BTN_PRIMARY)
             {
-                if (!dragging && Input.GetMouseButtonDown(0))
+                var ray = EditWindow.GetRayFromMousePosition(localPos);
+                if (Physics.Raycast(ray, out RaycastHit hit, float.PositiveInfinity, gizmoLayerMask))
                 {
-                    var ray = EditWindow.GetRayFromMousePosition();
-                    if (Physics.Raycast(ray, out RaycastHit hit, float.PositiveInfinity, 1 << gizmoLayer))
+                    dragObject = hit.transform.gameObject;
+                    if (dragObject == moveX || dragObject == moveY || dragObject == moveZ)
                     {
-                        dragObject = hit.transform.gameObject;
-                        if (dragObject == moveX || dragObject == moveY || dragObject == moveZ)
-                        {
-                            dragLast = Input.mousePosition;
-                            dragging = true;
-                        }
+                        dragging = true;
+                        return true;
                     }
-                }
-                else if (dragging && Input.GetMouseButtonUp(0))
-                {
-                    dragging = false;
-                }
-                if (dragging)
-                {
-                    Vector3 offset = Input.mousePosition - dragLast;
-                    offset /= 100;
-                    dragLast = Input.mousePosition;
-                    var pos = target.position;
-                    if (dragObject == moveX)
-                    {
-                        pos.x += offset.x;
-                    }
-                    else if (dragObject == moveY)
-                    {
-                        pos.y += offset.y;
-                    }
-                    else if (dragObject == moveZ)
-                    {
-                        pos.z -= offset.x;
-                    }
-                    target.position = pos;
                 }
             }
+            return false;
+        }
+
+        bool HandleDrag(Vector3 from, Vector3 to, Vector3 offset, int btn)
+        {
+            if (dragging && btn == EditWindowClickDetection.BTN_PRIMARY)
+            {
+                //TODO: project the dragged object arrow to viewport and then figure out movement from offset
+                offset /= 100;
+                var pos = target.position;
+                if (dragObject == moveX)
+                {
+                    pos.x += offset.x;
+                }
+                else if (dragObject == moveY)
+                {
+                    pos.y += offset.y;
+                }
+                else if (dragObject == moveZ)
+                {
+                    pos.z -= offset.x;
+                }
+                target.position = pos;
+                return true;
+            }
+            return false;
+        }
+
+        bool HandleEndDrag(Vector3 localPos, int btn)
+        {
+            if (dragging)
+            {
+                dragging = false;
+                return true;
+            }
+            return false;
         }
 
         public static void HighlightX()
@@ -184,6 +190,11 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
         public static void HighlightZ()
         {
             Instance.gizmoMaterial.color = new Color(0.75f, 0.75f, 1);
+        }
+
+        public static void HighlightNone()
+        {
+            Instance.gizmoMaterial.color = new Color(0.75f, 0.75f, 0.75f);
         }
 
         public static void Attach(Transform target, Vector3 localPosition)

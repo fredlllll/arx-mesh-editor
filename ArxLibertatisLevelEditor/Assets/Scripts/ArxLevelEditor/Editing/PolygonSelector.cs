@@ -13,11 +13,16 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
     {
         GameObject currentlySelected = null;
 
-        int selectLayer;
+        int polygonsLayer;
 
         private void Awake()
         {
-            selectLayer = 1 << LayerMask.NameToLayer("EditableLevelMesh");
+            polygonsLayer = 1 << LayerMask.NameToLayer("EditableLevelMesh");
+        }
+
+        private void Start()
+        {
+            EditWindowClickDetection.clickHandlers.Add(HandleClick, 0);
         }
 
         void Deselect()
@@ -37,44 +42,42 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
             }
         }
 
-        private void Update()
+        private bool HandleClick(Vector3 localPos, int btn)
         {
-            if (EditWindow.MouseInEditWindow)
+            if (LevelEditor.EditState == EditState.Polygons && btn == EditWindowClickDetection.BTN_PRIMARY)
             {
-                if (LevelEditor.EditState == EditState.Polygons && Input.GetMouseButtonDown(0))
+                var ray = EditWindow.GetRayFromMousePosition(localPos);
+                //raycast with levelmeshes to see what polygon was clicked
+                if (Physics.Raycast(ray, out RaycastHit hitInfo, float.MaxValue, polygonsLayer))
                 {
-                    //convert mouse position to viewport position
-                    var ray = EditWindow.GetRayFromMousePosition();
-                    //raycast with levelmeshes to see what polygon was clicked
-                    if (Physics.Raycast(ray, out RaycastHit hitInfo, float.MaxValue, selectLayer))
-                    {
-                        var mesh = hitInfo.transform.gameObject.GetComponent<MaterialMesh>();
-                        if (mesh != null)
-                        {
-                            Deselect();
-
-                            //remove newly selected from mesh
-                            var primitive = mesh.GetByTriangleIndex(hitInfo.triangleIndex);
-                            mesh.RemovePrimitive(primitive);
-                            mesh.UpdateMesh();
-
-                            var go = new GameObject();
-                            currentlySelected = go;
-                            go.transform.SetParent(mesh.gameObject.transform);
-                            go.transform.localPosition = Vector3.zero;
-                            go.transform.localScale = Vector3.one;
-                            var editablePrimitive = go.AddComponent<EditablePrimitive>();
-                            editablePrimitive.UpdatePrimitive(primitive, mesh.EditorMaterial);
-
-                            //TODO: add some indicator this poly is selected
-                        }
-                    }
-                    else
+                    var mesh = hitInfo.transform.gameObject.GetComponent<MaterialMesh>();
+                    if (mesh != null)
                     {
                         Deselect();
+
+                        //remove newly selected from mesh
+                        var primitive = mesh.GetByTriangleIndex(hitInfo.triangleIndex);
+                        mesh.RemovePrimitive(primitive);
+                        mesh.UpdateMesh();
+
+                        var go = new GameObject();
+                        currentlySelected = go;
+                        go.transform.SetParent(mesh.gameObject.transform);
+                        go.transform.localPosition = Vector3.zero;
+                        go.transform.localScale = Vector3.one;
+                        var editablePrimitive = go.AddComponent<EditablePrimitive>();
+                        editablePrimitive.UpdatePrimitive(primitive, mesh.EditorMaterial);
+
+                        //TODO: add some indicator this poly is selected
                     }
+                    return true;
+                }
+                else
+                {
+                    Deselect();
                 }
             }
+            return false;
         }
     }
 }

@@ -39,19 +39,27 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
             get; private set;
         }
 
-        public static Ray GetRayFromMousePosition()
+        public static Vector3 MouseGlobalToLocal(Vector3 globalPos)
         {
-            Vector3 mousePos = Input.mousePosition;
-            mousePos.x -= X;
-            mousePos.y -= Y;
-
-            mousePos.x /= Width;
-            mousePos.y /= Height;
-
-            return LevelEditor.EditorCamera.ViewportPointToRay(mousePos);
+            globalPos.x -= X;
+            globalPos.y -= Y;
+            return globalPos;
         }
 
-        private void Start()
+        public static Ray GetRayFromMousePosition(Vector3 localMousePos)
+        {
+            localMousePos.x /= Width;
+            localMousePos.y /= Height;
+
+            return LevelEditor.EditorCamera.ViewportPointToRay(localMousePos);
+        }
+
+        public static Ray GetRayFromMousePosition()
+        {
+            return GetRayFromMousePosition(MouseGlobalToLocal(Input.mousePosition));
+        }
+
+        private void Awake()
         {
             WindowTransform = GetComponent<RectTransform>();
         }

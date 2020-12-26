@@ -19,6 +19,11 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
             vertexLayerMask = 1 << LayerMask.NameToLayer("Vertices");
         }
 
+        private void Start()
+        {
+            EditWindowClickDetection.clickHandlers.Add(HandleClick, 0);
+        }
+
         void Deselect()
         {
             Gizmo.Detach();
@@ -30,33 +35,32 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
             }
         }
 
-        private void Update()
+        private bool HandleClick(Vector3 localPos, int btn)
         {
-            if (EditWindow.MouseInEditWindow)
+            if (LevelEditor.EditState == EditState.Vertices && btn == EditWindowClickDetection.BTN_PRIMARY)
             {
-                if (LevelEditor.EditState == EditState.Vertices && Input.GetMouseButtonUp(0) && !Gizmo.Instance.Dragging)
+                var ray = EditWindow.GetRayFromMousePosition(localPos);
+                //raycast with vertices
+                if (Physics.Raycast(ray, out RaycastHit hitInfo, float.MaxValue, vertexLayerMask))
                 {
-                    //convert mouse position to viewport position
-                    var ray = EditWindow.GetRayFromMousePosition();
-                    //raycast with vertices
-                    if (Physics.Raycast(ray, out RaycastHit hitInfo, float.MaxValue, vertexLayerMask))
-                    {
-                        var vertex = hitInfo.transform.gameObject.GetComponent<EditableVertex>();
-                        if (vertex != null)
-                        {
-                            Deselect();
-                            currentlySelected = hitInfo.transform.gameObject;
-
-                            Gizmo.Attach(currentlySelected.transform, Vector3.zero);
-                            Gizmo.Visible = true;
-                        }
-                    }
-                    else
+                    var vertex = hitInfo.transform.gameObject.GetComponent<EditableVertex>();
+                    if (vertex != null)
                     {
                         Deselect();
+                        currentlySelected = hitInfo.transform.gameObject;
+
+                        Gizmo.Attach(currentlySelected.transform, Vector3.zero);
+                        Gizmo.Visible = true;
+                        return true;
                     }
                 }
+                else
+                {
+                    Deselect();
+                }
             }
+            return false;
         }
+
     }
 }
