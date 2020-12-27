@@ -124,28 +124,25 @@ namespace Assets.Scripts.ArxLevelEditor.Mesh
             mesh.colors = colors.ToArray();
             mesh.triangles = indices.ToArray();
 
-            var meshTris = mesh.triangles; //the getter of triangles is slow, cache its result here
-            int[] normalPlusReverseIndices = new int[meshTris.Length * 2];
-            Array.Copy(meshTris, normalPlusReverseIndices, meshTris.Length);
-            for (int i = meshTris.Length, j = meshTris.Length - 1; i < normalPlusReverseIndices.Length; i++, j--)
-            {
-                normalPlusReverseIndices[i] = meshTris[j];
-            }
-
-            collisionMesh.triangles = null;
-            collisionMesh.vertices = mesh.vertices;
-            collisionMesh.triangles = normalPlusReverseIndices;
-            meshCollider.sharedMesh = collisionMesh;
+            meshCollider.sharedMesh = mesh; //no backface collisions
         }
 
         public EditablePrimitiveInfo GetByTriangleIndex(int triangleIndex)
         {
             int triCount = indices.Count / 3;
-            if (triangleIndex >= triCount)
+            if (triangleIndex < 0)
             {
-                //backface collision
-                triangleIndex = triCount - (triangleIndex - triCount);
+                throw new Exception("triangle index cant be < 0: " + triangleIndex);
             }
+            else if (triangleIndex < triCount)
+            {
+                //normal triangle index
+            }
+            else
+            {
+                throw new Exception("triangle index out of bounds: " + triangleIndex);
+            }
+
             if (!triangleIndexToPrimitive.TryGetValue(triangleIndex, out EditablePrimitiveInfo retval))
             {
                 return null;

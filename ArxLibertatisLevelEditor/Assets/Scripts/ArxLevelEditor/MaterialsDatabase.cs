@@ -11,17 +11,19 @@ namespace Assets.Scripts
         public static Material ArxMatDoubleSidedTransparent { get; private set; }
         public static Material NotFound { get; private set; }
         public static Material GizmoMaterial { get; private set; }
+        public static Material VertexMaterial { get; private set; }
 
         static MaterialsDatabase()
         {
-            ArxMat = UnityEngine.Object.Instantiate(Resources.Load<Material>("Materials/ArxMat"));
-            ArxMatDoubleSided = UnityEngine.Object.Instantiate(Resources.Load<Material>("Materials/ArxMatDoubleSided"));
-            ArxMatTransparent = UnityEngine.Object.Instantiate(Resources.Load<Material>("Materials/ArxMatTransparent"));
-            ArxMatDoubleSidedTransparent = UnityEngine.Object.Instantiate(Resources.Load<Material>("Materials/ArxMatDoubleSidedTransparent"));
+            ArxMat = Object.Instantiate(Resources.Load<Material>("Materials/ArxMat"));
+            ArxMatDoubleSided = Object.Instantiate(Resources.Load<Material>("Materials/ArxMatDoubleSided"));
+            ArxMatTransparent = Object.Instantiate(Resources.Load<Material>("Materials/ArxMatTransparent"));
+            ArxMatDoubleSidedTransparent = Object.Instantiate(Resources.Load<Material>("Materials/ArxMatDoubleSidedTransparent"));
 
-            NotFound = UnityEngine.Object.Instantiate(Resources.Load<Material>("Materials/NotFound"));
-            TEST = UnityEngine.Object.Instantiate(Resources.Load<Material>("Materials/TEST"));
+            NotFound = Object.Instantiate(Resources.Load<Material>("Materials/NotFound"));
+            TEST = Object.Instantiate(Resources.Load<Material>("Materials/TEST"));
             GizmoMaterial = Object.Instantiate(Resources.Load<Material>("Materials/Gizmo"));
+            VertexMaterial = Object.Instantiate(Resources.Load<Material>("Materials/Vertex"));
         }
     }
 }

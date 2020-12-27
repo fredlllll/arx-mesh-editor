@@ -67,33 +67,31 @@ namespace Assets.Scripts.ArxLevelLoading
                     MaterialMesh mm = lvl.EditableLevelMesh.GetMaterialMesh(matKey);
 
                     EditablePrimitiveInfo prim = new EditablePrimitiveInfo();
+                    int vertCount = 3;
                     if (poly.type.HasFlag(PolyType.QUAD))
                     { //QUAD
                         prim.type = EditablePrimitiveType.Quad;
-
-                        for (int i = 0; i < 4; i++)
-                        {
-                            var vert = poly.vertices[i];
-                            var evert = new EditableVertexInfo(new Vector3(vert.posX, vert.posY, vert.posZ),
-                                new Vector2(vert.texU, 1 - vert.texV),
-                                poly.normals[i].ToVector3(),
-                                ArxIOHelper.FromBGRA(lvl.ArxLevelNative.LLF.lightColors[lightIndex++]));
-                            prim.vertices[i] = evert;
-                        }
+                        vertCount = 4;
                     }
                     else
-                    { //TRIANGLE
+                    {
+                        //TRIANGLE
                         prim.type = EditablePrimitiveType.Triangle;
 
-                        for (int i = 0; i < 3; i++)
-                        {
-                            var vert = poly.vertices[i];
-                            var evert = new EditableVertexInfo(new Vector3(vert.posX, vert.posY, vert.posZ),
-                                new Vector2(vert.texU, 1 - vert.texV),
-                                poly.normals[i].ToVector3(),
-                                ArxIOHelper.FromBGRA(lvl.ArxLevelNative.LLF.lightColors[lightIndex++]));
-                            prim.vertices[i] = evert;
-                        }
+                        var lastVert = poly.vertices[3];
+                        prim.vertices[3] = new EditableVertexInfo(new Vector3(lastVert.posX, lastVert.posY, lastVert.posZ),
+                            new Vector2(lastVert.texU, 1 - lastVert.texV),
+                            poly.normals[3].ToVector3(), Color.white);
+                    }
+
+                    for (int i = 0; i < vertCount; i++)
+                    {
+                        var vert = poly.vertices[i];
+                        var evert = new EditableVertexInfo(new Vector3(vert.posX, vert.posY, vert.posZ),
+                            new Vector2(vert.texU, 1 - vert.texV),
+                            poly.normals[i].ToVector3(),
+                            ArxIOHelper.FromBGRA(lvl.ArxLevelNative.LLF.lightColors[lightIndex++]));
+                        prim.vertices[i] = evert;
                     }
 
                     prim.norm = poly.norm.ToVector3();

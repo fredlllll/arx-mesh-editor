@@ -121,6 +121,8 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
             EditWindowClickDetection.beginDragHandlers.Add(HandleBeginDrag, 0);
             EditWindowClickDetection.dragHandlers.Add(HandleDrag, 0);
             EditWindowClickDetection.endDragHandlers.Add(HandleEndDrag, 0);
+
+            Visible = false;
         }
 
         bool dragging = false;

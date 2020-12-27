@@ -51,7 +51,7 @@ namespace Assets.Scripts.ArxLevelLoading
             Vector2 pos = Vector2.zero;
 
             int vertCount = prim.vertexCount;
-            for(int i =0; i< vertCount; i++)
+            for (int i = 0; i < vertCount; i++)
             {
                 var v = prim.vertices[i];
                 pos += new Vector2(v.position.x, v.position.z);
@@ -143,8 +143,7 @@ namespace Assets.Scripts.ArxLevelLoading
                         //copy vertices
                         poly.vertices = new ArxNative.IO.FTS.FTS_IO_VERTEX[4];
                         poly.normals = new SavedVec3[4];
-                        int vertCount = prim.vertexCount;
-                        for (int j = 0; j < vertCount; j++)
+                        for (int j = 0; j < 4; j++) //always save all 4 vertices regardless of if its a triangle or quad
                         {
                             var vert = prim.vertices[j];
                             var natVert = new ArxNative.IO.FTS.FTS_IO_VERTEX();

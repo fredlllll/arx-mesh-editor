@@ -1,4 +1,6 @@
 ﻿using Assets.Scripts.ArxLevelEditor;
+using Assets.Scripts.Util;
+using cakeslice;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,13 +39,21 @@ namespace Assets.Scripts.ArxLevelEditor.Mesh
             {
                 var tmp = vertObjs[i] = new GameObject();
                 var col = tmp.AddComponent<SphereCollider>();
-                col.radius = 0.2f;
+                col.radius = 1;
                 tmp.transform.SetParent(transform);
                 tmp.layer = vertexLayer;
                 var vert = tmp.AddComponent<EditableVertex>();
                 vert.vertIndex = i;
                 vert.primitive = this;
+                //TODO: sync size with distance
+                tmp.transform.localScale = new Vector3(5, 5, 5);
+                var mf = tmp.AddComponent<MeshFilter>();
+                mf.sharedMesh = PrimitiveDatabase.Sphere;
+                var mr = tmp.AddComponent<MeshRenderer>();
+                mr.sharedMaterial = MaterialsDatabase.VertexMaterial;
             }
+
+            gameObject.AddComponent<Outline>();
         }
 
         public void UpdateMesh()

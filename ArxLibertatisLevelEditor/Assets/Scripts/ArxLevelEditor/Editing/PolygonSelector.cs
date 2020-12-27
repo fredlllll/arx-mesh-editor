@@ -53,22 +53,27 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
                     var mesh = hitInfo.transform.gameObject.GetComponent<MaterialMesh>();
                     if (mesh != null)
                     {
-                        Deselect();
-
-                        //remove newly selected from mesh
                         var primitive = mesh.GetByTriangleIndex(hitInfo.triangleIndex);
-                        mesh.RemovePrimitive(primitive);
-                        mesh.UpdateMesh();
+                        if (primitive != null)
+                        {
+                            Deselect();
 
-                        var go = new GameObject();
-                        currentlySelected = go;
-                        go.transform.SetParent(mesh.gameObject.transform);
-                        go.transform.localPosition = Vector3.zero;
-                        go.transform.localScale = Vector3.one;
-                        var editablePrimitive = go.AddComponent<EditablePrimitive>();
-                        editablePrimitive.UpdatePrimitive(primitive, mesh.EditorMaterial);
+                            //remove newly selected from mesh
+                            mesh.RemovePrimitive(primitive);
+                            mesh.UpdateMesh();
 
-                        //TODO: add some indicator this poly is selected
+                            var go = new GameObject();
+                            currentlySelected = go;
+                            go.transform.SetParent(mesh.gameObject.transform);
+                            go.transform.localPosition = Vector3.zero;
+                            go.transform.localScale = Vector3.one;
+                            var editablePrimitive = go.AddComponent<EditablePrimitive>();
+                            editablePrimitive.UpdatePrimitive(primitive, mesh.EditorMaterial);
+                        }
+                        else
+                        {
+                            Debug.LogWarning("primitive is null for " + hitInfo.triangleIndex);
+                        }
                     }
                     return true;
                 }
