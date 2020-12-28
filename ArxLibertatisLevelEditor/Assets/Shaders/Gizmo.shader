@@ -1,4 +1,4 @@
-﻿Shader "Arx/SingleColorUnlit"
+﻿Shader "Arx/Gizmo"
 {
 	Properties
 	{
@@ -6,13 +6,13 @@
 	}
 		SubShader
 	{
-		Tags { "RenderType" = "Opaque" }
+		Tags { "RenderType" = "Opaque" "Queue" = "Overlay" }
 		LOD 100
 
 		Pass
 		{
 			Tags { "LightMode" = "ForwardBase" }
-
+			ZTest Always
 			CGPROGRAM
 
 		#pragma vertex vert

@@ -10,6 +10,13 @@ namespace Assets.Scripts.ArxLevelEditor
         Vertices
     }
 
+    public enum SnapMode
+    {
+        None = 0,
+        Grid = 1,
+        Vertex = 2,
+    }
+
     public class LevelEditor : MonoBehaviour
     {
         public static Camera EditorCamera { get; set; }
@@ -19,6 +26,8 @@ namespace Assets.Scripts.ArxLevelEditor
         public static TextureDatabase TextureDatabase { get; } = new TextureDatabase();
 
         public static EditState EditState { get; set; } = EditState.Polygons;
+
+        public static SnapMode SnapMode { get; set; } = SnapMode.None;
 
         public static void OpenLevel(string name)
         {

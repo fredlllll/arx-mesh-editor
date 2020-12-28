@@ -13,11 +13,15 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
     {
         GameObject currentlySelected = null;
 
-        int polygonsLayer;
+        static int polygonsLayerMask;
+        public static int PolygonsLayerMask
+        {
+            get { return polygonsLayerMask; }
+        }
 
         private void Awake()
         {
-            polygonsLayer = 1 << LayerMask.NameToLayer("EditableLevelMesh");
+            polygonsLayerMask = 1 << LayerMask.NameToLayer("EditableLevelMesh");
         }
 
         private void Start()
@@ -48,7 +52,7 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
             {
                 var ray = EditWindow.GetRayFromMousePosition(localPos);
                 //raycast with levelmeshes to see what polygon was clicked
-                if (Physics.Raycast(ray, out RaycastHit hitInfo, float.MaxValue, polygonsLayer))
+                if (Physics.Raycast(ray, out RaycastHit hitInfo, float.MaxValue, polygonsLayerMask))
                 {
                     var mesh = hitInfo.transform.gameObject.GetComponent<MaterialMesh>();
                     if (mesh != null)

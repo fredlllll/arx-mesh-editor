@@ -9,12 +9,12 @@ using UnityEngine.UI;
 
 namespace Assets.Scripts.UI
 {
-    public class TopBarHandler :MonoBehaviour
+    public class TopBarHandler : MonoBehaviour
     {
         public GameObject polygonsButton, verticesButton;
         private void Start()
         {
-            
+
         }
 
         public void SaveClicked()
@@ -34,6 +34,11 @@ namespace Assets.Scripts.UI
             LevelEditor.EditState = EditState.Vertices;
             polygonsButton.GetComponent<Button>().interactable = true;
             verticesButton.GetComponent<Button>().interactable = false;
+        }
+
+        public void SnapModeChanged(Dropdown sender)
+        {
+            LevelEditor.SnapMode = (SnapMode)sender.value;
         }
     }
 }

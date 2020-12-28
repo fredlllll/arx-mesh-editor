@@ -131,6 +131,7 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
             {
                 if (Input.GetMouseButtonDown(btn))
                 {
+                    Cursor.lockState = CursorLockMode.Confined;
                     FireMouseDown(mousePosLocal, btn);
                     mouseButtonDown[btn] = true;
                     mouseButtonMoved[btn] = false;
@@ -139,6 +140,7 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
             }
             if (Input.GetMouseButtonUp(btn))
             {
+                Cursor.lockState = CursorLockMode.None;
                 FireMouseUp(mousePosLocal, btn, EditWindow.MouseInEditWindow);
                 if (EditWindow.MouseInEditWindow && mouseButtonDown[btn] && !mouseButtonMoved[btn])
                 {
@@ -159,7 +161,7 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
                     var offset = mousePosLocal - lastPosition[btn];
                     FireDrag(lastPosition[btn], mousePosLocal, offset, btn);
                 }
-                else
+                else if (EditWindow.MouseInEditWindow) //TODO: should check if mousedown pos is in edit window, but this is at max 3 pixels where you cant drag so no magic for now
                 {
                     var offsetSinceDown = mousePosLocal - mouseDownPosition[btn];
                     var distanceSinceDown = offsetSinceDown.magnitude;

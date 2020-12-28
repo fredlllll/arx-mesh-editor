@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -52,6 +53,8 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
                 }
             }
         }
+
+        SnapGrid snapGrid = new SnapGrid();
 
         void CreateMove()
         {
@@ -125,19 +128,21 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
             Visible = false;
         }
 
+        Vector3 virtualPosition;
         bool dragging = false;
         GameObject dragObject;
-
         bool HandleBeginDrag(Vector3 localPos, int btn)
         {
             if (LevelEditor.EditState == EditState.Vertices && btn == EditWindowClickDetection.BTN_PRIMARY)
             {
+                Debug.Log("begin drag");
                 var ray = EditWindow.GetRayFromMousePosition(localPos);
                 if (Physics.Raycast(ray, out RaycastHit hit, float.PositiveInfinity, gizmoLayerMask))
                 {
                     dragObject = hit.transform.gameObject;
                     if (dragObject == moveX || dragObject == moveY || dragObject == moveZ)
                     {
+                        virtualPosition = target.position;
                         dragging = true;
                         return true;
                     }
@@ -146,25 +151,72 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
             return false;
         }
 
-        bool HandleDrag(Vector3 from, Vector3 to, Vector3 offset, int btn)
+        Vector3 SnapVertex(Vector3 pos)
+        {
+            var colliders = Physics.OverlapSphere(pos, 0.1f, PolygonSelector.PolygonsLayerMask);
+            if (colliders.Length > 0)
+            {
+                float closestDistance = float.MaxValue;
+                Vector3 closestVertex = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
+                foreach (var col in colliders)
+                {
+                    var vertices = col.gameObject.GetComponent<MeshFilter>().sharedMesh.vertices;
+                    var mat = col.transform.localToWorldMatrix;
+                    foreach (var v in vertices)
+                    {
+                        Vector3 vert = mat.MultiplyPoint(v);
+                        float dist = Vector3.Distance(vert, pos);
+                        if (dist < closestDistance)
+                        {
+                            closestDistance = dist;
+                            closestVertex = vert;
+                        }
+                    }
+                }
+                if (closestDistance < 0.1f)
+                {
+                    return closestVertex;
+                }
+            }
+            return pos;
+        }
+
+        bool HandleDrag(Vector3 from, Vector3 to, Vector3 mouseOffset, int btn)
         {
             if (dragging && btn == EditWindowClickDetection.BTN_PRIMARY)
             {
                 //TODO: project the dragged object arrow to viewport and then figure out movement from offset
-                offset /= 100;
-                var pos = target.position;
+                mouseOffset /= 100;
+                Vector3 worldOffset = new Vector3();
+
                 if (dragObject == moveX)
                 {
-                    pos.x += offset.x;
+                    worldOffset.x += mouseOffset.x;
                 }
                 else if (dragObject == moveY)
                 {
-                    pos.y += offset.y;
+                    worldOffset.y += mouseOffset.y;
                 }
                 else if (dragObject == moveZ)
                 {
-                    pos.z -= offset.x;
+                    worldOffset.z += mouseOffset.x;
                 }
+
+                virtualPosition += worldOffset;
+                Vector3 pos = new Vector3();
+                switch (LevelEditor.SnapMode)
+                {
+                    case SnapMode.None:
+                        pos = virtualPosition;
+                        break;
+                    case SnapMode.Grid:
+                        pos = snapGrid.Snap(virtualPosition);
+                        break;
+                    case SnapMode.Vertex:
+                        pos = SnapVertex(virtualPosition);
+                        break;
+                }
+
                 target.position = pos;
                 return true;
             }
@@ -175,6 +227,7 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
         {
             if (dragging)
             {
+                Debug.Log("end drag");
                 dragging = false;
                 return true;
             }
