@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Assets.Scripts.ArxLevelEditor.Editing
 {
@@ -26,6 +27,7 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
         GameObject moveGameObject, rotateGameObject, scaleGameObject;
         GameObject moveX, moveY, moveZ;
         Transform target = null;
+        public Transform Target { get { return target; } }
 
         Material gizmoMaterial;
 
@@ -195,6 +197,15 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
             return false;
         }
 
+        private void Update()
+        {
+            if (target != null && target.hasChanged)
+            {
+                OnMove.Invoke();
+                target.hasChanged = false;
+            }
+        }
+
         public static void HighlightX()
         {
             Instance.gizmoMaterial.color = new Color(1, 0.75f, 0.75f);
@@ -218,6 +229,7 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
             Instance.target = target;
             Instance.transform.SetParent(target);
             Instance.transform.localPosition = localPosition;
+            OnMove.Invoke();
         }
 
         public static void Detach()
@@ -231,5 +243,10 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
             get { return Instance.gameObject.activeSelf; }
             set { Instance.gameObject.SetActive(value); }
         }
+
+        public static UnityEvent OnMove
+        {
+            get;
+        } = new UnityEvent();
     }
 }

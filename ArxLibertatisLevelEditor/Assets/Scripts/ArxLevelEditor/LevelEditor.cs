@@ -26,7 +26,9 @@ namespace Assets.Scripts.ArxLevelEditor
         {
             if (CurrentLevel != null)
             {
-                Object.Destroy(CurrentLevel.LevelObject);
+                Gizmo.Detach(); //prevent gizmo from being deleted with the level
+                Gizmo.Visible = false;
+                Destroy(CurrentLevel.LevelObject);
             }
 
             TextureDatabase.Clear();

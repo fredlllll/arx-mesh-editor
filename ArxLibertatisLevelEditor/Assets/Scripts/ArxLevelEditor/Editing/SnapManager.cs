@@ -71,18 +71,6 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
 
         public Vector3 Snap(Vector3 worldPos, SnapAxis snapAxis = SnapAxis.All)
         {
-            /*switch (LevelEditor.SnapMode)
-            {
-                case SnapMode.None:
-                    pos = virtualPosition;
-                    break;
-                case SnapMode.Grid:
-                    pos = snapGrid.Snap(virtualPosition);
-                    break;
-                case SnapMode.Vertex:
-                    pos = SnapVertex(virtualPosition);
-                    break;
-            }*/
             Vector3 snapped = worldPos;
             switch (SnapMode)
             {
@@ -91,6 +79,7 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
                     break;
                 case SnapMode.Vertex:
                     snapped = SnapVertex(worldPos);
+                    snapAxis = SnapAxis.All; //vertices are 3d positions so it doesnt make sense to snap to only one axis
                     break;
             }
 
