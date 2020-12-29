@@ -79,7 +79,7 @@ namespace Assets.Scripts.ArxLevelEditor.Mesh
         private void ProcessPrimitive(EditablePrimitiveInfo primitive)
         {
             int firstVert = verts.Count;
-            int vertCount = primitive.vertexCount;
+            int vertCount = primitive.VertexCount;
             for (int i = 0; i < vertCount; i++)
             {
                 var vert = primitive.vertices[i];

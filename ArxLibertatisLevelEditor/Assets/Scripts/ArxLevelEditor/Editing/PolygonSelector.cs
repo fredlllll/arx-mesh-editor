@@ -11,6 +11,8 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
 {
     public class PolygonSelector : MonoBehaviour
     {
+        public static PolygonSelector Instance { get; private set; }
+
         GameObject currentlySelected = null;
 
         static int polygonsLayerMask;
@@ -21,6 +23,7 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
 
         private void Awake()
         {
+            Instance = this;
             polygonsLayerMask = 1 << LayerMask.NameToLayer("EditableLevelMesh");
         }
 
@@ -43,6 +46,18 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
                 editableMesh.UpdateMesh();
                 Destroy(currentlySelected);
                 currentlySelected = null;
+            }
+        }
+
+        public static void Duplicate()
+        {
+            if (Instance.currentlySelected != null)
+            {
+                //adds the currently selected back to the mesh, but doesnt destroy the gameobject so its like a dupe
+                var selectedPrimitive = Instance.currentlySelected.GetComponent<EditablePrimitive>();
+                var editableMesh = LevelEditor.CurrentLevel.EditableLevelMesh.GetMaterialMesh(selectedPrimitive.material);
+                editableMesh.AddPrimitive(selectedPrimitive.info.Copy()); //add copy as adding the same twice could lead to problems
+                editableMesh.UpdateMesh();
             }
         }
 

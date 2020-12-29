@@ -16,5 +16,10 @@ namespace Assets.Scripts.ArxLevelEditor.Mesh
             this.normal = norm;
             this.color = color;
         }
+
+        public EditableVertexInfo Copy()
+        {
+            return new EditableVertexInfo(position, uv, normal, color);
+        }
     }
 }

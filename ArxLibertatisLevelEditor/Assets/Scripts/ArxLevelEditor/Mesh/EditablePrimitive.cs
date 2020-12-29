@@ -66,7 +66,7 @@ namespace Assets.Scripts.ArxLevelEditor.Mesh
             var center = Vector3.zero;
 
             int firstVert = 0;
-            int vertCount = info.vertexCount;
+            int vertCount = info.VertexCount;
             for (int i = 0; i < vertCount; i++)
             {
                 var vert = info.vertices[i];
@@ -101,7 +101,7 @@ namespace Assets.Scripts.ArxLevelEditor.Mesh
             this.material = mat;
             this.meshRenderer.sharedMaterial = mat.Material;
 
-            int vertCount = info.vertexCount;
+            int vertCount = info.VertexCount;
             for (int i = 0; i < vertCount; i++)
             {
                 vertObjs[i].transform.localPosition = info.vertices[i].position;

@@ -63,5 +63,10 @@ namespace Assets.Scripts.UI
         {
             snapGridSize.text = LevelEditor.SnapManager.SnapGridSize.ToString(System.Globalization.CultureInfo.InvariantCulture);
         }
+
+        public void DuplicatePolygon()
+        {
+            PolygonSelector.Duplicate();
+        }
     }
 }

@@ -66,39 +66,34 @@ namespace Assets.Scripts.ArxLevelLoading
 
                     MaterialMesh mm = lvl.EditableLevelMesh.GetMaterialMesh(matKey);
 
-                    EditablePrimitiveInfo prim = new EditablePrimitiveInfo();
-                    int vertCount = 3;
-                    if (poly.type.HasFlag(PolyType.QUAD))
-                    { //QUAD
-                        prim.type = EditablePrimitiveType.Quad;
-                        vertCount = 4;
-                    }
-                    else
+                    EditablePrimitiveInfo prim = new EditablePrimitiveInfo
                     {
-                        //TRIANGLE
-                        prim.type = EditablePrimitiveType.Triangle;
-
-                        var lastVert = poly.vertices[3];
-                        prim.vertices[3] = new EditableVertexInfo(new Vector3(lastVert.posX, lastVert.posY, lastVert.posZ),
-                            new Vector2(lastVert.texU, 1 - lastVert.texV),
-                            poly.normals[3].ToVector3(), Color.white);
-                    }
-
+                        polyType = poly.type,
+                        norm = poly.norm.ToVector3(),
+                        norm2 = poly.norm2.ToVector3(),
+                        area = poly.area,
+                        room = poly.room,
+                        paddy = poly.paddy
+                    };
+                    int vertCount = prim.VertexCount;
                     for (int i = 0; i < vertCount; i++)
                     {
                         var vert = poly.vertices[i];
-                        var evert = new EditableVertexInfo(new Vector3(vert.posX, vert.posY, vert.posZ),
+                        prim.vertices[i] = new EditableVertexInfo(new Vector3(vert.posX, vert.posY, vert.posZ),
                             new Vector2(vert.texU, 1 - vert.texV),
                             poly.normals[i].ToVector3(),
                             ArxIOHelper.FromBGRA(lvl.ArxLevelNative.LLF.lightColors[lightIndex++]));
-                        prim.vertices[i] = evert;
                     }
 
-                    prim.norm = poly.norm.ToVector3();
-                    prim.norm2 = poly.norm2.ToVector3();
-                    prim.area = poly.area;
-                    prim.room = poly.room;
-                    prim.paddy = poly.paddy;
+                    if (prim.IsTriangle)
+                    {
+                        //load 4th vertex manually as it has no lighting value and would break lighting otherwise
+                        var lastVert = poly.vertices[3];
+                        prim.vertices[3] = new EditableVertexInfo(new Vector3(lastVert.posX, lastVert.posY, lastVert.posZ),
+                            new Vector2(lastVert.texU, 1 - lastVert.texV),
+                            poly.normals[3].ToVector3(),
+                            Color.white);
+                    }
 
                     mm.AddPrimitive(prim);
                 }

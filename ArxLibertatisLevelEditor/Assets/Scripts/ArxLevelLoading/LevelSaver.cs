@@ -50,7 +50,7 @@ namespace Assets.Scripts.ArxLevelLoading
         {
             Vector2 pos = Vector2.zero;
 
-            int vertCount = prim.vertexCount;
+            int vertCount = prim.VertexCount;
             for (int i = 0; i < vertCount; i++)
             {
                 var v = prim.vertices[i];
@@ -139,6 +139,7 @@ namespace Assets.Scripts.ArxLevelLoading
                         poly.norm2 = new SavedVec3(prim.norm2);
                         poly.paddy = prim.paddy;
                         poly.room = prim.room;
+                        poly.type = prim.polyType; //this is completely ignoring mat polytype atm, but it should be sync with prim type anyway
 
                         //copy vertices
                         poly.vertices = new ArxNative.IO.FTS.FTS_IO_VERTEX[4];
@@ -162,11 +163,7 @@ namespace Assets.Scripts.ArxLevelLoading
                         //set material stuff
                         poly.tex = texPathToTc[mat.TexturePath];//keyerrors should not be possible on this
                         poly.transval = mat.TransVal;
-                        poly.type = mat.PolygonType;
-                        if (prim.type == EditablePrimitiveType.Quad)
-                        {
-                            poly.type |= ArxNative.PolyType.QUAD; // force quad if editable primitive type was changed
-                        }
+                        //polytype is set from primitive
 
                         ftsCell.polygons[i] = poly;
                     }

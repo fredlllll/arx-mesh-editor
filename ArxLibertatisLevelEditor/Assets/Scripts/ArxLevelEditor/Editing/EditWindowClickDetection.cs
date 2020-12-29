@@ -158,6 +158,7 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
             {
                 if (isDragging[btn])
                 {
+                    //var offset = new Vector3(Input.GetAxis("Mouse X") * 5, Input.GetAxis("Mouse Y") * 5, 0);
                     var offset = mousePosLocal - lastPosition[btn];
                     FireDrag(lastPosition[btn], mousePosLocal, offset, btn);
                 }
