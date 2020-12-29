@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
-using Assets.Scripts.ArxLevel;
 using Assets.Scripts.ArxLevelLoading;
+using Assets.Scripts.ArxLevelEditor.Editing;
 
 namespace Assets.Scripts.ArxLevelEditor
 {
@@ -8,13 +8,6 @@ namespace Assets.Scripts.ArxLevelEditor
     {
         Polygons,
         Vertices
-    }
-
-    public enum SnapMode
-    {
-        None = 0,
-        Grid = 1,
-        Vertex = 2,
     }
 
     public class LevelEditor : MonoBehaviour
@@ -27,7 +20,7 @@ namespace Assets.Scripts.ArxLevelEditor
 
         public static EditState EditState { get; set; } = EditState.Polygons;
 
-        public static SnapMode SnapMode { get; set; } = SnapMode.None;
+        public static SnapManager SnapManager { get; } = new SnapManager();
 
         public static void OpenLevel(string name)
         {

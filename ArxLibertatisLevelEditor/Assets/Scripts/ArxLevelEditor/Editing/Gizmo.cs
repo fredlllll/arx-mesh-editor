@@ -27,7 +27,7 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
         GameObject moveX, moveY, moveZ;
         Transform target = null;
 
-        UnityEngine.Material gizmoMaterial;
+        Material gizmoMaterial;
 
         GizmoMode mode;
         public GizmoMode Mode
@@ -53,8 +53,6 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
                 }
             }
         }
-
-        SnapGrid snapGrid = new SnapGrid();
 
         void CreateMove()
         {
@@ -151,36 +149,6 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
             return false;
         }
 
-        Vector3 SnapVertex(Vector3 pos)
-        {
-            var colliders = Physics.OverlapSphere(pos, 0.1f, PolygonSelector.PolygonsLayerMask);
-            if (colliders.Length > 0)
-            {
-                float closestDistance = float.MaxValue;
-                Vector3 closestVertex = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue);
-                foreach (var col in colliders)
-                {
-                    var vertices = col.gameObject.GetComponent<MeshFilter>().sharedMesh.vertices;
-                    var mat = col.transform.localToWorldMatrix;
-                    foreach (var v in vertices)
-                    {
-                        Vector3 vert = mat.MultiplyPoint(v);
-                        float dist = Vector3.Distance(vert, pos);
-                        if (dist < closestDistance)
-                        {
-                            closestDistance = dist;
-                            closestVertex = vert;
-                        }
-                    }
-                }
-                if (closestDistance < 0.1f)
-                {
-                    return closestVertex;
-                }
-            }
-            return pos;
-        }
-
         bool HandleDrag(Vector3 from, Vector3 to, Vector3 mouseOffset, int btn)
         {
             if (dragging && btn == EditWindowClickDetection.BTN_PRIMARY)
@@ -189,33 +157,26 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
                 mouseOffset /= 100;
                 Vector3 worldOffset = new Vector3();
 
+                SnapAxis snapAxis = SnapAxis.None;
+
                 if (dragObject == moveX)
                 {
                     worldOffset.x += mouseOffset.x;
+                    snapAxis = SnapAxis.X;
                 }
                 else if (dragObject == moveY)
                 {
                     worldOffset.y += mouseOffset.y;
+                    snapAxis = SnapAxis.Y;
                 }
                 else if (dragObject == moveZ)
                 {
                     worldOffset.z += mouseOffset.x;
+                    snapAxis = SnapAxis.Z;
                 }
 
                 virtualPosition += worldOffset;
-                Vector3 pos = new Vector3();
-                switch (LevelEditor.SnapMode)
-                {
-                    case SnapMode.None:
-                        pos = virtualPosition;
-                        break;
-                    case SnapMode.Grid:
-                        pos = snapGrid.Snap(virtualPosition);
-                        break;
-                    case SnapMode.Vertex:
-                        pos = SnapVertex(virtualPosition);
-                        break;
-                }
+                Vector3 pos = LevelEditor.SnapManager.Snap(virtualPosition, snapAxis);
 
                 target.position = pos;
                 return true;
