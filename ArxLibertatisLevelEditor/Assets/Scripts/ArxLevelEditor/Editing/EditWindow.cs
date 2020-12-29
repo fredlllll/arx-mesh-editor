@@ -59,6 +59,16 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
             return GetRayFromMousePosition(MouseGlobalToLocal(Input.mousePosition));
         }
 
+        public static bool IsInEditWindow(Vector3 localMousePos)
+        {
+            return localMousePos.x >= 0 && localMousePos.y >= 0 && localMousePos.x < Width && localMousePos.y < Height;
+        }
+
+        public static bool IsInEditWindowGlobal(Vector3 globalMousePos)
+        {
+            return IsInEditWindow(MouseGlobalToLocal(globalMousePos));
+        }
+
         private void Awake()
         {
             WindowTransform = GetComponent<RectTransform>();

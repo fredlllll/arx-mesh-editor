@@ -161,7 +161,7 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
                     var offset = mousePosLocal - lastPosition[btn];
                     FireDrag(lastPosition[btn], mousePosLocal, offset, btn);
                 }
-                else if (EditWindow.MouseInEditWindow) //TODO: should check if mousedown pos is in edit window, but this is at max 3 pixels where you cant drag so no magic for now
+                else if (EditWindow.IsInEditWindow(mouseDownPosition[btn])) //only start drag if mouse down position was inside window
                 {
                     var offsetSinceDown = mousePosLocal - mouseDownPosition[btn];
                     var distanceSinceDown = offsetSinceDown.magnitude;
