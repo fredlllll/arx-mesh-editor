@@ -6,14 +6,31 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Assets.Scripts.ArxLevelEditor.Editing
 {
+
+
     public class PolygonSelector : MonoBehaviour
     {
         public static PolygonSelector Instance { get; private set; }
+        public static EditablePrimitiveEvent OnDeselected { get; } = new EditablePrimitiveEvent();
+        public static EditablePrimitiveEvent OnSelected { get; } = new EditablePrimitiveEvent();
 
         GameObject currentlySelected = null;
+
+        public static EditablePrimitive CurrentlySelected
+        {
+            get
+            {
+                if (Instance.currentlySelected != null)
+                {
+                    return Instance.currentlySelected.GetComponent<EditablePrimitive>();
+                }
+                return null;
+            }
+        }
 
         static int polygonsLayerMask;
         public static int PolygonsLayerMask
@@ -41,9 +58,10 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
             if (currentlySelected != null)
             {
                 var selectedPrimitive = currentlySelected.GetComponent<EditablePrimitive>();
-                var editableMesh = LevelEditor.CurrentLevel.EditableLevelMesh.GetMaterialMesh(selectedPrimitive.material);
+                var editableMesh = LevelEditor.CurrentLevel.EditableLevelMesh.GetMaterialMesh(selectedPrimitive.Material);
                 editableMesh.AddPrimitive(selectedPrimitive.info);
                 editableMesh.UpdateMesh();
+                OnDeselected.Invoke(selectedPrimitive);
                 Destroy(currentlySelected);
                 currentlySelected = null;
             }
@@ -55,7 +73,7 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
             {
                 //adds the currently selected back to the mesh, but doesnt destroy the gameobject so its like a dupe
                 var selectedPrimitive = Instance.currentlySelected.GetComponent<EditablePrimitive>();
-                var editableMesh = LevelEditor.CurrentLevel.EditableLevelMesh.GetMaterialMesh(selectedPrimitive.material);
+                var editableMesh = LevelEditor.CurrentLevel.EditableLevelMesh.GetMaterialMesh(selectedPrimitive.Material);
                 editableMesh.AddPrimitive(selectedPrimitive.info.Copy()); //add copy as adding the same twice could lead to problems
                 editableMesh.UpdateMesh();
             }
@@ -88,6 +106,8 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
                             go.transform.localScale = Vector3.one;
                             var editablePrimitive = go.AddComponent<EditablePrimitive>();
                             editablePrimitive.UpdatePrimitive(primitive, mesh.EditorMaterial);
+
+                            OnSelected.Invoke(editablePrimitive);
                         }
                         else
                         {

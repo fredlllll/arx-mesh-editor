@@ -5,6 +5,7 @@ namespace Assets.Scripts.ArxNative
     [Flags]
     public enum PolyType : int
     {
+        None = 0,
         NO_SHADOW = 1 << 0,
         DOUBLESIDED = 1 << 1,
         TRANS = 1 << 2,

@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts.ArxNative;
+using Assets.Scripts.Util;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -39,7 +40,7 @@ namespace Assets.Scripts.ArxLevelEditor
         }
 
         //only these types will be used to differentiate between materials. for example QUAD has nothing to do with the material
-        const PolyType materialPolyTypes = PolyType.DOUBLESIDED | PolyType.FALL | PolyType.GLOW | PolyType.LAVA | PolyType.TRANS | PolyType.WATER;
+        public const PolyType materialPolyTypes = PolyType.DOUBLESIDED | PolyType.FALL | PolyType.GLOW | PolyType.LAVA | PolyType.TRANS | PolyType.WATER;
 
         public EditorMaterial(string texArxPath, PolyType polyType, float transVal)
         {
@@ -48,9 +49,13 @@ namespace Assets.Scripts.ArxLevelEditor
             TransVal = transVal;
         }
 
-        public EditorMaterial(UnityEngine.Material mat)
+        ~EditorMaterial()
         {
-            //TODO:
+            if(mat != null)
+            {
+                //prevent memory leaks
+                MainThreadDestroyer.AddForDestruction(mat);
+            }
         }
 
         public override bool Equals(object obj)
