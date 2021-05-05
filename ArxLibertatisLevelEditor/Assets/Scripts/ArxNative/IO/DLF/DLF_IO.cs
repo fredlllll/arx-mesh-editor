@@ -148,8 +148,6 @@ namespace Assets.Scripts.ArxNative.IO.DLF
 
         public static Stream EnsurePacked(Stream s)
         {
-            //TODO: i should pack stuff depending on version, but for now ill just assume version 1.44 by default
-
             MemoryStream ms = new MemoryStream();
 
             BinaryReader reader = new BinaryReader(s);

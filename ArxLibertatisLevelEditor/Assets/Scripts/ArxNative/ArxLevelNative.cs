@@ -62,31 +62,31 @@ namespace Assets.Scripts.ArxNative
         {
             LastSaveName = name;
 
-            using (FileStream fs = new FileStream(ArxPaths.GetDlfPath(name), FileMode.Create, FileAccess.Write))
             using (MemoryStream ms = new MemoryStream())
             {
                 dlf.WriteTo(ms);
                 using (var packedStream = DLF_IO.EnsurePacked(ms))
+                using (FileStream fs = new FileStream(ArxPaths.GetDlfPath(name), FileMode.Create, FileAccess.Write))
                 {
                     packedStream.CopyTo(fs);
                 }
             }
 
-            using (FileStream fs = new FileStream(ArxPaths.GetLlfPath(name), FileMode.Create, FileAccess.Write))
             using (MemoryStream ms = new MemoryStream())
             {
                 llf.WriteTo(ms);
                 using (var packedStream = LLF_IO.EnsurePacked(ms))
+                using (FileStream fs = new FileStream(ArxPaths.GetLlfPath(name), FileMode.Create, FileAccess.Write))
                 {
                     packedStream.CopyTo(fs);
                 }
             }
 
-            using (FileStream fs = new FileStream(ArxPaths.GetFtsPath(name), FileMode.Create, FileAccess.Write))
             using (MemoryStream ms = new MemoryStream())
             {
                 fts.WriteTo(ms);
                 using (var packedStream = FTS_IO.EnsurePacked(ms))
+                using (FileStream fs = new FileStream(ArxPaths.GetFtsPath(name), FileMode.Create, FileAccess.Write))
                 {
                     packedStream.CopyTo(fs);
                 }

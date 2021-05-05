@@ -5,12 +5,11 @@ namespace Assets.Scripts.Util
 {
     public class StructWriter : BinaryWriter
     {
-        public StructWriter(Stream baseStream) : base(baseStream)
-        {
+        public StructWriter(Stream output) : base(output) { }
 
-        }
+        public StructWriter(Stream output, System.Text.Encoding encoding) : base(output, encoding) { }
 
-        public StructWriter(Stream baseStream, System.Text.Encoding encoding, bool leaveOpen) : base(baseStream, encoding, leaveOpen) { }
+        public StructWriter(Stream output, System.Text.Encoding encoding, bool leaveOpen) : base(output, encoding, leaveOpen) { }
 
         public void WriteStruct<T>(T obj)
         {

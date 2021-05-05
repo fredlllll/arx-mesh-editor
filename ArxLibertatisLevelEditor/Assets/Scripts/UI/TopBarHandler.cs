@@ -29,7 +29,7 @@ namespace Assets.Scripts.UI
 
         public void SaveClicked()
         {
-
+            LevelEditor.SaveLevel();
         }
 
         public void PolygonsClicked()

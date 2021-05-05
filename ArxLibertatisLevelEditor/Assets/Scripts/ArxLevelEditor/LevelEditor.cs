@@ -36,6 +36,14 @@ namespace Assets.Scripts.ArxLevelEditor
             CurrentLevel = LevelLoader.LoadLevel(name);
         }
 
+        public static void SaveLevel()
+        {
+            if(CurrentLevel != null)
+            {
+                LevelSaver.SaveLevel(CurrentLevel, CurrentLevel.Name);
+            }
+        }
+
         private void Awake()
         {
             EditorCamera = Camera.main;
