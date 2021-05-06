@@ -78,13 +78,15 @@ namespace Assets.Scripts.ArxLevelLoading
 
             var fts = level.ArxLevelNative.FTS;
             fts.textureContainers = new ArxNative.IO.FTS.FTS_IO_TEXTURE_CONTAINER[uniqueTexturePaths.Count];
+            fts.sceneHeader.nb_textures = uniqueTexturePaths.Count;
             int i = 0; //nothing speaks against just using a normal index for tc, i dont know why they ever used random ints
             Dictionary<string, int> texPathToTc = new Dictionary<string, int>();
             foreach (var path in uniqueTexturePaths)
             {
+                int index = i++;
                 var texPath = path.Replace(EditorSettings.DataDir, "");
-                fts.textureContainers[i].fic = ArxIOHelper.GetBytes(texPath, 256);
-                texPathToTc[path] = fts.textureContainers[i].tc = i++;
+                fts.textureContainers[index].fic = ArxIOHelper.GetBytes(texPath, 256);
+                texPathToTc[path] = fts.textureContainers[index].tc = index;
             }
 
             //put primitives into cells
@@ -162,11 +164,13 @@ namespace Assets.Scripts.ArxLevelLoading
 
                         //set material stuff
                         poly.tex = texPathToTc[mat.TexturePath];//keyerrors should not be possible on this
+                        Debug.Log("saving tex " + poly.tex);
                         poly.transval = mat.TransVal;
                         //polytype is set from primitive
 
                         ftsCell.polygons[i] = poly;
                     }
+                    fts.cells[index] = ftsCell;
                 }
             }
 

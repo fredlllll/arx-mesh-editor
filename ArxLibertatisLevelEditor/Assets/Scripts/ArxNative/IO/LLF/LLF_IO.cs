@@ -53,6 +53,7 @@ namespace Assets.Scripts.ArxNative.IO.LLF
 
         public static Stream EnsureUnpacked(Stream s)
         {
+            s.Position = 0;
             byte[] packed = new byte[s.Length];
             s.Read(packed, 0, packed.Length);
             byte[] unpacked = ArxIO.Unpack(packed);
@@ -66,12 +67,12 @@ namespace Assets.Scripts.ArxNative.IO.LLF
 
         public static Stream EnsurePacked(Stream s)
         {
+            s.Position = 0;
             byte[] unpacked = new byte[s.Length];
             s.Read(unpacked, 0, unpacked.Length);
             byte[] packed = ArxIO.Pack(unpacked);
 
-            MemoryStream ms = new MemoryStream();
-            ms.Write(packed, 0, packed.Length);
+            MemoryStream ms = new MemoryStream(packed);
             ms.Position = 0;
             s.Dispose(); //close old stream
             return ms;

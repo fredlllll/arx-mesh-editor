@@ -2,6 +2,7 @@
 using Assets.Scripts.ArxNative.IO.FTS;
 using Assets.Scripts.ArxNative.IO.LLF;
 using System.IO;
+using UnityEngine;
 
 namespace Assets.Scripts.ArxNative
 {
@@ -65,6 +66,7 @@ namespace Assets.Scripts.ArxNative
             using (MemoryStream ms = new MemoryStream())
             {
                 dlf.WriteTo(ms);
+                ms.Position = 0;
                 using (var packedStream = DLF_IO.EnsurePacked(ms))
                 using (FileStream fs = new FileStream(ArxPaths.GetDlfPath(name), FileMode.Create, FileAccess.Write))
                 {
@@ -75,6 +77,7 @@ namespace Assets.Scripts.ArxNative
             using (MemoryStream ms = new MemoryStream())
             {
                 llf.WriteTo(ms);
+                ms.Position = 0;
                 using (var packedStream = LLF_IO.EnsurePacked(ms))
                 using (FileStream fs = new FileStream(ArxPaths.GetLlfPath(name), FileMode.Create, FileAccess.Write))
                 {
@@ -85,6 +88,7 @@ namespace Assets.Scripts.ArxNative
             using (MemoryStream ms = new MemoryStream())
             {
                 fts.WriteTo(ms);
+                ms.Position = 0;
                 using (var packedStream = FTS_IO.EnsurePacked(ms))
                 using (FileStream fs = new FileStream(ArxPaths.GetFtsPath(name), FileMode.Create, FileAccess.Write))
                 {

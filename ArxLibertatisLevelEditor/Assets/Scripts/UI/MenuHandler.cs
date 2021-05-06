@@ -1,7 +1,9 @@
 ﻿using Assets.Scripts.ArxLevelEditor;
+using Assets.Scripts.ArxNative.IO;
 using Assets.Scripts.ArxNative.IO.DLF;
 using Assets.Scripts.ArxNative.IO.FTS;
 using Assets.Scripts.ArxNative.IO.LLF;
+using Assets.Scripts.ArxNative.IO.PK;
 using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,6 +18,20 @@ namespace Assets.Scripts.UI
         {
             LevelEditor.OpenLevel(levelName.text);
             gameObject.SetActive(false);
+        }
+
+        public void TestImplode()
+        {
+            System.Random r = new System.Random();
+            byte[] bytes = new byte[512];
+            r.NextBytes(bytes);
+
+            var imploded = Implode.DoImplode(bytes);
+            var exploded = ArxIO.Unpack(imploded);
+
+            compare("imploded exploded", bytes, exploded);
+
+            Debug.Log("test done");
         }
 
         void compare(string name, byte[] bytesIn, byte[] bytesOut)

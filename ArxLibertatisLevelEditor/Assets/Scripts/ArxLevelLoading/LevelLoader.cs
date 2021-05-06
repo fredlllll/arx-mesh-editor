@@ -45,6 +45,8 @@ namespace Assets.Scripts.ArxLevelLoading
                 tcToIndex[fts.textureContainers[i].tc] = i;
             }
 
+            UnityEngine.Debug.Log("Texture containers loaded: " + fts.textureContainers.Length);
+
             //TODO: use external placeholder texture so it can be set to 0 on export
             var notFoundMaterialKey = new EditorMaterial(EditorSettings.DataDir + "graph\\interface\\misc\\default[icon].bmp", PolyType.GLOW, 0);
 
@@ -62,6 +64,10 @@ namespace Assets.Scripts.ArxLevelLoading
                         string texArxPath = ArxIOHelper.GetString(fts.textureContainers[textureIndex].fic);
                         string texPath = TextureDatabase.GetRealTexturePath(EditorSettings.DataDir + texArxPath);
                         matKey = new EditorMaterial(texPath, poly.type, poly.transval); //TODO: speed up by using a pool of some sort?
+                    }
+                    else
+                    {
+                        UnityEngine.Debug.Log("Couldnt find texture " + poly.tex);
                     }
 
                     MaterialMesh mm = lvl.EditableLevelMesh.GetMaterialMesh(matKey);

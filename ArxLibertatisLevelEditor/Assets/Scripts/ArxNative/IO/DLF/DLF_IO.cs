@@ -148,6 +148,7 @@ namespace Assets.Scripts.ArxNative.IO.DLF
 
         public static Stream EnsurePacked(Stream s)
         {
+            s.Position = 0;
             MemoryStream ms = new MemoryStream();
 
             BinaryReader reader = new BinaryReader(s);

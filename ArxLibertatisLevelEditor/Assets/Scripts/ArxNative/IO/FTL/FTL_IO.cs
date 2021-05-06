@@ -141,11 +141,11 @@ namespace Assets.Scripts.ArxNative.IO.FTL
 
         public static Stream EnsureUnpacked(Stream s)
         {
-            var start = s.Position;
+            s.Position = 0;
 
             byte[] first3 = new byte[3];
             s.Read(first3, 0, first3.Length);
-            s.Position = start;
+            s.Position = 0;
             if (first3[0] == 'F' && first3[1] == 'T' && first3[2] == 'L')
             {
                 //uncomressed
@@ -165,12 +165,12 @@ namespace Assets.Scripts.ArxNative.IO.FTL
 
         public static Stream EnsurePacked(Stream s)
         {
+            s.Position = 0;
             byte[] unpacked = new byte[s.Length];
             s.Read(unpacked, 0, unpacked.Length);
             byte[] packed = ArxIO.Pack(unpacked);
 
-            MemoryStream ms = new MemoryStream();
-            ms.Write(packed, 0, packed.Length);
+            MemoryStream ms = new MemoryStream(packed);
             ms.Position = 0;
             s.Dispose(); //close old stream
             return ms;

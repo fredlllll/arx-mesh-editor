@@ -140,6 +140,7 @@ namespace Assets.Scripts.ArxNative.IO.FTS
 
         public static Stream EnsureUnpacked(Stream s)
         {
+            s.Position = 0;
             var reader = new StructReader(s, System.Text.Encoding.ASCII, true);
 
             MemoryStream ms = new MemoryStream();
@@ -164,6 +165,7 @@ namespace Assets.Scripts.ArxNative.IO.FTS
 
         public static Stream EnsurePacked(Stream s)
         {
+            s.Position = 0;
             StructReader reader = new StructReader(s);
             MemoryStream ms = new MemoryStream();
             StructWriter writer = new StructWriter(ms, System.Text.Encoding.ASCII, true);

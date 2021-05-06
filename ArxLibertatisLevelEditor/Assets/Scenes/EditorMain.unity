@@ -12843,12 +12843,12 @@ GameObject:
   - component: {fileID: 1725476908}
   - component: {fileID: 1725476907}
   m_Layer: 5
-  m_Name: Test IO
+  m_Name: TestButtn
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1725476906
 RectTransform:
   m_ObjectHideFlags: 0
@@ -12913,7 +12913,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1775222635}
-        m_MethodName: TestIOReadWrite
+        m_MethodName: TestImplode
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
