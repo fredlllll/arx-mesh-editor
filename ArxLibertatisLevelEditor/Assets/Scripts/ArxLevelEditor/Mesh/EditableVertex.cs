@@ -4,9 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Assets.Scripts.ArxLevelEditor.Mesh
 {
+    public class EditableVertexEvent : UnityEvent<EditableVertex> { }
+
     public class EditableVertex : MonoBehaviour
     {
         public EditablePrimitive primitive;

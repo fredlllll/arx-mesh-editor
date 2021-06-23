@@ -13,7 +13,9 @@ namespace Assets.Scripts.UI
 {
     public class RightAreaHandler : MonoBehaviour
     {
-        public InputField X, Y, Z;
+        public InputField X, Y, Z, U, V, NX, NY, NZ;
+
+        public Button colorPickerButton;
 
         public Toggle noShadow, doubleSided, trans, water, glow, ignore, quad, tiled, metal, hide, stone, wood, gravel, earth, nocol, lava, climb, fall, noPath, noDraw, precisePath, noClimb, angular, angularIDX0, angularIDX1, angularIDX2, angularIDX3, lateMip;
         private readonly List<Tuple<PolyType, Toggle>> toggleAssoc = new List<Tuple<PolyType, Toggle>>();
@@ -24,10 +26,22 @@ namespace Assets.Scripts.UI
             Y.onEndEdit.AddListener(YEndEdit);
             Z.onEndEdit.AddListener(ZEndEdit);
 
+            U.onEndEdit.AddListener(UEndEdit);
+            V.onEndEdit.AddListener(VEndEdit);
+
+            NX.onEndEdit.AddListener(NXEndEdit);
+            NY.onEndEdit.AddListener(NYEndEdit);
+            NZ.onEndEdit.AddListener(NZEndEdit);
+
+            colorPickerButton.onClick.AddListener(OnColorPickerClicked);
+
             Gizmo.OnMove.AddListener(OnGizmoMove);
 
             PolygonSelector.OnSelected.AddListener(OnPolySelected);
             PolygonSelector.OnDeselected.AddListener(OnPolyDeselected);
+
+            VertexSelector.OnSelected.AddListener(OnVertSelected);
+            VertexSelector.OnDeselected.AddListener(OnVertDeselected);
 
             toggleAssoc.Add(new Tuple<PolyType, Toggle>(PolyType.NO_SHADOW, noShadow));
             toggleAssoc.Add(new Tuple<PolyType, Toggle>(PolyType.DOUBLESIDED, doubleSided));
@@ -87,6 +101,33 @@ namespace Assets.Scripts.UI
             }
         }
 
+        private void OnVertSelected(EditableVertex vert)
+        {
+            U.interactable = true;
+            V.interactable = true;
+            NX.interactable = true;
+            NY.interactable = true;
+            NZ.interactable = true;
+            var v = vert.primitive.info.vertices[vert.vertIndex];
+
+            U.text = v.uv.x.ToString(System.Globalization.CultureInfo.InvariantCulture);
+            V.text = v.uv.y.ToString(System.Globalization.CultureInfo.InvariantCulture);
+            NX.text = v.normal.x.ToString(System.Globalization.CultureInfo.InvariantCulture);
+            NY.text = v.normal.y.ToString(System.Globalization.CultureInfo.InvariantCulture);
+            NZ.text = v.normal.z.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        }
+
+        private void OnVertDeselected(EditableVertex vert)
+        {
+            U.interactable = false;
+            V.interactable = false;
+            NX.interactable = false;
+            NY.interactable = false;
+            NZ.interactable = false;
+            UpdateUV();
+            UpdateNormal();
+        }
+
         private void OnPolySelected(EditablePrimitive prim)
         {
             X.interactable = true;
@@ -123,6 +164,72 @@ namespace Assets.Scripts.UI
         private void ZEndEdit(string value)
         {
             UpdateGizmo();
+        }
+
+        private void UEndEdit(string value)
+        {
+            UpdateUV();
+        }
+
+        private void VEndEdit(string value)
+        {
+            UpdateUV();
+        }
+
+        private void NXEndEdit(string value)
+        {
+            UpdateNormal();
+        }
+
+        private void NYEndEdit(string value)
+        {
+            UpdateNormal();
+        }
+
+        private void NZEndEdit(string value)
+        {
+            UpdateNormal();
+        }
+
+        private void OnColorPickerClicked()
+        {
+            //TODO: open color picker
+        }
+
+        private void UpdateUV()
+        {
+            var vert = VertexSelector.CurrentlySelected;
+            if (vert != null)
+            {
+                if (float.TryParse(U.text, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out float u))
+                {
+                    vert.primitive.info.vertices[vert.vertIndex].uv.x = u;
+                }
+                if (float.TryParse(V.text, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out float v))
+                {
+                    vert.primitive.info.vertices[vert.vertIndex].uv.y = v;
+                }
+            }
+        }
+
+        private void UpdateNormal()
+        {
+            var vert = VertexSelector.CurrentlySelected;
+            if (vert != null)
+            {
+                if (float.TryParse(NX.text, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out float nx))
+                {
+                    vert.primitive.info.vertices[vert.vertIndex].normal.x = nx;
+                }
+                if (float.TryParse(NY.text, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out float ny))
+                {
+                    vert.primitive.info.vertices[vert.vertIndex].normal.y = ny;
+                }
+                if (float.TryParse(NZ.text, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out float nz))
+                {
+                    vert.primitive.info.vertices[vert.vertIndex].normal.z = nz;
+                }
+            }
         }
 
         private void UpdateGizmo()

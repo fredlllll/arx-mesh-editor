@@ -5,17 +5,35 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Assets.Scripts.ArxLevelEditor.Editing
 {
     public class VertexSelector : MonoBehaviour
     {
+        public static VertexSelector Instance { get; private set; }
+
         GameObject currentlySelected = null;
+        public static EditableVertex CurrentlySelected
+        {
+            get
+            {
+                if (Instance.currentlySelected != null)
+                {
+                    return Instance.currentlySelected.GetComponent<EditableVertex>();
+                }
+                return null;
+            }
+        }
+
+        public static EditableVertexEvent OnDeselected { get; } = new EditableVertexEvent();
+        public static EditableVertexEvent OnSelected { get; } = new EditableVertexEvent();
 
         int vertexLayerMask;
 
         private void Awake()
         {
+            Instance = this;
             vertexLayerMask = 1 << LayerMask.NameToLayer("Vertices");
         }
 
@@ -31,7 +49,7 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
 
             if (currentlySelected != null)
             {
-                //nothing to do to unselect for vertices
+                OnDeselected.Invoke(currentlySelected.GetComponent<EditableVertex>());
             }
         }
 
@@ -51,6 +69,7 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
 
                         Gizmo.Attach(currentlySelected.transform, Vector3.zero);
                         Gizmo.Visible = true;
+                        OnSelected.Invoke(vertex);
                         return true;
                     }
                 }
