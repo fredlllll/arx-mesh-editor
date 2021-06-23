@@ -1,8 +1,8 @@
-﻿Shader "Unlit/SVShader"
+﻿Shader "Unlit/HShader"
 {
     Properties
     {
-        _Hue ("Hue",Float) = 0
+        
     }
     SubShader
     {
@@ -31,19 +31,12 @@
                 float4 vertex : SV_POSITION;
             };
 
-            float _Hue;
-
             float3 Hue(float H)
             {
                 float R = abs(H * 6 - 3) - 1;
                 float G = 2 - abs(H * 6 - 2);
                 float B = 2 - abs(H * 6 - 4);
                 return saturate(float3(R, G, B));
-            }
-
-            float4 HSVToRGB(in float3 HSV)
-            {
-                return float4(((Hue(HSV.x) - 1) * HSV.y + 1) * HSV.z, 1);
             }
 
             v2f vert (appdata v)
@@ -56,7 +49,7 @@
 
             fixed4 frag(v2f i) : SV_Target
             {
-                return HSVToRGB(float3(_Hue,i.uv.x,i.uv.y));
+                return fixed4(Hue(i.uv.y),1);
             }
             ENDCG
         }
