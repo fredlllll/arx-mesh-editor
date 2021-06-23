@@ -157,10 +157,18 @@ namespace Assets.Scripts.ArxLevelLoading
                             natVert.texU = vert.uv.x;
                             natVert.texV = 1 - vert.uv.y;
                             poly.normals[j] = new SavedVec3(vert.normal);
-                            lightColors.Add(ArxIOHelper.ToBGRA(vert.color));
 
                             poly.vertices[j] = natVert;
                         }
+
+                        lightColors.Add(ArxIOHelper.ToBGRA(prim.vertices[0].color));
+                        lightColors.Add(ArxIOHelper.ToBGRA(prim.vertices[1].color));
+                        lightColors.Add(ArxIOHelper.ToBGRA(prim.vertices[2].color));
+                        if (poly.type.HasFlag(ArxNative.PolyType.QUAD))
+                        {
+                            lightColors.Add(ArxIOHelper.ToBGRA(prim.vertices[3].color));
+                        }
+
 
                         //set material stuff
                         poly.tex = texPathToTc[mat.TexturePath];//keyerrors should not be possible on this
