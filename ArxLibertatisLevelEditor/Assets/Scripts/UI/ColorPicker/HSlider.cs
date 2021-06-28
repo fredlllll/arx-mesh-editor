@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 namespace Assets.Scripts.UI.ColorPicker
 {
-    public class HSlider :MonoBehaviour
+    public class HSlider : MonoBehaviour
     {
         [SerializeField]
         private ColorPicker picker;
@@ -39,7 +39,7 @@ namespace Assets.Scripts.UI.ColorPicker
         {
             receiveEvents = false;
             picker.H = val;
-            if(valueLabel != null)
+            if (valueLabel != null)
             {
                 valueLabel.text = ((int)(val * 255)).ToString();
             }

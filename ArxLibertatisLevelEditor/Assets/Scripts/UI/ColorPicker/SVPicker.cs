@@ -41,7 +41,8 @@ namespace Assets.Scripts.UI.ColorPicker
             OnVChanged(picker.V);
         }
 
-        private void OnHChanged(float h) {
+        private void OnHChanged(float h)
+        {
             if (receiveEvents)
             {
                 svMaterial.SetFloat("_Hue", h);

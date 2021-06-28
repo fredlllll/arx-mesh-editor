@@ -69,7 +69,7 @@ namespace Assets.Scripts.UI.ColorPicker
             set
             {
                 var col = PickerColor;
-                col.r = value;
+                col.g = value;
                 Color.RGBToHSV(col, out h, out s, out v);
                 HChanged.Invoke(h);
                 SChanged.Invoke(s);
@@ -83,7 +83,7 @@ namespace Assets.Scripts.UI.ColorPicker
             set
             {
                 var col = PickerColor;
-                col.r = value;
+                col.b = value;
                 Color.RGBToHSV(col, out h, out s, out v);
                 HChanged.Invoke(h);
                 SChanged.Invoke(s);

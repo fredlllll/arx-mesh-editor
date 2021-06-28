@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 namespace Assets.Scripts.UI.ColorPicker
 {
-    public class VSlider : MonoBehaviour
+    public class GSlider : MonoBehaviour
     {
         [SerializeField]
         private ColorPicker picker;
@@ -24,52 +24,41 @@ namespace Assets.Scripts.UI.ColorPicker
 
         private void Start()
         {
-            slider.onValueChanged.AddListener(OnValChanged);
-
             background.material = backgroundMaterial = Instantiate(background.material);
 
-            picker.HChanged.AddListener(OnHChanged);
-            picker.SChanged.AddListener(OnSChanged);
-            picker.VChanged.AddListener(OnVChanged);
-            OnHChanged(picker.H);
-            OnSChanged(picker.S);
-            OnVChanged(picker.V);
+            picker.HChanged.AddListener(OnHSVChanged);
+            picker.SChanged.AddListener(OnHSVChanged);
+            picker.VChanged.AddListener(OnHSVChanged);
+            OnHSVChanged(0);
+            UpdateValueLabel();
+
+            slider.onValueChanged.AddListener(OnValChanged);
         }
 
-
-        private void OnHChanged(float h)
+        private void UpdateValueLabel()
         {
-            if (receiveEvents)
+            if (valueLabel != null)
             {
-                backgroundMaterial.SetFloat("_Hue", h);
+                valueLabel.text = ((int)(slider.value * 255)).ToString();
             }
         }
 
-        private void OnSChanged(float s)
+        private void OnHSVChanged(float _)
         {
             if (receiveEvents)
             {
-                backgroundMaterial.SetFloat("_Saturation", s);
-            }
-        }
-
-
-        private void OnVChanged(float v)
-        {
-            if (receiveEvents)
-            {
-                slider.value = v;
+                var col = picker.PickerColor;
+                backgroundMaterial.SetFloat("_R", col.r);
+                slider.value = col.g;
+                backgroundMaterial.SetFloat("_B", col.b);
             }
         }
 
         private void OnValChanged(float val)
         {
             receiveEvents = false;
-            picker.V = val;
-            if (valueLabel != null)
-            {
-                valueLabel.text = ((int)(val * 255)).ToString();
-            }
+            picker.G = val;
+            UpdateValueLabel();
             receiveEvents = true;
         }
     }
