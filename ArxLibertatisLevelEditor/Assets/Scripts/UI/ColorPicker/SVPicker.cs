@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace Assets.Scripts.UI.ColorPicker
 {
@@ -13,14 +14,58 @@ namespace Assets.Scripts.UI.ColorPicker
         private Canvas canvas;
         private RectTransform rectTransform;
         private RectTransform parentRectTransform;
+        private Material svMaterial;
 
-        public ColorPicker picker;
+        [SerializeField]
+        private ColorPicker picker;
+        [SerializeField]
+        private RawImage svImage;
+
+        private bool receiveEvents = true;
+
 
         void Start()
         {
             canvas = this.GetComponentInParent<Canvas>();
             rectTransform = GetComponent<RectTransform>();
-            parentRectTransform = GetComponentInParent<RectTransform>();
+            parentRectTransform = rectTransform.parent as RectTransform;
+
+            svImage.material = svMaterial = Instantiate(svImage.material);
+
+            picker.HChanged.AddListener(OnHChanged);
+            picker.SChanged.AddListener(OnSChanged);
+            picker.VChanged.AddListener(OnVChanged);
+
+            OnHChanged(picker.H);
+            OnSChanged(picker.S);
+            OnVChanged(picker.V);
+        }
+
+        private void OnHChanged(float h) {
+            if (receiveEvents)
+            {
+                svMaterial.SetFloat("_Hue", h);
+            }
+        }
+        private void OnSChanged(float s)
+        {
+            if (receiveEvents)
+            {
+                float parentWidth = parentRectTransform.sizeDelta.x;
+                Vector2 newPos = rectTransform.anchoredPosition;
+                newPos.x = Mathf.Clamp(s * parentWidth, 0, parentWidth);
+                rectTransform.anchoredPosition = newPos;
+            }
+        }
+        private void OnVChanged(float v)
+        {
+            if (receiveEvents)
+            {
+                float parentHeight = parentRectTransform.sizeDelta.y;
+                Vector2 newPos = rectTransform.anchoredPosition;
+                newPos.y = Mathf.Clamp(v * parentHeight, 0, parentHeight);
+                rectTransform.anchoredPosition = newPos;
+            }
         }
 
         public void OnBeginDrag(PointerEventData eventData)
@@ -44,34 +89,15 @@ namespace Assets.Scripts.UI.ColorPicker
             float s = newPos.x / parentRectTransform.sizeDelta.x;
             float v = newPos.y / parentRectTransform.sizeDelta.y;
 
-            picker.UpdateSV(s, v);
+            receiveEvents = false;
+            picker.S = s;
+            picker.V = v;
+            receiveEvents = true;
         }
 
         public void OnEndDrag(PointerEventData eventData)
         {
 
-        }
-
-        public void SetS(float s)
-        {
-            float parentWidth = parentRectTransform.sizeDelta.x;
-
-            Vector2 newPos = rectTransform.anchoredPosition;
-            newPos.x = Mathf.Clamp(s * parentWidth, 0, parentWidth);
-            rectTransform.anchoredPosition = newPos;
-
-            picker.UpdateS(s);
-        }
-
-        public void SetV(float v)
-        {
-            float parentHeight = parentRectTransform.sizeDelta.y;
-
-            Vector2 newPos = rectTransform.anchoredPosition;
-            newPos.y = Mathf.Clamp(v * parentHeight, 0, parentHeight);
-            rectTransform.anchoredPosition = newPos;
-
-            picker.UpdateV(v);
         }
     }
 }
