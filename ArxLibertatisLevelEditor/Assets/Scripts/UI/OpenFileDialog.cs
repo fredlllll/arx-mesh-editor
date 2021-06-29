@@ -23,6 +23,21 @@ namespace Assets.Scripts.UI
 
         public static string FileName { get; set; } = "";
 
+        private static string GetString(char[] chars)
+        {
+            int strlen = chars.Length;
+            for (int i = 0; i < chars.Length; i++)
+            {
+                if (chars[i] == 0)
+                {
+                    strlen = i;
+                    break;
+                }
+            }
+            string retval = new string(chars, 0, strlen);
+            return retval;
+        }
+
         public static Task<DialogResult> OpenDialog()
         {
             return new Task<DialogResult>(() =>
@@ -30,6 +45,7 @@ namespace Assets.Scripts.UI
                 var ofn = new OpenFileName();
                 ofn.lStructSize = Marshal.SizeOf(ofn);
                 ofn.lpstrFilter = Filter + "\0\0";
+                ofn.Flags = 0x00001000 | 0x00000800 | 0x00000008;//OFN_FILEMUSTEXIST|OFN_PATHMUSTEXIST|OFN_NOCHANGEDIR
 
                 var strFile = new char[1024];
                 Array.Copy(FileName.ToCharArray(), strFile, FileName.Length);
@@ -41,7 +57,7 @@ namespace Assets.Scripts.UI
                 ofn.lpstrTitle = Title;
                 if (GetOpenFileName(ofn))
                 {
-                    FileName = ofn.lpstrFile;
+                    FileName = GetString(ofn.lpstrFile.ToCharArray());
                     return DialogResult.OK;
                 }
 

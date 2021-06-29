@@ -8,6 +8,12 @@ namespace Assets.Scripts.ArxNative.IO
 {
     public static class ArxIOHelper
     {
+        /// <summary>
+        /// get a string from bytes
+        /// be aware this searches for first non 0 char from the end, so you could end up with 0 chars in the string
+        /// </summary>
+        /// <param name="bytes"></param>
+        /// <returns></returns>
         public static string GetString(byte[] bytes)
         {
             int strlen = 0;
@@ -19,7 +25,7 @@ namespace Assets.Scripts.ArxNative.IO
                     break;
                 }
             }
-            string retval =  Encoding.ASCII.GetString(bytes, 0, strlen);
+            string retval = Encoding.ASCII.GetString(bytes, 0, strlen);
             return retval;
         }
 

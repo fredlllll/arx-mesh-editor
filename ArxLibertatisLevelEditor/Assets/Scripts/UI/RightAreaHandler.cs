@@ -121,6 +121,7 @@ namespace Assets.Scripts.UI
             NX.interactable = true;
             NY.interactable = true;
             NZ.interactable = true;
+            colorPickerButton.interactable = true;
             var v = vert.primitive.info.vertices[vert.vertIndex];
 
             U.text = v.uv.x.ToString(System.Globalization.CultureInfo.InvariantCulture);
@@ -138,6 +139,11 @@ namespace Assets.Scripts.UI
             NX.interactable = false;
             NY.interactable = false;
             NZ.interactable = false;
+            colorPickerButton.interactable = false;
+            if (colorPicker.gameObject.activeSelf)
+            {
+                OnCloseColorPickerClicked();
+            }
             UpdateUV();
             UpdateNormal();
         }
@@ -324,6 +330,7 @@ namespace Assets.Scripts.UI
                     var relPath = path.Replace(EditorSettings.DataDir, "");
                     var em = new EditorMaterial(relPath, PolygonSelector.CurrentlySelected.info.polyType, PolygonSelector.CurrentlySelected.Material.TransVal);
                     PolygonSelector.CurrentlySelected.Material = em;
+                    polyTextureImage.texture = em.Material.mainTexture;
                 }
             }
         }
