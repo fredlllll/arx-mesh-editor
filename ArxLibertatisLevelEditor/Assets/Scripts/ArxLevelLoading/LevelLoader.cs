@@ -62,8 +62,7 @@ namespace Assets.Scripts.ArxLevelLoading
                     if (tcToIndex.TryGetValue(poly.tex, out int textureIndex))
                     {
                         string texArxPath = ArxIOHelper.GetString(fts.textureContainers[textureIndex].fic);
-                        string texPath = TextureDatabase.GetRealTexturePath(EditorSettings.DataDir + texArxPath);
-                        matKey = new EditorMaterial(texPath, poly.type, poly.transval); //TODO: speed up by using a pool of some sort?
+                        matKey = new EditorMaterial(texArxPath, poly.type, poly.transval); //TODO: speed up by using a pool of some sort?
                     }
                     else
                     {

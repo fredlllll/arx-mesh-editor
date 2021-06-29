@@ -9,56 +9,57 @@ namespace Assets.Scripts.ArxLevelEditor
     {
         readonly Dictionary<string, Texture2D> textures = new Dictionary<string, Texture2D>();
 
-        public Texture2D this[string path]
+        public IReadOnlyDictionary<string, Texture2D> Textures
+        {
+            get { return textures; }
+        }
+
+        public Texture2D this[string arxPath]
         {
             get
             {
-                if (path == null || path.Length == 0)
-                {
-                    return null;
-                }
-                path = Path.GetFullPath(path);
-                if (!textures.TryGetValue(path, out Texture2D retval))
-                {
-                    //Load texture if it doesnt exist
-                    retval = LoadTexture(path);
-                    textures[path] = retval;
-                }
-                return retval;
+                return GetTexture(arxPath);
             }
         }
 
-        public void Clear()
+        public Texture2D GetTexture(string arxPath)
         {
-            foreach (var kv in textures)
+            if (arxPath == null || arxPath.Length == 0)
             {
-                //free old textures
-                UnityEngine.Object.Destroy(kv.Value);
+                return null;
             }
-
-            textures.Clear();
+            var path = Path.Combine(EditorSettings.DataDir, arxPath);
+            path = Path.GetFullPath(path); //in case there are relative path things in there like .. or .
+            path = GetRealTexturePath(path); //in case the extension isnt the right one
+            if (!textures.TryGetValue(path, out Texture2D retval))
+            {
+                //Load texture if it doesnt exist
+                retval = LoadTexture(path);
+                textures[path] = retval;
+            }
+            return retval;
         }
 
         /// <summary>
         /// returns the real path to a texture if it exists, otherwise null
         /// </summary>
-        /// <param name="arxPath"></param>
+        /// <param name="path"></param>
         /// <returns></returns>
-        public static string GetRealTexturePath(string arxPath)
+        private static string GetRealTexturePath(string path)
         {
-            int lastDot = arxPath.LastIndexOf('.');
-            string absPath = arxPath.Substring(0, lastDot); //strip extension
+            int lastDot = path.LastIndexOf('.');
+            path = path.Substring(0, lastDot); //strip extension
 
             //because textures come as either jpg or bmp, extensions sometimes dont match up with the level files
-            if (File.Exists(absPath + ".jpg"))
+            if (File.Exists(path + ".jpg"))
             {
-                absPath += ".jpg";
+                path += ".jpg";
             }
-            else if (File.Exists(absPath + ".bmp"))
+            else if (File.Exists(path + ".bmp"))
             {
-                absPath += ".bmp";
+                path += ".bmp";
             }
-            return absPath;
+            return path;
         }
 
 

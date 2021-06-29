@@ -1,8 +1,11 @@
-﻿using Assets.Scripts.ArxLevelEditor.Editing;
+﻿using Assets.Scripts.ArxLevelEditor;
+using Assets.Scripts.ArxLevelEditor.Editing;
 using Assets.Scripts.ArxLevelEditor.Mesh;
 using Assets.Scripts.ArxNative;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,9 +16,15 @@ namespace Assets.Scripts.UI
 {
     public class RightAreaHandler : MonoBehaviour
     {
+        public GameObject properties;
         public InputField X, Y, Z, U, V, NX, NY, NZ;
 
         public Button colorPickerButton;
+        public ColorPicker.ColorPicker colorPicker;
+        public Button closeColorPickerButton;
+
+        public Button pickTextureButton;
+        public RawImage polyTextureImage;
 
         public Toggle noShadow, doubleSided, trans, water, glow, ignore, quad, tiled, metal, hide, stone, wood, gravel, earth, nocol, lava, climb, fall, noPath, noDraw, precisePath, noClimb, angular, angularIDX0, angularIDX1, angularIDX2, angularIDX3, lateMip;
         private readonly List<Tuple<PolyType, Toggle>> toggleAssoc = new List<Tuple<PolyType, Toggle>>();
@@ -34,6 +43,8 @@ namespace Assets.Scripts.UI
             NZ.onEndEdit.AddListener(NZEndEdit);
 
             colorPickerButton.onClick.AddListener(OnColorPickerClicked);
+            closeColorPickerButton.onClick.AddListener(OnCloseColorPickerClicked);
+            colorPicker.ColorChanged.AddListener(OnPickerColorChanged);
 
             Gizmo.OnMove.AddListener(OnGizmoMove);
 
@@ -90,6 +101,8 @@ namespace Assets.Scripts.UI
                     }
                 });
             }
+
+            pickTextureButton.onClick.AddListener(OnPickTextureClick);
         }
 
         private void SyncPolyTypeToggles()
@@ -115,6 +128,7 @@ namespace Assets.Scripts.UI
             NX.text = v.normal.x.ToString(System.Globalization.CultureInfo.InvariantCulture);
             NY.text = v.normal.y.ToString(System.Globalization.CultureInfo.InvariantCulture);
             NZ.text = v.normal.z.ToString(System.Globalization.CultureInfo.InvariantCulture);
+            colorPicker.PickerColor = v.color;
         }
 
         private void OnVertDeselected(EditableVertex vert)
@@ -137,6 +151,9 @@ namespace Assets.Scripts.UI
             {
                 ass.Item2.interactable = true;
             }
+            var tex = LevelEditor.TextureDatabase[prim.Material.TexturePath];
+            polyTextureImage.texture = tex;
+            pickTextureButton.interactable = true;
             SyncPolyTypeToggles();
         }
 
@@ -149,6 +166,8 @@ namespace Assets.Scripts.UI
             {
                 ass.Item2.interactable = false;
             }
+            pickTextureButton.interactable = false;
+            polyTextureImage.texture = null;
         }
 
         private void XEndEdit(string value)
@@ -193,7 +212,25 @@ namespace Assets.Scripts.UI
 
         private void OnColorPickerClicked()
         {
-            //TODO: open color picker
+            properties.SetActive(false);
+            colorPicker.gameObject.SetActive(true);
+        }
+
+        private void OnCloseColorPickerClicked()
+        {
+            properties.SetActive(true);
+            colorPicker.gameObject.SetActive(false);
+        }
+
+        private void OnPickerColorChanged(Color col)
+        {
+            var vert = VertexSelector.CurrentlySelected;
+            if (vert != null)
+            {
+                vert.primitive.info.vertices[vert.vertIndex].color = col;
+
+                PolygonSelector.CurrentlySelected.UpdateMesh();
+            }
         }
 
         private void UpdateUV()
@@ -261,6 +298,39 @@ namespace Assets.Scripts.UI
             X.text = gizmoPos.x.ToString(System.Globalization.CultureInfo.InvariantCulture);
             Y.text = gizmoPos.y.ToString(System.Globalization.CultureInfo.InvariantCulture);
             Z.text = gizmoPos.z.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        }
+
+        private IEnumerator PickTextureCoroutine()
+        {
+            OpenFileDialog.Filter = "Arx Texture Files (*.jpg|*.bmp)";
+            OpenFileDialog.Title = "Open Texture";
+            OpenFileDialog.FileName = Path.Combine(EditorSettings.DataDir, PolygonSelector.CurrentlySelected.Material.TexturePath);
+
+            var t = OpenFileDialog.OpenDialog();
+            t.Start();
+            while (!t.IsCompleted)
+            {
+                yield return null;
+            }
+            if (t.Result == OpenFileDialog.DialogResult.OK)
+            {
+                var path = OpenFileDialog.FileName;
+                if (!path.StartsWith(EditorSettings.DataDir))
+                {
+                    Debug.LogWarning("file is not in datadir, cant use it as a texture");
+                }
+                else
+                {
+                    var relPath = path.Replace(EditorSettings.DataDir, "");
+                    var em = new EditorMaterial(relPath, PolygonSelector.CurrentlySelected.info.polyType, PolygonSelector.CurrentlySelected.Material.TransVal);
+                    PolygonSelector.CurrentlySelected.Material = em;
+                }
+            }
+        }
+
+        private void OnPickTextureClick()
+        {
+            StartCoroutine(PickTextureCoroutine());
         }
     }
 }

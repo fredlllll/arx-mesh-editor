@@ -31,8 +31,6 @@ namespace Assets.Scripts.ArxLevelEditor
                 Destroy(CurrentLevel.LevelObject);
             }
 
-            TextureDatabase.Clear();
-
             CurrentLevel = LevelLoader.LoadLevel(name);
         }
 

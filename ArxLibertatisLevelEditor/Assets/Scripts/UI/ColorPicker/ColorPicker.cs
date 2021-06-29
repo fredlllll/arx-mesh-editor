@@ -10,12 +10,14 @@ using UnityEngine.UI;
 namespace Assets.Scripts.UI.ColorPicker
 {
     public class ColorComponentChangedEvent : UnityEvent<float> { }
+    public class ColorChangedEvent : UnityEvent<Color> { }
 
     public class ColorPicker : MonoBehaviour
     {
         public ColorComponentChangedEvent HChanged { get; } = new ColorComponentChangedEvent();
         public ColorComponentChangedEvent SChanged { get; } = new ColorComponentChangedEvent();
         public ColorComponentChangedEvent VChanged { get; } = new ColorComponentChangedEvent();
+        public ColorChangedEvent ColorChanged { get; } = new ColorChangedEvent();
 
         [SerializeField]
         float h = 0, s = 0, v = 0;
@@ -26,6 +28,7 @@ namespace Assets.Scripts.UI.ColorPicker
             {
                 h = value;
                 HChanged.Invoke(value);
+                ColorChanged.Invoke(PickerColor);
             }
         }
 
@@ -36,6 +39,7 @@ namespace Assets.Scripts.UI.ColorPicker
             {
                 s = value;
                 SChanged.Invoke(value);
+                ColorChanged.Invoke(PickerColor);
             }
         }
 
@@ -46,6 +50,7 @@ namespace Assets.Scripts.UI.ColorPicker
             {
                 v = value;
                 VChanged.Invoke(value);
+                ColorChanged.Invoke(PickerColor);
             }
         }
 
@@ -60,6 +65,7 @@ namespace Assets.Scripts.UI.ColorPicker
                 HChanged.Invoke(h);
                 SChanged.Invoke(s);
                 VChanged.Invoke(v);
+                ColorChanged.Invoke(PickerColor);
             }
         }
 
@@ -74,6 +80,7 @@ namespace Assets.Scripts.UI.ColorPicker
                 HChanged.Invoke(h);
                 SChanged.Invoke(s);
                 VChanged.Invoke(v);
+                ColorChanged.Invoke(PickerColor);
             }
         }
 
@@ -88,6 +95,7 @@ namespace Assets.Scripts.UI.ColorPicker
                 HChanged.Invoke(h);
                 SChanged.Invoke(s);
                 VChanged.Invoke(v);
+                ColorChanged.Invoke(PickerColor);
             }
         }
 
@@ -103,6 +111,7 @@ namespace Assets.Scripts.UI.ColorPicker
                 HChanged.Invoke(h);
                 SChanged.Invoke(s);
                 VChanged.Invoke(v);
+                ColorChanged.Invoke(PickerColor);
             }
         }
     }
