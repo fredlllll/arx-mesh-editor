@@ -49,7 +49,7 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
             EditWindowClickDetection.clickHandlers.Add(HandleClick, 0);
         }
 
-        void Deselect()
+        public void Deselect()
         {
             Gizmo.Detach();
             Gizmo.Visible = false;
@@ -67,7 +67,7 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
             }
         }
 
-        public static void Duplicate()
+        public void Duplicate()
         {
             if (Instance.currentlySelected != null)
             {
@@ -76,6 +76,17 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
                 var editableMesh = LevelEditor.CurrentLevel.EditableLevelMesh.GetMaterialMesh(selectedPrimitive.Material);
                 editableMesh.AddPrimitive(selectedPrimitive.info.Copy()); //add copy as adding the same twice could lead to problems
                 editableMesh.UpdateMesh();
+            }
+        }
+
+        public void DeleteSelected()
+        {
+            if(currentlySelected != null)
+            {
+                var selectedPrimitive = currentlySelected.GetComponent<EditablePrimitive>();
+                OnDeselected.Invoke(selectedPrimitive);
+                Destroy(currentlySelected);
+                currentlySelected = null;
             }
         }
 

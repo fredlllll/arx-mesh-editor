@@ -234,8 +234,7 @@ namespace Assets.Scripts.UI
             if (vert != null)
             {
                 vert.primitive.info.vertices[vert.vertIndex].color = col;
-
-                PolygonSelector.CurrentlySelected.UpdateMesh();
+                vert.primitive.UpdateMesh();
             }
         }
 
@@ -252,6 +251,7 @@ namespace Assets.Scripts.UI
                 {
                     vert.primitive.info.vertices[vert.vertIndex].uv.y = v;
                 }
+                vert.primitive.UpdateMesh();
             }
         }
 
@@ -260,18 +260,27 @@ namespace Assets.Scripts.UI
             var vert = VertexSelector.CurrentlySelected;
             if (vert != null)
             {
+                var v = vert.primitive.info.vertices[vert.vertIndex];
+
                 if (float.TryParse(NX.text, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out float nx))
                 {
-                    vert.primitive.info.vertices[vert.vertIndex].normal.x = nx;
+                    v.normal.x = nx;
                 }
                 if (float.TryParse(NY.text, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out float ny))
                 {
-                    vert.primitive.info.vertices[vert.vertIndex].normal.y = ny;
+                    v.normal.y = ny;
                 }
                 if (float.TryParse(NZ.text, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out float nz))
                 {
-                    vert.primitive.info.vertices[vert.vertIndex].normal.z = nz;
+                    v.normal.z = nz;
                 }
+
+                v.normal.Normalize();
+                NX.text = v.normal.x.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                NY.text = v.normal.y.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                NZ.text = v.normal.z.ToString(System.Globalization.CultureInfo.InvariantCulture);
+
+                vert.primitive.UpdateMesh();
             }
         }
 

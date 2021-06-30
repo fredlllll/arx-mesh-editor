@@ -66,7 +66,12 @@ namespace Assets.Scripts.UI
 
         public void DuplicatePolygon()
         {
-            PolygonSelector.Duplicate();
+            PolygonSelector.Instance.Duplicate();
+        }
+
+        public void DeletePolygon()
+        {
+            PolygonSelector.Instance.DeleteSelected();
         }
     }
 }
