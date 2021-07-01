@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts.Util;
+using System.Runtime.InteropServices;
 
 namespace Assets.Scripts.ArxNative.IO.FTS
 {
@@ -26,6 +27,16 @@ namespace Assets.Scripts.ArxNative.IO.FTS
             {
                 writer.Write(linkedAnchors[i]);
             }
+        }
+
+        public int CalculateWrittenSize()
+        {
+            int size = 0;
+
+            size += Marshal.SizeOf<FTS_IO_ANCHOR_DATA>();
+            size += sizeof(int) * linkedAnchors.Length;
+
+            return size;
         }
     }
 }

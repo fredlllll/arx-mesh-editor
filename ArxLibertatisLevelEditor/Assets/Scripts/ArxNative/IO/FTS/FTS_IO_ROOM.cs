@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts.Util;
+using System.Runtime.InteropServices;
 
 namespace Assets.Scripts.ArxNative.IO.FTS
 {
@@ -38,6 +39,17 @@ namespace Assets.Scripts.ArxNative.IO.FTS
             {
                 writer.WriteStruct(polygons[i]);
             }
+        }
+
+        public int CalculateWrittenSize()
+        {
+            int size = 0;
+
+            size += Marshal.SizeOf<EERIE_IO_ROOM_DATA>();
+            size += sizeof(int) * portals.Length;
+            size += Marshal.SizeOf<FTS_IO_EP_DATA>() * polygons.Length;
+
+            return size;
         }
     }
 }

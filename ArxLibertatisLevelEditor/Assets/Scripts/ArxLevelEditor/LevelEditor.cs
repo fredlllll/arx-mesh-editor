@@ -38,6 +38,7 @@ namespace Assets.Scripts.ArxLevelEditor
         {
             if(CurrentLevel != null)
             {
+                PolygonSelector.Instance.Deselect();
                 LevelSaver.SaveLevel(CurrentLevel, CurrentLevel.Name);
             }
         }

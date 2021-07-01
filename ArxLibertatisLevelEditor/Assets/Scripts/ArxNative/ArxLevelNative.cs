@@ -87,7 +87,17 @@ namespace Assets.Scripts.ArxNative
 
             using (MemoryStream ms = new MemoryStream())
             {
+                fts.header.uncompressedsize = fts.CalculateWrittenSize(true);
+                Debug.Log("uncompressed size " + fts.header.uncompressedsize);
+
+                fts.sceneHeader.nb_textures = fts.textureContainers.Length;
+                fts.sceneHeader.nb_polys = fts.CalculatePolyCount();
+                fts.sceneHeader.nb_anchors = fts.anchors.Length;
+                fts.sceneHeader.nb_portals = fts.portals.Length;
+                fts.sceneHeader.nb_rooms = fts.rooms.Length - 1;
+
                 fts.WriteTo(ms);
+
                 ms.Position = 0;
                 using (var packedStream = FTS_IO.EnsurePacked(ms))
                 using (FileStream fs = new FileStream(ArxPaths.GetFtsPath(name), FileMode.Create, FileAccess.Write))

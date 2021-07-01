@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts.Util;
+using System.Runtime.InteropServices;
 
 namespace Assets.Scripts.ArxNative.IO.FTS
 {
@@ -38,6 +39,17 @@ namespace Assets.Scripts.ArxNative.IO.FTS
             {
                 writer.Write(anchors[i]);
             }
+        }
+
+        public int CalculateWrittenSize()
+        {
+            int size = 0;
+
+            size += Marshal.SizeOf<FTS_IO_SCENE_INFO>();
+            size += Marshal.SizeOf<FTS_IO_EERIEPOLY>() * polygons.Length;
+            size += sizeof(int) * anchors.Length;
+
+            return size;
         }
     }
 }
