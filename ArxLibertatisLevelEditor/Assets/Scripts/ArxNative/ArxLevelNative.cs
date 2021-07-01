@@ -88,13 +88,18 @@ namespace Assets.Scripts.ArxNative
             using (MemoryStream ms = new MemoryStream())
             {
                 fts.header.uncompressedsize = fts.CalculateWrittenSize(true);
-                Debug.Log("uncompressed size " + fts.header.uncompressedsize);
 
                 fts.sceneHeader.nb_textures = fts.textureContainers.Length;
                 fts.sceneHeader.nb_polys = fts.CalculatePolyCount();
                 fts.sceneHeader.nb_anchors = fts.anchors.Length;
                 fts.sceneHeader.nb_portals = fts.portals.Length;
                 fts.sceneHeader.nb_rooms = fts.rooms.Length - 1;
+
+                for(int i =0; i< fts.rooms.Length; ++i)
+                {
+                    fts.rooms[i].data.nb_polys = fts.rooms[i].polygons.Length;
+                    fts.rooms[i].data.nb_portals = fts.rooms[i].portals.Length;
+                }
 
                 fts.WriteTo(ms);
 

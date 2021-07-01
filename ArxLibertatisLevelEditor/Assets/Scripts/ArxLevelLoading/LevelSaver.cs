@@ -2,6 +2,7 @@
 using Assets.Scripts.ArxLevelEditor;
 using Assets.Scripts.ArxLevelEditor.Mesh;
 using Assets.Scripts.ArxNative.IO;
+using Assets.Scripts.ArxNative.IO.FTS;
 using Assets.Scripts.ArxNative.IO.Shared_IO;
 using System;
 using System.Collections.Generic;
@@ -88,20 +89,19 @@ namespace Assets.Scripts.ArxLevelLoading
                 texPathToTc[path] = fts.textureContainers[index].tc = index;
             }
 
-            //put primitives into cells
+            //create cells
             int sizex = fts.sceneHeader.sizex;
             int sizez = fts.sceneHeader.sizez;
             LevelCell[] cells = new LevelCell[sizex * sizez];
-            for (int z = 0; z < sizez; z++)
+            for (int z = 0, index = 0; z < sizez; z++)
             {
-                for (int x = 0; x < sizex; x++)
+                for (int x = 0; x < sizex; x++, index++)
                 {
-                    int index = ArxIOHelper.XZToCellIndex(x, z, sizex, sizez);
+                    //int index = ArxIOHelper.XZToCellIndex(x, z, sizex, sizez);
                     var cell = new LevelCell(x, z);
                     cells[index] = cell;
                 }
             }
-
 
             //add primitives to cells
             Vector2Int maxPos = new Vector2Int(sizex - 1, sizez - 1); //if clamp is inclusive we have to sub 1
@@ -116,31 +116,46 @@ namespace Assets.Scripts.ArxLevelLoading
                 }
             }
 
+            List<FTS_IO_EP_DATA>[] roomPolyDatas = new List<FTS_IO_EP_DATA>[fts.rooms.Length];
+            for(i =0; i< fts.rooms.Length; ++i)
+            {
+                roomPolyDatas[i] = new List<FTS_IO_EP_DATA>();
+            }
+
             List<uint> lightColors = new List<uint>();
 
             //put primitves into polys in their cells
-            for (int z = 0; z < sizez; z++)
+            for (int z = 0, index = 0; z < sizez; z++)
             {
-                for (int x = 0; x < sizex; x++)
+                for (int x = 0; x < sizex; x++, index++)
                 {
-                    int index = ArxIOHelper.XZToCellIndex(x, z, sizex, sizez);
+                    //int index = ArxIOHelper.XZToCellIndex(x, z, sizex, sizez);
                     var myCell = cells[index];
                     var ftsCell = fts.cells[index];
                     ftsCell.sceneInfo.nbpoly = myCell.primitives.Count;
-                    ftsCell.polygons = new ArxNative.IO.FTS.FTS_IO_EERIEPOLY[myCell.primitives.Count];
+                    ftsCell.polygons = new FTS_IO_EERIEPOLY[myCell.primitives.Count];
                     for (i = 0; i < myCell.primitives.Count; i++)
                     {
                         var tup = myCell.primitives[i];
                         var mat = tup.Item1;
                         var prim = tup.Item2;
-                        var poly = new ArxNative.IO.FTS.FTS_IO_EERIEPOLY();
-                        //copy data that we dont edit yet (but probably should at some point)
+                        var poly = new FTS_IO_EERIEPOLY();
+                        //copy data over
                         poly.area = prim.area;
                         poly.norm = new SavedVec3(prim.norm);
                         poly.norm2 = new SavedVec3(prim.norm2);
                         poly.paddy = prim.paddy;
                         poly.room = prim.room;
                         poly.type = prim.polyType; //this is completely ignoring mat polytype atm, but it should be sync with prim type anyway
+
+                        if (poly.room >= 0)
+                        {
+                            var polyData = new FTS_IO_EP_DATA();
+                            polyData.cell_x = (short)x;
+                            polyData.cell_z = (short)z;
+                            polyData.idx = (short)i;
+                            roomPolyDatas[poly.room].Add(polyData);
+                        }
 
                         //copy vertices
                         poly.vertices = new ArxNative.IO.FTS.FTS_IO_VERTEX[4];
@@ -180,6 +195,10 @@ namespace Assets.Scripts.ArxLevelLoading
                 }
             }
 
+            for (i = 0; i < fts.rooms.Length; i++)
+            {
+                fts.rooms[i].polygons = roomPolyDatas[i].ToArray();
+            }
 
             var llf = level.ArxLevelNative.LLF;
             llf.lightingHeader.numLights = lightColors.Count;
