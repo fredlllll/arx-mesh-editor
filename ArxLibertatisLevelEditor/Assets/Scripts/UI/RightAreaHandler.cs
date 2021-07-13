@@ -46,7 +46,7 @@ namespace Assets.Scripts.UI
             closeColorPickerButton.onClick.AddListener(OnCloseColorPickerClicked);
             colorPicker.ColorChanged.AddListener(OnPickerColorChanged);
 
-            Gizmo.OnMove.AddListener(OnGizmoMove);
+            Gizmo_OLD.OnMove.AddListener(OnGizmoMove);
 
             PolygonSelector.OnSelected.AddListener(OnPolySelected);
             PolygonSelector.OnDeselected.AddListener(OnPolyDeselected);
@@ -286,9 +286,9 @@ namespace Assets.Scripts.UI
 
         private void UpdateGizmo()
         {
-            if (Gizmo.Instance.Target != null)
+            if (Gizmo_OLD.Instance.Target != null)
             {
-                Vector3 gizmoPos = Gizmo.Instance.Target.position;
+                Vector3 gizmoPos = Gizmo_OLD.Instance.Target.position;
 
                 if (float.TryParse(X.text, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out float x))
                 {
@@ -302,13 +302,13 @@ namespace Assets.Scripts.UI
                 {
                     gizmoPos.z = z;
                 }
-                Gizmo.Instance.Target.position = gizmoPos;
+                Gizmo_OLD.Instance.Target.position = gizmoPos;
             }
         }
 
         private void OnGizmoMove()
         {
-            Vector3 gizmoPos = Gizmo.Instance.Target.position;
+            Vector3 gizmoPos = Gizmo_OLD.Instance.Target.position;
 
             X.text = gizmoPos.x.ToString(System.Globalization.CultureInfo.InvariantCulture);
             Y.text = gizmoPos.y.ToString(System.Globalization.CultureInfo.InvariantCulture);

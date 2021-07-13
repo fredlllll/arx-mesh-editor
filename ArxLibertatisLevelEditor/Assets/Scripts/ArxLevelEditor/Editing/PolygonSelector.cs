@@ -51,8 +51,8 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
 
         public void Deselect()
         {
-            Gizmo.Detach();
-            Gizmo.Visible = false;
+            Gizmo_OLD.Detach();
+            Gizmo_OLD.Visible = false;
 
             //place currently selected back into mesh
             if (currentlySelected != null)

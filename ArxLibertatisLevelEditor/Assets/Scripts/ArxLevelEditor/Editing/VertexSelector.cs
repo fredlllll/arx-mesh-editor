@@ -44,8 +44,8 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
 
         void Deselect()
         {
-            Gizmo.Detach();
-            Gizmo.Visible = false;
+            Gizmo_OLD.Detach();
+            Gizmo_OLD.Visible = false;
 
             if (currentlySelected != null)
             {
@@ -67,8 +67,8 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
                         Deselect();
                         currentlySelected = hitInfo.transform.gameObject;
 
-                        Gizmo.Attach(currentlySelected.transform, Vector3.zero);
-                        Gizmo.Visible = true;
+                        Gizmo_OLD.Attach(currentlySelected.transform, Vector3.zero);
+                        Gizmo_OLD.Visible = true;
                         OnSelected.Invoke(vertex);
                         return true;
                     }

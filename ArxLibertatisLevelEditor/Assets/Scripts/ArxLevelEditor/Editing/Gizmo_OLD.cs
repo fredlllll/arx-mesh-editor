@@ -6,22 +6,13 @@ using UnityEngine.Events;
 
 namespace Assets.Scripts.ArxLevelEditor.Editing
 {
-    public enum GizmoMode
-    {
-        Move,
-        Rotate,
-        Scale,
-    }
 
-    public class PositionChangedEvent : UnityEvent<Gizmo, Vector3, Vector3> { }
-    //TODO: need events for rotation and scale too in the future?
-
-    public class Gizmo : MonoBehaviour
+    public class Gizmo_OLD : MonoBehaviour
     {
         static int gizmoLayer = 0;
         static int gizmoLayerMask = 0;
 
-        public static Gizmo Instance
+        public static Gizmo_OLD Instance
         {
             get;
             private set;
@@ -29,6 +20,8 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
 
         GameObject moveGameObject, rotateGameObject, scaleGameObject;
         GameObject moveX, moveY, moveZ;
+        Transform target = null;
+        public Transform Target { get { return target; } }
 
         Material gizmoMaterial;
 
@@ -58,38 +51,6 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
                         break;
                 }
             }
-        }
-
-        public bool Visible
-        {
-            get { return gameObject.activeSelf; }
-            set { gameObject.SetActive(value); }
-        }
-
-        public PositionChangedEvent PositionChanged { get; } = new PositionChangedEvent();
-
-        private void Awake()
-        {
-            Instance = this;
-            gizmoLayer = LayerMask.NameToLayer("Gizmo");
-            gizmoLayerMask = 1 << gizmoLayer;
-        }
-
-        void Start()
-        {
-            gizmoMaterial = Instantiate(MaterialsDatabase.GizmoMaterial); //copy material so we can modify it
-
-            CreateMove();
-            CreateRotate();
-            CreateScale();
-
-            Mode = GizmoMode.Move;
-
-            EditWindowClickDetection.beginDragHandlers.Add(HandleBeginDrag, 0);
-            EditWindowClickDetection.dragHandlers.Add(HandleDrag, 0);
-            EditWindowClickDetection.endDragHandlers.Add(HandleEndDrag, 0);
-
-            Visible = false;
         }
 
         void CreateMove()
@@ -140,7 +101,29 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
             GizmoCreator.CreateScale(scaleGameObject, gizmoMaterial);
         }
 
+        private void Awake()
+        {
+            Instance = this;
+            gizmoLayer = LayerMask.NameToLayer("Gizmo");
+            gizmoLayerMask = 1 << gizmoLayer;
+        }
 
+        void Start()
+        {
+            gizmoMaterial = Instantiate(MaterialsDatabase.GizmoMaterial); //copy material so we can modify it
+
+            CreateMove();
+            CreateRotate();
+            CreateScale();
+
+            Mode = GizmoMode.Move;
+
+            EditWindowClickDetection.beginDragHandlers.Add(HandleBeginDrag, 0);
+            EditWindowClickDetection.dragHandlers.Add(HandleDrag, 0);
+            EditWindowClickDetection.endDragHandlers.Add(HandleEndDrag, 0);
+
+            Visible = false;
+        }
 
         Vector3 virtualPosition;
         bool dragging = false;
@@ -149,13 +132,14 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
         {
             if (LevelEditor.EditState == EditState.Vertices && btn == EditWindowClickDetection.BTN_PRIMARY)
             {
+                Debug.Log("begin drag");
                 var ray = EditWindow.GetRayFromMousePosition(localPos);
                 if (Physics.Raycast(ray, out RaycastHit hit, float.PositiveInfinity, gizmoLayerMask))
                 {
                     dragObject = hit.transform.gameObject;
                     if (dragObject == moveX || dragObject == moveY || dragObject == moveZ)
                     {
-                        virtualPosition = transform.position;
+                        virtualPosition = target.position;
                         dragging = true;
                         return true;
                     }
@@ -191,12 +175,9 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
                 }
 
                 virtualPosition += worldOffset;
+                Vector3 pos = LevelEditor.SnapManager.Snap(virtualPosition, snapAxis);
 
-                var oldPos = transform.position;
-                var newPos = LevelEditor.SnapManager.Snap(virtualPosition, snapAxis);
-
-                transform.position = newPos;
-                PositionChanged.Invoke(this, oldPos, newPos);
+                target.position = pos;
                 return true;
             }
             return false;
@@ -206,30 +187,63 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
         {
             if (dragging)
             {
-                transform.hasChanged = false;
+                Debug.Log("end drag");
                 dragging = false;
                 return true;
             }
             return false;
         }
 
-        public void HighlightX()
+        private void Update()
         {
-            gizmoMaterial.color = new Color(1, 0.75f, 0.75f);
-        }
-        public void HighlightY()
-        {
-            gizmoMaterial.color = new Color(0.75f, 1, 0.75f);
-        }
-        public void HighlightZ()
-        {
-            gizmoMaterial.color = new Color(0.75f, 0.75f, 1);
+            if (target != null && target.hasChanged)
+            {
+                OnMove.Invoke();
+                target.hasChanged = false;
+            }
         }
 
-        public void HighlightNone()
+        public static void HighlightX()
         {
-            gizmoMaterial.color = new Color(0.75f, 0.75f, 0.75f);
+            Instance.gizmoMaterial.color = new Color(1, 0.75f, 0.75f);
+        }
+        public static void HighlightY()
+        {
+            Instance.gizmoMaterial.color = new Color(0.75f, 1, 0.75f);
+        }
+        public static void HighlightZ()
+        {
+            Instance.gizmoMaterial.color = new Color(0.75f, 0.75f, 1);
         }
 
+        public static void HighlightNone()
+        {
+            Instance.gizmoMaterial.color = new Color(0.75f, 0.75f, 0.75f);
+        }
+
+        public static void Attach(Transform target, Vector3 localPosition)
+        {
+            Instance.target = target;
+            Instance.transform.SetParent(target);
+            Instance.transform.localPosition = localPosition;
+            OnMove.Invoke();
+        }
+
+        public static void Detach()
+        {
+            Instance.target = null;
+            Instance.transform.SetParent(null);
+        }
+
+        public static bool Visible
+        {
+            get { return Instance.gameObject.activeSelf; }
+            set { Instance.gameObject.SetActive(value); }
+        }
+
+        public static UnityEvent OnMove
+        {
+            get;
+        } = new UnityEvent();
     }
 }
