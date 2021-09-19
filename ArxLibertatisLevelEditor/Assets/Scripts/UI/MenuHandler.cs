@@ -55,8 +55,8 @@ namespace Assets.Scripts.UI
 
         public void TestIOReadWrite()
         {
-            DirectoryInfo ftsDir = new DirectoryInfo(@"F:\Program Files\Arx Libertatis\paks\game\graph\levels");
-            DirectoryInfo dlfLlfDir = new DirectoryInfo(@"F:\Program Files\Arx Libertatis\paks\graph\levels");
+            DirectoryInfo ftsDir = new DirectoryInfo(EditorSettings.FtsDir);
+            DirectoryInfo dlfLlfDir = new DirectoryInfo(EditorSettings.DlfLlfDir);
 
             string name = levelName.text;
 
