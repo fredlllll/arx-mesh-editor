@@ -77,6 +77,13 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
             transform.position += offset * moveSpeed * Time.deltaTime;
         }
 
+        private void HandleHotkeys() {
+            if (Input.GetKey(KeyCode.Delete))
+            {
+                PolygonSelector.Instance.DeleteSelected();
+            }
+        }
+
         public void Update()
         {
             if (EditWindow.MouseInEditWindow)
@@ -99,6 +106,7 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
                 }
             }
             DoMove();
+            HandleHotkeys();
         }
     }
 }
