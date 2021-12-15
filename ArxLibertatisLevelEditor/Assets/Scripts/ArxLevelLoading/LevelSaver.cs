@@ -79,14 +79,14 @@ namespace Assets.Scripts.ArxLevelLoading
 
             var fts = level.ArxLevelNative.FTS;
             fts.textureContainers = new ArxNative.IO.FTS.FTS_IO_TEXTURE_CONTAINER[uniqueTexturePaths.Count];
-            int i = 0; //nothing speaks against just using a normal index for tc, i dont know why they ever used random ints
+            int i = 1; //nothing speaks against just using a normal index for tc, i dont know why they ever used random ints, has to be 1 based
             Dictionary<string, int> texPathToTc = new Dictionary<string, int>();
             foreach (var path in uniqueTexturePaths)
             {
                 int index = i++;
                 var texPath = path.Replace(EditorSettings.DataDir, "");
-                fts.textureContainers[index].fic = ArxIOHelper.GetBytes(texPath, 256);
-                texPathToTc[path] = fts.textureContainers[index].tc = index;
+                fts.textureContainers[index-1].fic = ArxIOHelper.GetBytes(texPath, 256);
+                texPathToTc[path] = fts.textureContainers[index-1].tc = index;
             }
 
             //create cells
@@ -117,7 +117,7 @@ namespace Assets.Scripts.ArxLevelLoading
             }
 
             List<FTS_IO_EP_DATA>[] roomPolyDatas = new List<FTS_IO_EP_DATA>[fts.rooms.Length];
-            for(i =0; i< fts.rooms.Length; ++i)
+            for (i = 0; i < fts.rooms.Length; ++i)
             {
                 roomPolyDatas[i] = new List<FTS_IO_EP_DATA>();
             }
@@ -200,14 +200,18 @@ namespace Assets.Scripts.ArxLevelLoading
                 fts.rooms[i].polygons = roomPolyDatas[i].ToArray();
             }
 
+            //update llf
             var llf = level.ArxLevelNative.LLF;
             llf.lightingHeader.numLights = lightColors.Count;
+            llf.lightColors = lightColors.ToArray();
+            //below does the same as toArray, just wondering if toArray is faster or manually assigning it
+            /*
             llf.lightColors = new uint[lightColors.Count];
-            //update llf
             for (i = 0; i < lightColors.Count; i++)
             {
                 llf.lightColors[i] = lightColors[i];
             }
+            */
         }
     }
 }

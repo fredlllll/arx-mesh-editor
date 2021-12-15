@@ -80,14 +80,17 @@ namespace Assets.Scripts.ArxLevelLoading
                         room = poly.room,
                         paddy = poly.paddy
                     };
+
                     int vertCount = prim.VertexCount;
                     for (int i = 0; i < vertCount; i++)
                     {
                         var vert = poly.vertices[i];
+                        //might want to add some code that detects if lightcolors isnt the right size, but only thing i can think of is try catch around this, which might be slow?
+                        uint lightCol = lvl.ArxLevelNative.LLF.lightColors[lightIndex++];
                         prim.vertices[i] = new EditableVertexInfo(new Vector3(vert.posX, vert.posY, vert.posZ),
                             new Vector2(vert.texU, 1 - vert.texV),
                             poly.normals[i].ToVector3(),
-                            ArxIOHelper.FromBGRA(lvl.ArxLevelNative.LLF.lightColors[lightIndex++]));
+                            ArxIOHelper.FromBGRA(lightCol));
                     }
 
                     if (prim.IsTriangle)

@@ -32,7 +32,6 @@ namespace Assets.Scripts.ArxNative.IO.FTS
             }
 
             sceneHeader = reader.ReadStruct<FTS_IO_SCENE_HEADER>();
-
             textureContainers = new FTS_IO_TEXTURE_CONTAINER[sceneHeader.nb_textures];
             for (int i = 0; i < sceneHeader.nb_textures; i++)
             {

@@ -17,7 +17,7 @@ namespace Assets.Scripts.UI
     public class RightAreaHandler : MonoBehaviour
     {
         public GameObject properties;
-        public InputField X, Y, Z, U, V, NX, NY, NZ;
+        public InputField X, Y, Z, U, V, NX, NY, NZ, room;
 
         public Button colorPickerButton;
         public ColorPicker.ColorPicker colorPicker;
@@ -161,6 +161,7 @@ namespace Assets.Scripts.UI
             polyTextureImage.texture = tex;
             pickTextureButton.interactable = true;
             SyncPolyTypeToggles();
+            room.text = prim.info.room.ToString();
         }
 
         private void OnPolyDeselected(EditablePrimitive prim)
