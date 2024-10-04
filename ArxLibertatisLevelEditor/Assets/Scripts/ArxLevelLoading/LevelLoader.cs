@@ -3,8 +3,10 @@ using Assets.Scripts.ArxLevelEditor;
 using Assets.Scripts.ArxLevelEditor.Mesh;
 using Assets.Scripts.ArxNative;
 using Assets.Scripts.ArxNative.IO;
+using Assets.Scripts.ArxNative.IO.FTL;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using UnityEngine;
 using UnityEngine.Profiling;
 
@@ -26,6 +28,46 @@ namespace Assets.Scripts.ArxLevelLoading
             lvl.LevelOffset = lvln.DLF.header.offset.ToVector3();
 
             LoadMesh(lvl);
+            //light debug:
+            GameObject lights = new GameObject();
+            foreach(var l in lvln.LLF.lights)
+            {
+                GameObject go = new GameObject();
+                go.name = "light " + l.extras;
+                go.transform.position = l.pos.ToVector3();
+                var light = go.AddComponent<Light>();
+                light.color = l.rgb.ToColor();
+                light.intensity = l.intensity;
+                light.range = l.fallEnd;
+                go.transform.SetParent(lights.transform);
+            }
+            lights.transform.localScale = new Vector3(0.01f, -0.01f, 0.01f);
+            var pos = lvln.FTS.sceneHeader.Mscenepos.ToVector3() / 100;
+            pos.y = -pos.y;
+            UnityEngine.Debug.Log(pos);
+            lights.transform.position = pos;
+            //inter debug:
+            /*foreach (var inter in lvl.ArxLevelNative.DLF.inters)
+            {
+                var interName = ArxIOHelper.GetString(inter.name);
+                interName = interName.Replace("C:\\ARX\\", "game\\").Replace(".teo", ".ftl");
+                var filePath = EditorSettings.DataDir + interName;
+                UnityEngine.Debug.Log(filePath);
+
+                FTL_IO ftl = new FTL_IO();
+                using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                {
+                    var s = FTL_IO.EnsureUnpacked(fs);
+                    ftl.ReadFrom(s);
+                }
+
+                var m = ftl.CreateMesh();
+                GameObject go = new GameObject();
+                var mf = go.AddComponent<MeshFilter>();
+                mf.sharedMesh = m;
+                var mr = go.AddComponent<MeshRenderer>();
+                go.transform.localScale = new Vector3(0.1f, -0.1f, 0.1f);
+            }*/
 
             return lvl;
         }

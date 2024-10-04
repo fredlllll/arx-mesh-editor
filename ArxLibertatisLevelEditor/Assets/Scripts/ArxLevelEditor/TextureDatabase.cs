@@ -48,7 +48,10 @@ namespace Assets.Scripts.ArxLevelEditor
         private static string GetRealTexturePath(string path)
         {
             int lastDot = path.LastIndexOf('.');
-            path = path.Substring(0, lastDot); //strip extension
+            if (lastDot >= 0)
+            {
+                path = path.Substring(0, lastDot); //strip extension
+            }
 
             //because textures come as either jpg or bmp, extensions sometimes dont match up with the level files
             if (File.Exists(path + ".jpg"))

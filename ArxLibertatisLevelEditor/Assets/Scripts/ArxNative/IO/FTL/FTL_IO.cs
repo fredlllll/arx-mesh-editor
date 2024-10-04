@@ -122,7 +122,7 @@ namespace Assets.Scripts.ArxNative.IO.FTL
                     {
                         ushort vertIndex = face.vid[i];
 
-                        uvs[vertIndex] = new Vector2(face.u[i], face.v[i]);
+                        uvs[vertIndex] = new Vector2(face.u[i], 1-face.v[i]);
                         indices.Add(vertIndex);
                     }
                 }
@@ -130,6 +130,7 @@ namespace Assets.Scripts.ArxNative.IO.FTL
                 m.vertices = verts;
                 m.triangles = indices.ToArray();
                 m.normals = norms;
+                m.uv = uvs;
 
                 m.RecalculateBounds();
                 m.RecalculateTangents();
