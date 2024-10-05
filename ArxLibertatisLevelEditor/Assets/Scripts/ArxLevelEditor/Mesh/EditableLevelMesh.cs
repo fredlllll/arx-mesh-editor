@@ -1,5 +1,4 @@
-﻿using Assets.Scripts.ArxLevelEditor;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets.Scripts.ArxLevelEditor.Mesh

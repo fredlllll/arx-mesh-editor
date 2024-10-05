@@ -2,7 +2,6 @@
 using Assets.Scripts.ArxNative.IO.FTS;
 using Assets.Scripts.ArxNative.IO.LLF;
 using System.IO;
-using UnityEngine;
 
 namespace Assets.Scripts.ArxNative
 {

@@ -1,14 +1,11 @@
-﻿using Assets.Scripts.ArxLevelEditor;
+﻿using ArxLibertatisEditorIO.Util;
+using Assets.Scripts.ArxLevelEditor;
 using Assets.Scripts.ArxLevelEditor.Editing;
 using Assets.Scripts.ArxLevelEditor.Mesh;
-using Assets.Scripts.ArxNative;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -229,7 +226,7 @@ namespace Assets.Scripts.UI
             colorPicker.gameObject.SetActive(false);
         }
 
-        private void OnPickerColorChanged(Color col)
+        private void OnPickerColorChanged(UnityEngine.Color col)
         {
             var vert = VertexSelector.CurrentlySelected;
             if (vert != null)

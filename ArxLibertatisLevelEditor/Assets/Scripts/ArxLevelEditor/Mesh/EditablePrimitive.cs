@@ -1,12 +1,7 @@
-﻿using Assets.Scripts.ArxLevelEditor;
-using Assets.Scripts.ArxNative;
+﻿using ArxLibertatisEditorIO.Util;
 using Assets.Scripts.Util;
 using cakeslice;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -74,7 +69,7 @@ namespace Assets.Scripts.ArxLevelEditor.Mesh
             List<Vector3> verts = new List<Vector3>();
             List<Vector2> uvs = new List<Vector2>();
             List<Vector3> normals = new List<Vector3>();
-            List<Color> colors = new List<Color>();
+            List<UnityEngine.Color> colors = new List<UnityEngine.Color>();
             List<int> indices = new List<int>();
             var center = Vector3.zero;
 

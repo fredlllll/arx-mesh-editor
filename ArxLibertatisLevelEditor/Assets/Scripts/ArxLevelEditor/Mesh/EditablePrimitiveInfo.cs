@@ -1,4 +1,4 @@
-﻿using Assets.Scripts.ArxNative;
+﻿using ArxLibertatisEditorIO.Util;
 using UnityEngine;
 
 namespace Assets.Scripts.ArxLevelEditor.Mesh
@@ -12,7 +12,6 @@ namespace Assets.Scripts.ArxLevelEditor.Mesh
         public Vector3 norm2;
         public float area;
         public short room;
-        public short paddy;
         public PolyType polyType;
 
         public int VertexCount
@@ -38,7 +37,6 @@ namespace Assets.Scripts.ArxLevelEditor.Mesh
                 norm2 = norm2,
                 area = area,
                 room = room,
-                paddy = paddy,
                 polyType = polyType,
             };
 

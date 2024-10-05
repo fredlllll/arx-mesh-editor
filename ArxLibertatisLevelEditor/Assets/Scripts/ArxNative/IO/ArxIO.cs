@@ -40,7 +40,7 @@ namespace Assets.Scripts.ArxNative.IO
 
     public static class ArxIONative
     {
-        [DllImport("ArxIO", EntryPoint = "ArxIO_init", CallingConvention = CallingConvention.Cdecl)]
+        /*[DllImport("ArxIO", EntryPoint = "ArxIO_init", CallingConvention = CallingConvention.Cdecl)]
         public static extern void Init();
         [DllImport("ArxIO", EntryPoint = "ArxIO_getError", CallingConvention = CallingConvention.Cdecl)]
         public static extern void GetError(IntPtr outMessage, int size);
@@ -49,6 +49,12 @@ namespace Assets.Scripts.ArxNative.IO
         [DllImport("ArxIO", EntryPoint = "ArxIO_unpack_alloc", CallingConvention = CallingConvention.Cdecl)]
         public static extern void UnpackAlloc(IntPtr in_, uint inSize, out IntPtr out_, out uint outSize);
         [DllImport("ArxIO", EntryPoint = "ArxIO_unpack_free", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void UnpackFree(IntPtr buffer);
+        public static extern void UnpackFree(IntPtr buffer);*/
+
+        public static void Init() { }
+        public static void GetError(IntPtr outMessage, int size) { }
+        public static int GetLogLine(IntPtr outMessage, int size) { return 0; }
+        public static void UnpackAlloc(IntPtr in_, uint inSize, out IntPtr out_, out uint outSize) { out_ = IntPtr.Zero; outSize = 0; }
+        public static void UnpackFree(IntPtr buffer) { }
     }
 }

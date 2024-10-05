@@ -1,5 +1,5 @@
-﻿using Assets.Scripts.ArxLevelEditor.Mesh;
-using Assets.Scripts.ArxNative;
+﻿using ArxLibertatisEditorIO.MediumIO;
+using Assets.Scripts.ArxLevelEditor.Mesh;
 using UnityEngine;
 
 namespace Assets.Scripts.ArxLevelEditor
@@ -12,7 +12,7 @@ namespace Assets.Scripts.ArxLevelEditor
             private set;
         }
 
-        public ArxLevelNative ArxLevelNative
+        public MediumArxLevel MediumArxLevel
         {
             get;
             private set;
@@ -32,10 +32,10 @@ namespace Assets.Scripts.ArxLevelEditor
 
         public EditableLevelMesh EditableLevelMesh { get { return LevelMeshObject.GetComponent<EditableLevelMesh>(); } }
 
-        public Level(string name, ArxLevelNative arxLevelNative)
+        public Level(string name, MediumArxLevel arxLevelNative)
         {
             Name = name;
-            ArxLevelNative = arxLevelNative;
+            MediumArxLevel = arxLevelNative;
 
             LevelObject = new GameObject(name);
             LevelMeshObject = new GameObject(name + "Mesh");

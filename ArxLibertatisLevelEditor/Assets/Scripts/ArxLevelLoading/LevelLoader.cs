@@ -1,14 +1,12 @@
-﻿using Assets.Scripts.ArxLevel;
+﻿using ArxLibertatisEditorIO.MediumIO;
+using ArxLibertatisEditorIO.RawIO;
+using ArxLibertatisEditorIO.Util;
 using Assets.Scripts.ArxLevelEditor;
 using Assets.Scripts.ArxLevelEditor.Mesh;
-using Assets.Scripts.ArxNative;
-using Assets.Scripts.ArxNative.IO;
-using Assets.Scripts.ArxNative.IO.FTL;
+using Assets.Scripts.Util;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using UnityEngine;
-using UnityEngine.Profiling;
 
 namespace Assets.Scripts.ArxLevelLoading
 {
@@ -16,33 +14,35 @@ namespace Assets.Scripts.ArxLevelLoading
     {
         public static Level LoadLevel(string name)
         {
-            var lvln = new ArxLevelNative();
-            lvln.LoadLevel(name);
+            ArxLibertatisEditorIO.ArxPaths.DataDir = EditorSettings.DataDir;
+            var ral = new RawArxLevel();
+            var mal = new MediumArxLevel();
+            mal.LoadFrom(ral.LoadLevel(name));
 
-            Level lvl = new Level(name, lvln);
+            Level lvl = new Level(name, mal);
 
-            Vector3 camPos = lvln.DLF.header.positionEdit.ToVector3() / 100;
+            Vector3 camPos = mal.DLF.header.positionEdit.ToUnity() / 100;
             camPos.y *= -1;
             LevelEditor.EditorCamera.transform.position = camPos;
-            LevelEditor.EditorCamera.transform.eulerAngles = lvln.DLF.header.angleEdit.ToEuler();
-            lvl.LevelOffset = lvln.DLF.header.offset.ToVector3();
+            LevelEditor.EditorCamera.transform.eulerAngles = mal.DLF.header.eulersEdit.ToUnity();
+            lvl.LevelOffset = mal.DLF.header.offset.ToUnity();
 
             LoadMesh(lvl);
             //light debug:
             GameObject lights = new GameObject();
-            foreach(var l in lvln.LLF.lights)
+            foreach (var l in mal.LLF.lights)
             {
                 GameObject go = new GameObject();
                 go.name = "light " + l.extras;
-                go.transform.position = l.pos.ToVector3();
+                go.transform.position = l.pos.ToUnity();
                 var light = go.AddComponent<Light>();
-                light.color = l.rgb.ToColor();
+                light.color = l.color.ToUnity();
                 light.intensity = l.intensity;
                 light.range = l.fallEnd;
                 go.transform.SetParent(lights.transform);
             }
             lights.transform.localScale = new Vector3(0.01f, -0.01f, 0.01f);
-            var pos = lvln.FTS.sceneHeader.Mscenepos.ToVector3() / 100;
+            var pos = mal.FTS.sceneHeader.Mscenepos.ToUnity() / 100;
             pos.y = -pos.y;
             UnityEngine.Debug.Log(pos);
             lights.transform.position = pos;
@@ -79,48 +79,47 @@ namespace Assets.Scripts.ArxLevelLoading
             sw.Start();
 
             int lightIndex = 0;
-            var fts = lvl.ArxLevelNative.FTS;
+            var fts = lvl.MediumArxLevel.FTS;
             Dictionary<int, int> tcToIndex = new Dictionary<int, int>();
             //texture indices
-            for (int i = 0; i < fts.textureContainers.Length; i++)
+            for (int i = 0; i < fts.textureContainers.Count; i++)
             {
-                tcToIndex[fts.textureContainers[i].tc] = i;
+                tcToIndex[fts.textureContainers[i].containerId] = i;
             }
 
-            UnityEngine.Debug.Log("Texture containers loaded: " + fts.textureContainers.Length);
+            UnityEngine.Debug.Log("Texture containers loaded: " + fts.textureContainers.Count);
 
             //TODO: use external placeholder texture so it can be set to 0 on export
             var notFoundMaterialKey = new EditorMaterial(EditorSettings.DataDir + "graph\\interface\\misc\\default[icon].bmp", PolyType.GLOW, 0);
 
-            for (int c = 0; c < fts.cells.Length; c++)
+            for (int c = 0; c < fts.cells.Count; c++)
             {
                 var cell = fts.cells[c];
-                loadedPolys += cell.polygons.Length;
-                for (int p = 0; p < cell.polygons.Length; p++)
+                loadedPolys += cell.polygons.Count;
+                for (int p = 0; p < cell.polygons.Count; p++)
                 {
                     var poly = cell.polygons[p];
 
                     var matKey = notFoundMaterialKey;
-                    if (tcToIndex.TryGetValue(poly.tex, out int textureIndex))
+                    if (tcToIndex.TryGetValue(poly.textureContainerId, out int textureIndex))
                     {
-                        string texArxPath = ArxIOHelper.GetString(fts.textureContainers[textureIndex].fic);
-                        matKey = new EditorMaterial(texArxPath, poly.type, poly.transval); //TODO: speed up by using a pool of some sort?
+                        string texArxPath = fts.textureContainers[textureIndex].texturePath;
+                        matKey = new EditorMaterial(texArxPath, poly.polyType, poly.transVal); //TODO: speed up by using a pool of some sort?
                     }
                     else
                     {
-                        UnityEngine.Debug.Log("Couldnt find texture " + poly.tex);
+                        UnityEngine.Debug.Log("Couldnt find texture container " + poly.textureContainerId);
                     }
 
                     MaterialMesh mm = lvl.EditableLevelMesh.GetMaterialMesh(matKey);
 
                     EditablePrimitiveInfo prim = new EditablePrimitiveInfo
                     {
-                        polyType = poly.type,
-                        norm = poly.norm.ToVector3(),
-                        norm2 = poly.norm2.ToVector3(),
+                        polyType = poly.polyType,
+                        norm = poly.norm.ToUnity(),
+                        norm2 = poly.norm2.ToUnity(),
                         area = poly.area,
                         room = poly.room,
-                        paddy = poly.paddy
                     };
 
                     int vertCount = prim.VertexCount;
@@ -128,21 +127,25 @@ namespace Assets.Scripts.ArxLevelLoading
                     {
                         var vert = poly.vertices[i];
                         //might want to add some code that detects if lightcolors isnt the right size, but only thing i can think of is try catch around this, which might be slow?
-                        uint lightCol = lvl.ArxLevelNative.LLF.lightColors[lightIndex++];
-                        prim.vertices[i] = new EditableVertexInfo(new Vector3(vert.posX, vert.posY, vert.posZ),
-                            new Vector2(vert.texU, 1 - vert.texV),
-                            poly.normals[i].ToVector3(),
-                            ArxIOHelper.FromBGRA(lightCol));
+                        var uv = vert.uv.ToUnity();
+                        uv.y = 1 - uv.y;
+                        var lightCol = lvl.MediumArxLevel.LLF.lightColors[lightIndex++].ToUnity();
+                        prim.vertices[i] = new EditableVertexInfo(vert.position.ToUnity(),
+                            uv,
+                            vert.normal.ToUnity(),
+                            lightCol);
                     }
 
                     if (prim.IsTriangle)
                     {
                         //load 4th vertex manually as it has no lighting value and would break lighting otherwise
                         var lastVert = poly.vertices[3];
-                        prim.vertices[3] = new EditableVertexInfo(new Vector3(lastVert.posX, lastVert.posY, lastVert.posZ),
-                            new Vector2(lastVert.texU, 1 - lastVert.texV),
-                            poly.normals[3].ToVector3(),
-                            Color.white);
+                        var uv  = lastVert.uv.ToUnity();
+                        uv.y = 1 - uv.y;
+                        prim.vertices[3] = new EditableVertexInfo(lastVert.position.ToUnity(),
+                            uv,
+                            lastVert.normal.ToUnity(),
+                            UnityEngine.Color.white);
                     }
 
                     mm.AddPrimitive(prim);

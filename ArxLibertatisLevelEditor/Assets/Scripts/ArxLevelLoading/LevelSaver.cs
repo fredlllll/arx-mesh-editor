@@ -1,14 +1,12 @@
-﻿using Assets.Scripts.ArxLevel;
+﻿using ArxLibertatisEditorIO.MediumIO.FTS;
+using ArxLibertatisEditorIO.RawIO;
 using Assets.Scripts.ArxLevelEditor;
 using Assets.Scripts.ArxLevelEditor.Mesh;
 using Assets.Scripts.ArxNative.IO;
-using Assets.Scripts.ArxNative.IO.FTS;
-using Assets.Scripts.ArxNative.IO.Shared_IO;
+using Assets.Scripts.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Assets.Scripts.ArxLevelLoading
@@ -17,17 +15,19 @@ namespace Assets.Scripts.ArxLevelLoading
     {
         public static void SaveLevel(Level level, string name)
         {
-            var lvln = level.ArxLevelNative;
+            ArxLibertatisEditorIO.ArxPaths.DataDir = EditorSettings.DataDir;
+            var lvln = level.MediumArxLevel;
 
             Vector3 camPos = LevelEditor.EditorCamera.transform.position * 100;
             camPos.y *= -1;
-            lvln.DLF.header.positionEdit = new SavedVec3(camPos);
-            lvln.DLF.header.angleEdit = new SavedAnglef(LevelEditor.EditorCamera.transform.eulerAngles);
-            lvln.DLF.header.offset = new SavedVec3(level.LevelOffset);
+            lvln.DLF.header.positionEdit = camPos.ToNumerics();
+            lvln.DLF.header.eulersEdit = LevelEditor.EditorCamera.transform.eulerAngles.ToNumerics(); //TODO: might have to fix rotation because different handedness?
+            lvln.DLF.header.eulersEdit = level.LevelOffset.ToNumerics();
 
             SaveMesh(level);
 
-            lvln.SaveLevel(name);
+            var ral = new RawArxLevel();
+            lvln.SaveTo(ral).SaveLevel(name, false);
         }
 
         class LevelCell
@@ -77,16 +77,16 @@ namespace Assets.Scripts.ArxLevelLoading
                 }
             }
 
-            var fts = level.ArxLevelNative.FTS;
-            fts.textureContainers = new ArxNative.IO.FTS.FTS_IO_TEXTURE_CONTAINER[uniqueTexturePaths.Count];
+            var fts = level.MediumArxLevel.FTS;
+            fts.textureContainers.Clear();
             int i = 1; //nothing speaks against just using a normal index for tc, i dont know why they ever used random ints, has to be 1 based
             Dictionary<string, int> texPathToTc = new Dictionary<string, int>();
             foreach (var path in uniqueTexturePaths)
             {
-                int index = i++;
                 var texPath = path.Replace(EditorSettings.DataDir, "");
-                fts.textureContainers[index-1].fic = ArxIOHelper.GetBytes(texPath, 256);
-                texPathToTc[path] = fts.textureContainers[index-1].tc = index;
+                fts.textureContainers.Add(new ArxLibertatisEditorIO.MediumIO.FTS.TextureContainer() { texturePath = texPath, containerId = i });
+                texPathToTc[path] = i;
+                i++;
             }
 
             //create cells
@@ -116,13 +116,15 @@ namespace Assets.Scripts.ArxLevelLoading
                 }
             }
 
-            List<FTS_IO_EP_DATA>[] roomPolyDatas = new List<FTS_IO_EP_DATA>[fts.rooms.Length];
-            for (i = 0; i < fts.rooms.Length; ++i)
+            AutoDictionary<short, Room> roomPolyDatas = new AutoDictionary<short, Room>(_ => new Room());
+            /*List<FTS_IO_EP_DATA>[] roomPolyDatas = new List<FTS_IO_EP_DATA>[fts.rooms.Count];
+            for (i = 0; i < fts.rooms.Count; ++i)
             {
                 roomPolyDatas[i] = new List<FTS_IO_EP_DATA>();
-            }
+            }*/
 
-            List<uint> lightColors = new List<uint>();
+            var llf = level.MediumArxLevel.LLF;
+            llf.lightColors.Clear();
 
             //put primitves into polys in their cells
             for (int z = 0, index = 0; z < sizez; z++)
@@ -132,86 +134,71 @@ namespace Assets.Scripts.ArxLevelLoading
                     //int index = ArxIOHelper.XZToCellIndex(x, z, sizex, sizez);
                     var myCell = cells[index];
                     var ftsCell = fts.cells[index];
-                    ftsCell.sceneInfo.nbpoly = myCell.primitives.Count;
-                    ftsCell.polygons = new FTS_IO_EERIEPOLY[myCell.primitives.Count];
                     for (i = 0; i < myCell.primitives.Count; i++)
                     {
                         var tup = myCell.primitives[i];
                         var mat = tup.Item1;
                         var prim = tup.Item2;
-                        var poly = new FTS_IO_EERIEPOLY();
+                        var poly = new Polygon();
                         //copy data over
                         poly.area = prim.area;
-                        poly.norm = new SavedVec3(prim.norm);
-                        poly.norm2 = new SavedVec3(prim.norm2);
-                        poly.paddy = prim.paddy;
+                        poly.norm = prim.norm.ToNumerics();
+                        poly.norm2 = prim.norm2.ToNumerics();
                         poly.room = prim.room;
-                        poly.type = prim.polyType; //this is completely ignoring mat polytype atm, but it should be sync with prim type anyway
+                        poly.polyType = prim.polyType; //this is completely ignoring mat polytype atm, but it should be sync with prim type anyway
 
                         if (poly.room >= 0)
                         {
-                            var polyData = new FTS_IO_EP_DATA();
+                            var polyData = new RoomPolygon();
                             polyData.cell_x = (short)x;
                             polyData.cell_z = (short)z;
                             polyData.idx = (short)i;
-                            roomPolyDatas[poly.room].Add(polyData);
+                            roomPolyDatas[poly.room].polygons.Add(polyData);
                         }
 
                         //copy vertices
-                        poly.vertices = new ArxNative.IO.FTS.FTS_IO_VERTEX[4];
-                        poly.normals = new SavedVec3[4];
                         for (int j = 0; j < 4; j++) //always save all 4 vertices regardless of if its a triangle or quad
                         {
                             var vert = prim.vertices[j];
-                            var natVert = new ArxNative.IO.FTS.FTS_IO_VERTEX();
-                            natVert.posX = vert.position.x;
-                            natVert.posY = vert.position.y;
-                            natVert.posZ = vert.position.z;
-
-                            natVert.texU = vert.uv.x;
-                            natVert.texV = 1 - vert.uv.y;
-                            poly.normals[j] = new SavedVec3(vert.normal);
-
-                            poly.vertices[j] = natVert;
+                            var polyVert = poly.vertices[j];
+                            polyVert.position = vert.position.ToNumerics();
+                            polyVert.normal = vert.normal.ToNumerics();
+                            polyVert.uv = vert.uv.ToNumerics();
+                            polyVert.uv.Y = 1 - polyVert.uv.Y;
                         }
 
-                        lightColors.Add(ArxIOHelper.ToBGRA(prim.vertices[0].color));
-                        lightColors.Add(ArxIOHelper.ToBGRA(prim.vertices[1].color));
-                        lightColors.Add(ArxIOHelper.ToBGRA(prim.vertices[2].color));
-                        if (poly.type.HasFlag(ArxNative.PolyType.QUAD))
+                        llf.lightColors.Add(prim.vertices[0].color.ToArxIo());
+                        llf.lightColors.Add(prim.vertices[1].color.ToArxIo());
+                        llf.lightColors.Add(prim.vertices[2].color.ToArxIo());
+                        if (poly.polyType.HasFlag(ArxLibertatisEditorIO.Util.PolyType.QUAD))
                         {
-                            lightColors.Add(ArxIOHelper.ToBGRA(prim.vertices[3].color));
+                            llf.lightColors.Add(prim.vertices[3].color.ToArxIo());
                         }
-
 
                         //set material stuff
-                        poly.tex = texPathToTc[mat.TexturePath];//keyerrors should not be possible on this
-                        poly.transval = mat.TransVal;
+                        poly.textureContainerId = texPathToTc[mat.TexturePath];//keyerrors should not be possible on this
+                        poly.transVal = mat.TransVal;
                         //polytype is set from primitive
 
-                        ftsCell.polygons[i] = poly;
+                        ftsCell.polygons.Add(poly);
                     }
                     fts.cells[index] = ftsCell;
                 }
             }
 
-            for (i = 0; i < fts.rooms.Length; i++)
+            var maxRoom = roomPolyDatas.Keys.Max();
+            fts.rooms.Clear();
+            for (i = 0; i < maxRoom + 1; i++)
             {
-                fts.rooms[i].polygons = roomPolyDatas[i].ToArray();
+                if (roomPolyDatas.TryGetValue((short)i, out var room))
+                {
+                    fts.rooms.Add(room);
+                }
+                else
+                {
+                    fts.rooms.Add(new Room());
+                }
             }
-
-            //update llf
-            var llf = level.ArxLevelNative.LLF;
-            llf.lightingHeader.numLights = lightColors.Count;
-            llf.lightColors = lightColors.ToArray();
-            //below does the same as toArray, just wondering if toArray is faster or manually assigning it
-            /*
-            llf.lightColors = new uint[lightColors.Count];
-            for (i = 0; i < lightColors.Count; i++)
-            {
-                llf.lightColors[i] = lightColors[i];
-            }
-            */
         }
     }
 }

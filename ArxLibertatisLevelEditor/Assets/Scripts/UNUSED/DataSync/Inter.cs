@@ -1,7 +1,6 @@
-﻿using Assets.Scripts.ArxLevelEditor;
-using Assets.Scripts.ArxNative.IO;
-using Assets.Scripts.ArxNative.IO.DLF;
-using Assets.Scripts.ArxNative.IO.FTL;
+﻿using ArxLibertatisEditorIO.RawIO.FTL;
+using Assets.Scripts.ArxLevelEditor;
+using Assets.Scripts.Util;
 using System.IO;
 using UnityEngine;
 
@@ -11,9 +10,9 @@ namespace Assets.Scripts.DataSync
     {
         public void LoadFrom(Level level, int index)
         {
-            DLF_IO_INTER inter = level.ArxLevelNative.DLF.inters[index];
+            ArxLibertatisEditorIO.MediumIO.DLF.Inter inter = level.MediumArxLevel.DLF.inters[index];
 
-            name = ArxIOHelper.GetString(inter.name);
+            name = inter.name;
 
             string interPath = name.ToLowerInvariant();
             int graphPos = interPath.IndexOf("graph");
@@ -21,7 +20,7 @@ namespace Assets.Scripts.DataSync
             int lastDot = interPath.LastIndexOf('.');
             interPath = interPath.Substring(0, lastDot);
 
-            var ftlPath = Path.Combine(EditorSettings.DataDir, "game", ArxIOHelper.ArxPathToPlatformPath(interPath + ".ftl"));
+            var ftlPath = System.IO.Path.Combine(EditorSettings.DataDir, "game", ArxNative.IO.ArxIOHelper.ArxPathToPlatformPath(interPath + ".ftl"));
             if (File.Exists(ftlPath))
             {
                 FTL_IO ftl = new FTL_IO();
@@ -60,8 +59,8 @@ namespace Assets.Scripts.DataSync
 
             }
 
-            transform.localPosition = inter.pos.ToVector3();
-            transform.localEulerAngles = inter.angle.ToEuler();
+            transform.localPosition = inter.position.ToUnity();
+            transform.localEulerAngles = inter.euler.ToUnity();
         }
     }
 }

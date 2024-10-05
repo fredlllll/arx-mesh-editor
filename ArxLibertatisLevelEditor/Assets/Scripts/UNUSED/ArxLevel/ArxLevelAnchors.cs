@@ -1,5 +1,6 @@
 ﻿using Assets.Scripts.ArxLevel.Mesh;
 using Assets.Scripts.ArxLevelEditor;
+using Assets.Scripts.Util;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -23,21 +24,21 @@ namespace Assets.Scripts.ArxLevel
             List<int> indices = new List<int>();
 
             List<GameObject> anchors = new List<GameObject>();
-            var fts = level.ArxLevelNative.FTS;
+            var fts = level.MediumArxLevel.FTS;
             foreach (var anchor in fts.anchors)
             {
                 GameObject anchorObject = GameObject.Instantiate(Resources.Load<GameObject>("Prefabs/Anchor"));
-                anchorObject.transform.position = anchor.data.pos.ToVector3();
+                anchorObject.transform.position = anchor.pos.ToUnity();
                 anchors.Add(anchorObject);
 
-                for(int i =0; i< anchor.linkedAnchors.Length; i++)
+                for(int i =0; i< anchor.linkedAnchors.Count; i++)
                 {
                     int start = indices.Count;
 
                     var other = fts.anchors[anchor.linkedAnchors[i]];
-                    vertices.Add(anchor.data.pos.ToVector3());
+                    vertices.Add(anchor.pos.ToUnity());
                     colors.Add(Color.black);
-                    vertices.Add(other.data.pos.ToVector3());
+                    vertices.Add(other.pos.ToUnity());
                     colors.Add(Color.white);
                     indices.Add(start);
                     indices.Add(start+1);
@@ -62,7 +63,7 @@ namespace Assets.Scripts.ArxLevel
             foreach (var cellIndex in LevelCellIndex.GetCellIndices(fts.sceneHeader.sizex, fts.sceneHeader.sizez))
             {
                 var cell = fts.cells[cellIndex.index];
-                if (cell.anchors.Length > 0)
+                if (cell.anchors.Count > 0)
                 {
                     GameObject cellObject = new GameObject("Cell " + cellIndex.x + "," + cellIndex.z);
                     cellObject.transform.SetParent(anchorsObject.transform);
