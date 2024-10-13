@@ -28,7 +28,7 @@ namespace Assets.Scripts.ArxLevelEditor
             {
                 return null;
             }
-            var path = Path.Combine(EditorSettings.DataDir, arxPath);
+            var path = Path.Combine(ArxLibertatisEditorIO.ArxPaths.DataDir, arxPath);
             path = Path.GetFullPath(path); //in case there are relative path things in there like .. or .
             path = GetRealTexturePath(path); //in case the extension isnt the right one
             if (!textures.TryGetValue(path, out Texture2D retval))

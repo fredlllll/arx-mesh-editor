@@ -15,7 +15,6 @@ namespace Assets.Scripts.ArxLevelLoading
     {
         public static void SaveLevel(Level level, string name)
         {
-            ArxLibertatisEditorIO.ArxPaths.DataDir = EditorSettings.DataDir;
             var lvln = level.MediumArxLevel;
 
             Vector3 camPos = LevelEditor.EditorCamera.transform.position * 100;
@@ -83,7 +82,7 @@ namespace Assets.Scripts.ArxLevelLoading
             Dictionary<string, int> texPathToTc = new Dictionary<string, int>();
             foreach (var path in uniqueTexturePaths)
             {
-                var texPath = path.Replace(EditorSettings.DataDir, "");
+                var texPath = path.Replace(ArxLibertatisEditorIO.ArxPaths.DataDir, "");
                 fts.textureContainers.Add(new ArxLibertatisEditorIO.MediumIO.FTS.TextureContainer() { texturePath = texPath, containerId = i });
                 texPathToTc[path] = i;
                 i++;

@@ -20,7 +20,7 @@ namespace Assets.Scripts.DataSync
             int lastDot = interPath.LastIndexOf('.');
             interPath = interPath.Substring(0, lastDot);
 
-            var ftlPath = System.IO.Path.Combine(EditorSettings.DataDir, "game", ArxNative.IO.ArxIOHelper.ArxPathToPlatformPath(interPath + ".ftl"));
+            var ftlPath = System.IO.Path.Combine(ArxLibertatisEditorIO.ArxPaths.DataDir, "game", ArxNative.IO.ArxIOHelper.ArxPathToPlatformPath(interPath + ".ftl"));
             if (File.Exists(ftlPath))
             {
                 FTL_IO ftl = new FTL_IO();

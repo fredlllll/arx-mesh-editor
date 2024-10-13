@@ -10,7 +10,7 @@ namespace Assets.Scripts.ArxNative
         {
             get
             {
-                return Path.Combine(EditorSettings.DataDir, "graph", "levels");
+                return Path.Combine(ArxLibertatisEditorIO.ArxPaths.DataDir, "graph", "levels");
             }
         }
 
@@ -26,7 +26,7 @@ namespace Assets.Scripts.ArxNative
         {
             get
             {
-                return Path.Combine(EditorSettings.DataDir, "game", "graph", "levels");
+                return Path.Combine(ArxLibertatisEditorIO.ArxPaths.DataDir, "game", "graph", "levels");
             }
         }
     }

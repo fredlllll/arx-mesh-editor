@@ -317,7 +317,7 @@ namespace Assets.Scripts.UI
         {
             OpenFileDialog.Filter = "Arx Texture Files (*.jpg|*.bmp)";
             OpenFileDialog.Title = "Open Texture";
-            OpenFileDialog.FileName = Path.Combine(EditorSettings.DataDir, PolygonSelector.CurrentlySelected.Material.TexturePath);
+            OpenFileDialog.FileName = Path.Combine(ArxLibertatisEditorIO.ArxPaths.DataDir, PolygonSelector.CurrentlySelected.Material.TexturePath);
 
             var t = OpenFileDialog.OpenDialog();
             t.Start();
@@ -328,13 +328,13 @@ namespace Assets.Scripts.UI
             if (t.Result == OpenFileDialog.DialogResult.OK)
             {
                 var path = OpenFileDialog.FileName;
-                if (!path.StartsWith(EditorSettings.DataDir))
+                if (!path.StartsWith(ArxLibertatisEditorIO.ArxPaths.DataDir))
                 {
                     Debug.LogWarning("file is not in datadir, cant use it as a texture");
                 }
                 else
                 {
-                    var relPath = path.Replace(EditorSettings.DataDir, "");
+                    var relPath = path.Replace(ArxLibertatisEditorIO.ArxPaths.DataDir, "");
                     var em = new EditorMaterial(relPath, PolygonSelector.CurrentlySelected.info.polyType, PolygonSelector.CurrentlySelected.Material.TransVal);
                     PolygonSelector.CurrentlySelected.Material = em;
                     polyTextureImage.texture = em.Material.mainTexture;

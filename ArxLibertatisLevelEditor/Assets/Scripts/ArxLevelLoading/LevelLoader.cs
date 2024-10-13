@@ -14,7 +14,6 @@ namespace Assets.Scripts.ArxLevelLoading
     {
         public static Level LoadLevel(string name)
         {
-            ArxLibertatisEditorIO.ArxPaths.DataDir = EditorSettings.DataDir;
             var ral = new RawArxLevel();
             var mal = new MediumArxLevel();
             mal.LoadFrom(ral.LoadLevel(name));
@@ -90,7 +89,7 @@ namespace Assets.Scripts.ArxLevelLoading
             UnityEngine.Debug.Log("Texture containers loaded: " + fts.textureContainers.Count);
 
             //TODO: use external placeholder texture so it can be set to 0 on export
-            var notFoundMaterialKey = new EditorMaterial(EditorSettings.DataDir + "graph\\interface\\misc\\default[icon].bmp", PolyType.GLOW, 0);
+            var notFoundMaterialKey = new EditorMaterial(ArxLibertatisEditorIO.ArxPaths.DataDir + "graph\\interface\\misc\\default[icon].bmp", PolyType.GLOW, 0);
 
             for (int c = 0; c < fts.cells.Count; c++)
             {
