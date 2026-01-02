@@ -128,7 +128,15 @@ namespace Assets.Scripts.ArxLevelLoading
                         //might want to add some code that detects if lightcolors isnt the right size, but only thing i can think of is try catch around this, which might be slow?
                         var uv = vert.uv.ToUnity();
                         uv.y = 1 - uv.y;
-                        var lightCol = lvl.MediumArxLevel.LLF.lightColors[lightIndex++].ToUnity();
+                        UnityEngine.Color lightCol = UnityEngine.Color.magenta;
+                        if (lightIndex >= lvl.MediumArxLevel.LLF.lightColors.Count)
+                        {
+                            UnityEngine.Debug.LogWarning("Light color index out of range! Filling with magenta color.");
+                        }
+                        else
+                        {
+                            lightCol = lvl.MediumArxLevel.LLF.lightColors[lightIndex++].ToUnity();
+                        }
                         prim.vertices[i] = new EditableVertexInfo(vert.position.ToUnity(),
                             uv,
                             vert.normal.ToUnity(),

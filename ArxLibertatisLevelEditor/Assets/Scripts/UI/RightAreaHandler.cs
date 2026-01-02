@@ -3,6 +3,7 @@ using Assets.Scripts.ArxLevelEditor;
 using Assets.Scripts.ArxLevelEditor.Editing;
 using Assets.Scripts.ArxLevelEditor.Mesh;
 using Assets.Scripts.Util;
+using SFB;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -29,6 +30,7 @@ namespace Assets.Scripts.UI
 
         private void Start()
         {
+            //start is only called once, so no need to unsubscribe from events
             X.onEndEdit.AddListener(XEndEdit);
             Y.onEndEdit.AddListener(YEndEdit);
             Z.onEndEdit.AddListener(ZEndEdit);
@@ -105,10 +107,13 @@ namespace Assets.Scripts.UI
 
         private void SyncPolyTypeToggles()
         {
-            var polyType = PolygonSelector.CurrentlySelected.info.polyType;
-            foreach (var ass in toggleAssoc)
+            if (PolygonSelector.CurrentlySelected != null)
             {
-                ass.Item2.isOn = polyType.HasFlag(ass.Item1);
+                var polyType = PolygonSelector.CurrentlySelected.info.polyType;
+                foreach (var ass in toggleAssoc)
+                {
+                    ass.Item2.isOn = polyType.HasFlag(ass.Item1);
+                }
             }
         }
 
@@ -156,6 +161,10 @@ namespace Assets.Scripts.UI
                 ass.Item2.interactable = true;
             }
             var tex = LevelEditor.TextureDatabase[prim.Material.TexturePath];
+            if (tex == null)
+            {
+                tex = LevelEditor.TextureDatabase.NoTextureFoundPlaceholder;
+            }
             polyTextureImage.texture = tex;
             pickTextureButton.interactable = true;
             SyncPolyTypeToggles();
@@ -316,11 +325,13 @@ namespace Assets.Scripts.UI
 
         private IEnumerator PickTextureCoroutine()
         {
-            OpenFileDialog.Filter = "Arx Texture Files (*.jpg|*.bmp)";
             OpenFileDialog.Title = "Open Texture";
             OpenFileDialog.FileName = Path.Combine(ArxLibertatisEditorIO.ArxPaths.DataDir, PolygonSelector.CurrentlySelected.Material.TexturePath);
-
-            var t = OpenFileDialog.OpenDialog();
+            OpenFileDialog.Filters = new[] {
+                new ExtensionFilter("Arx Texture Files", "jpg","bmp"),
+                new ExtensionFilter("All Files", "*")
+            };
+            var t = OpenFileDialog.OpenDialogAsync();
             t.Start();
             while (!t.IsCompleted)
             {

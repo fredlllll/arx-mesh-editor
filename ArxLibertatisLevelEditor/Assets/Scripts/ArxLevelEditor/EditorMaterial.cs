@@ -13,7 +13,7 @@ namespace Assets.Scripts.ArxLevelEditor
         {
             get
             {
-                if(mat == null)
+                if (mat == null)
                 {
                     mat = CreateMaterial(this);
                 }
@@ -51,7 +51,7 @@ namespace Assets.Scripts.ArxLevelEditor
 
         ~EditorMaterial()
         {
-            if(mat != null)
+            if (mat != null)
             {
                 //prevent memory leaks
                 MainThreadDestroyer.AddForDestruction(mat);
@@ -108,7 +108,12 @@ namespace Assets.Scripts.ArxLevelEditor
             }
             mat = UnityEngine.Object.Instantiate(mat);
             mat.name = editorMat.TexturePath;
-            mat.mainTexture = LevelEditor.TextureDatabase[editorMat.TexturePath];
+            var matTex = LevelEditor.TextureDatabase[editorMat.TexturePath];
+            if (matTex == null)
+            {
+                matTex = LevelEditor.TextureDatabase.NoTextureFoundPlaceholder;
+            }
+            mat.mainTexture = matTex;
             if (transparent)
             {//transparents look better with point filtering
                 //TODO: check transval

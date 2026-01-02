@@ -33,7 +33,7 @@ namespace SFB {
             }
             fd.Multiselect = multiselect;
             if (!string.IsNullOrEmpty(directory)) {
-                fd.FileName = GetDirectoryPath(directory);
+                fd.FileName = directory;
             }
             var res = fd.ShowDialog(new WindowWrapper(GetActiveWindow()));
             var filenames = res == DialogResult.OK ? fd.FileNames : new string[0];

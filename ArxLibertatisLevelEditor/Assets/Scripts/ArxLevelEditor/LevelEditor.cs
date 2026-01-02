@@ -46,6 +46,7 @@ namespace Assets.Scripts.ArxLevelEditor
         private void Awake()
         {
             EditorCamera = Camera.main;
+            TextureDatabase.Awake();
         }
     }
 }

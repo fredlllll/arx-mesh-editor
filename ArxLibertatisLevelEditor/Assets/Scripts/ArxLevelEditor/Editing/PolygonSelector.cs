@@ -62,10 +62,10 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
 
         public void Duplicate()
         {
-            if (Instance.currentlySelected != null)
+            if (currentlySelected != null)
             {
                 //adds the currently selected back to the mesh, but doesnt destroy the gameobject so its like a dupe
-                var selectedPrimitive = Instance.currentlySelected.GetComponent<EditablePrimitive>();
+                var selectedPrimitive = currentlySelected.GetComponent<EditablePrimitive>();
                 var editableMesh = LevelEditor.CurrentLevel.EditableLevelMesh.GetMaterialMesh(selectedPrimitive.Material);
                 editableMesh.AddPrimitive(selectedPrimitive.info.Copy()); //add copy as adding the same twice could lead to problems
                 editableMesh.UpdateMesh();

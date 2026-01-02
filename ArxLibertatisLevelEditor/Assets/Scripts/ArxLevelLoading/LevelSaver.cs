@@ -21,7 +21,7 @@ namespace Assets.Scripts.ArxLevelLoading
             camPos.y *= -1;
             lvln.DLF.header.positionEdit = camPos.ToNumerics();
             lvln.DLF.header.eulersEdit = LevelEditor.EditorCamera.transform.eulerAngles.ToNumerics(); //TODO: might have to fix rotation because different handedness?
-            lvln.DLF.header.eulersEdit = level.LevelOffset.ToNumerics();
+            lvln.DLF.header.offset = level.LevelOffset.ToNumerics();
 
             SaveMesh(level);
 
@@ -70,8 +70,6 @@ namespace Assets.Scripts.ArxLevelLoading
             {
                 if (kv.Value.PrimitiveCount > 0) //only add if we have primitives for this material
                 {
-                    //TODO: remove that later
-                    //var texPath = kv.Key.TexturePath.Replace(EditorSettings.DataDir, "");
                     uniqueTexturePaths.Add(kv.Key.TexturePath);
                 }
             }
@@ -82,7 +80,8 @@ namespace Assets.Scripts.ArxLevelLoading
             Dictionary<string, int> texPathToTc = new Dictionary<string, int>();
             foreach (var path in uniqueTexturePaths)
             {
-                var texPath = path.Replace(ArxLibertatisEditorIO.ArxPaths.DataDir, "");
+                //var texPath = path.Replace(ArxLibertatisEditorIO.ArxPaths.DataDir, "");
+                var texPath = System.IO.Path.GetRelativePath(ArxLibertatisEditorIO.ArxPaths.DataDir, path);
                 fts.textureContainers.Add(new ArxLibertatisEditorIO.MediumIO.FTS.TextureContainer() { texturePath = texPath, containerId = i });
                 texPathToTc[path] = i;
                 i++;
@@ -185,17 +184,20 @@ namespace Assets.Scripts.ArxLevelLoading
                 }
             }
 
-            var maxRoom = roomPolyDatas.Keys.Max();
             fts.rooms.Clear();
-            for (i = 0; i < maxRoom + 1; i++)
+            if (roomPolyDatas.Count > 0)
             {
-                if (roomPolyDatas.TryGetValue((short)i, out var room))
+                var maxRoom = roomPolyDatas.Keys.Max();
+                for (i = 0; i < maxRoom + 1; i++)
                 {
-                    fts.rooms.Add(room);
-                }
-                else
-                {
-                    fts.rooms.Add(new Room());
+                    if (roomPolyDatas.TryGetValue((short)i, out var room))
+                    {
+                        fts.rooms.Add(room);
+                    }
+                    else
+                    {
+                        fts.rooms.Add(new Room());
+                    }
                 }
             }
         }
