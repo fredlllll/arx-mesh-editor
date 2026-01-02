@@ -2,6 +2,7 @@
 using Assets.Scripts.ArxLevelEditor;
 using Assets.Scripts.ArxLevelEditor.Editing;
 using Assets.Scripts.ArxLevelEditor.Mesh;
+using Assets.Scripts.Util;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -340,6 +341,7 @@ namespace Assets.Scripts.UI
                     polyTextureImage.texture = em.Material.mainTexture;
                 }
             }
+            PathUtil.SetCurrentWorkingDirectoryToProjectRoot();
         }
 
         private void OnPickTextureClick()

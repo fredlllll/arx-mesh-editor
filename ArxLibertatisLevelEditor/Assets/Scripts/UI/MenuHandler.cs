@@ -4,6 +4,7 @@ using Assets.Scripts.ArxNative.IO.DLF;
 using Assets.Scripts.ArxNative.IO.FTS;
 using Assets.Scripts.ArxNative.IO.LLF;
 using Assets.Scripts.ArxNative.IO.PK;
+using Assets.Scripts.Util;
 using SFB;
 using System.IO;
 using UnityEngine;
@@ -55,6 +56,7 @@ namespace Assets.Scripts.UI
         public void SearchDirectoryClicked()
         {
             StandaloneFileBrowser.OpenFolderPanelAsync("Find Arx Directory", "", false, this.DirectorySelected);
+            PathUtil.SetCurrentWorkingDirectoryToProjectRoot();
         }
 
         private void DirectorySelected(string[] folders)

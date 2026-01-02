@@ -293,7 +293,7 @@ namespace cakeslice
 
 		private void OnEnable()
 		{
-			Outline[] o = FindObjectsOfType<Outline>();
+			Outline[] o = FindObjectsByType<Outline>(FindObjectsSortMode.None);
 			if (autoEnableOutlines)
 			{
 				foreach (Outline oL in o)
