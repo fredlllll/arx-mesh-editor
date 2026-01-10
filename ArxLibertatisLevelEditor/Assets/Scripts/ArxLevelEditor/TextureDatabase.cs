@@ -91,7 +91,11 @@ namespace Assets.Scripts.ArxLevelEditor
             {
                 path += ".bmp";
             }
-            return null; //return null if no file found
+            else
+            {
+                return null; //return null if no file found
+            }
+            return path;
         }
 
 

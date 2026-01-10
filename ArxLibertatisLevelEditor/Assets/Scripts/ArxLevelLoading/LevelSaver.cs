@@ -80,8 +80,8 @@ namespace Assets.Scripts.ArxLevelLoading
             Dictionary<string, int> texPathToTc = new Dictionary<string, int>();
             foreach (var path in uniqueTexturePaths)
             {
-                //var texPath = path.Replace(ArxLibertatisEditorIO.ArxPaths.DataDir, "");
-                var texPath = System.IO.Path.GetRelativePath(ArxLibertatisEditorIO.ArxPaths.DataDir, path);
+                // Use a local helper to calculate relative path compatible with .NET Framework
+                var texPath = PathUtil.GetRelativePath(ArxLibertatisEditorIO.ArxPaths.DataDir, path);
                 fts.textureContainers.Add(new ArxLibertatisEditorIO.MediumIO.FTS.TextureContainer() { texturePath = texPath, containerId = i });
                 texPathToTc[path] = i;
                 i++;
