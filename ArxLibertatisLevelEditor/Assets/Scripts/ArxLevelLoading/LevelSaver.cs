@@ -27,6 +27,8 @@ namespace Assets.Scripts.ArxLevelLoading
 
             var ral = new RawArxLevel();
             lvln.SaveTo(ral).SaveLevel(name, false);
+            Debug.Log($"Saved {lvln.FTS.cells.Select(x=>x.polygons.Count).Sum()} polygons");
+            Debug.Log($"Saved {lvln.LLF.lightColors.Count} light values");
         }
 
         class LevelCell
@@ -80,8 +82,14 @@ namespace Assets.Scripts.ArxLevelLoading
             Dictionary<string, int> texPathToTc = new Dictionary<string, int>();
             foreach (var path in uniqueTexturePaths)
             {
-                // Use a local helper to calculate relative path compatible with .NET Framework
-                var texPath = PathUtil.GetRelativePath(ArxLibertatisEditorIO.ArxPaths.DataDir, path);
+                var texPath = path;
+
+                if (System.IO.Path.IsPathRooted(path))
+                {
+                    // Use a local helper to calculate relative path compatible with .NET Framework
+                    texPath = PathUtil.GetRelativePath(ArxLibertatisEditorIO.ArxPaths.DataDir, texPath);
+                }
+
                 fts.textureContainers.Add(new ArxLibertatisEditorIO.MediumIO.FTS.TextureContainer() { texturePath = texPath, containerId = i });
                 texPathToTc[path] = i;
                 i++;
@@ -132,6 +140,7 @@ namespace Assets.Scripts.ArxLevelLoading
                     //int index = ArxIOHelper.XZToCellIndex(x, z, sizex, sizez);
                     var myCell = cells[index];
                     var ftsCell = fts.cells[index];
+                    ftsCell.polygons.Clear();
                     for (i = 0; i < myCell.primitives.Count; i++)
                     {
                         var tup = myCell.primitives[i];
@@ -180,7 +189,6 @@ namespace Assets.Scripts.ArxLevelLoading
 
                         ftsCell.polygons.Add(poly);
                     }
-                    fts.cells[index] = ftsCell;
                 }
             }
 

@@ -24,7 +24,10 @@ namespace Assets.Scripts.Util
             {
                 foreach (var obj in objects)
                 {
-                    Destroy(obj);
+                    if (obj != null)
+                    {
+                        Destroy(obj);
+                    }
                 }
             }
         }

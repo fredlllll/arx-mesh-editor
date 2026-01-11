@@ -346,7 +346,7 @@ namespace Assets.Scripts.UI
                 }
                 else
                 {
-                    var relPath = path.Replace(ArxLibertatisEditorIO.ArxPaths.DataDir, "");
+                    var relPath = PathUtil.GetRelativePath(ArxLibertatisEditorIO.ArxPaths.DataDir, path);
                     var em = new EditorMaterial(relPath, PolygonSelector.CurrentlySelected.info.polyType, PolygonSelector.CurrentlySelected.Material.TransVal);
                     PolygonSelector.CurrentlySelected.Material = em;
                     polyTextureImage.texture = em.Material.mainTexture;

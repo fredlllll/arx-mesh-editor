@@ -125,13 +125,12 @@ namespace Assets.Scripts.ArxLevelLoading
                     for (int i = 0; i < vertCount; i++)
                     {
                         var vert = poly.vertices[i];
-                        //might want to add some code that detects if lightcolors isnt the right size, but only thing i can think of is try catch around this, which might be slow?
                         var uv = vert.uv.ToUnity();
                         uv.y = 1 - uv.y;
                         UnityEngine.Color lightCol = UnityEngine.Color.magenta;
                         if (lightIndex >= lvl.MediumArxLevel.LLF.lightColors.Count)
                         {
-                            UnityEngine.Debug.LogWarning("Light color index out of range! Filling with magenta color.");
+                            UnityEngine.Debug.LogWarning($"Light color index {lightIndex} out of range! Filling with magenta color.");
                         }
                         else
                         {

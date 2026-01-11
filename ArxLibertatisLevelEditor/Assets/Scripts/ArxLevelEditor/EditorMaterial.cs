@@ -51,7 +51,7 @@ namespace Assets.Scripts.ArxLevelEditor
 
         ~EditorMaterial()
         {
-            if (mat != null)
+            if (!ReferenceEquals(mat, null))
             {
                 //prevent memory leaks
                 MainThreadDestroyer.AddForDestruction(mat);
