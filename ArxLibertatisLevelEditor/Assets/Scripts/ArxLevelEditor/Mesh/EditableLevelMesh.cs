@@ -19,7 +19,7 @@ namespace Assets.Scripts.ArxLevelEditor.Mesh
         {
             if (!materialMeshes.TryGetValue(key, out var retval))
             {
-                UnityEngine.Debug.Log("Creating material mesh for material: " + key.TexturePath);
+                //UnityEngine.Debug.Log("Creating material mesh for material: " + key.TexturePath);
                 var go = new GameObject();
                 go.transform.SetParent(gameObject.transform);
                 go.transform.localPosition = Vector3.zero;
