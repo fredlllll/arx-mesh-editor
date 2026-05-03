@@ -1,11 +1,14 @@
 ﻿using ArxLibertatisEditorIO.MediumIO;
 using ArxLibertatisEditorIO.RawIO;
+using ArxLibertatisEditorIO.RawIO.FTL;
 using ArxLibertatisEditorIO.Util;
 using Assets.Scripts.ArxLevelEditor;
 using Assets.Scripts.ArxLevelEditor.Mesh;
 using Assets.Scripts.Util;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using UnityEngine;
 
 namespace Assets.Scripts.ArxLevelLoading
@@ -27,8 +30,19 @@ namespace Assets.Scripts.ArxLevelLoading
             lvl.LevelOffset = mal.DLF.header.offset.ToUnity();
 
             LoadMesh(lvl);
-            //light debug:
-            GameObject lights = new GameObject();
+            LoadLights(lvl);
+            LoadInters(lvl);
+            LoadPortals(lvl);
+            LoadNavGrid(lvl);
+
+            return lvl;
+        }
+
+        private static void LoadLights(Level lvl)
+        {
+            GameObject lights = lvl.LevelLightsObject;
+
+            var mal = lvl.MediumArxLevel;
             foreach (var l in mal.LLF.lights)
             {
                 GameObject go = new GameObject();
@@ -37,21 +51,33 @@ namespace Assets.Scripts.ArxLevelLoading
                 var light = go.AddComponent<Light>();
                 light.color = l.color.ToUnity();
                 light.intensity = l.intensity;
-                light.range = l.fallEnd;
+                light.range = l.fallEnd / 100;
                 go.transform.SetParent(lights.transform);
             }
             lights.transform.localScale = new Vector3(0.01f, -0.01f, 0.01f);
             var pos = mal.FTS.sceneHeader.Mscenepos.ToUnity() / 100;
             pos.y = -pos.y;
-            UnityEngine.Debug.Log(pos);
             lights.transform.position = pos;
-            //inter debug:
-            /*foreach (var inter in lvl.ArxLevelNative.DLF.inters)
+        }
+
+        private static void LoadInters(Level lvl)
+        {
+            var mat = MaterialsDatabase.PlaceholderMaterial;
+            foreach (var inter in lvl.MediumArxLevel.DLF.inters)
             {
-                var interName = ArxIOHelper.GetString(inter.name);
-                interName = interName.Replace("C:\\ARX\\", "game\\").Replace(".teo", ".ftl");
-                var filePath = EditorSettings.DataDir + interName;
-                UnityEngine.Debug.Log(filePath);
+                UnityEngine.Debug.Log(inter.name);
+                var intername = inter.name.ToLowerInvariant();
+                var internameShort = intername.Replace("\\\\arkaneserver\\public\\arx\\graph\\obj3d\\interactive", "");
+                var ftlName = intername.Replace("\\\\arkaneserver\\public\\arx\\", "\\game\\").Replace(".teo", ".ftl");
+                UnityEngine.Debug.Log(ftlName);
+                var filePath = EditorSettings.DataDir + ftlName;
+                if (!File.Exists(filePath))
+                {
+                    UnityEngine.Debug.LogWarning("Couldnt find inter FTL file at " + filePath);
+                    continue;
+                }
+
+                
 
                 FTL_IO ftl = new FTL_IO();
                 using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
@@ -61,14 +87,71 @@ namespace Assets.Scripts.ArxLevelLoading
                 }
 
                 var m = ftl.CreateMesh();
-                GameObject go = new GameObject();
+                GameObject go = new GameObject(internameShort);
                 var mf = go.AddComponent<MeshFilter>();
                 mf.sharedMesh = m;
                 var mr = go.AddComponent<MeshRenderer>();
-                go.transform.localScale = new Vector3(0.1f, -0.1f, 0.1f);
-            }*/
+                mr.material = MaterialsDatabase.PlaceholderMaterial;
+                go.transform.localPosition = inter.position.ToUnity();
 
-            return lvl;
+                var eul = inter.euler.ToUnity();
+                eul = new Vector3(
+                    eul.x,
+                    -eul.y - 90, //might be wrong, but fixes rotation around y axis for most inters. good enough for preview purposes
+                    eul.z
+                    );
+
+                go.transform.localEulerAngles = eul;
+                go.transform.SetParent(lvl.LevelIntersObject.transform);
+            }
+            var pos = lvl.MediumArxLevel.FTS.sceneHeader.Mscenepos.ToUnity() / 100;
+            pos.y = -pos.y;
+            lvl.LevelIntersObject.transform.localPosition = pos;
+            lvl.LevelIntersObject.transform.localScale = new Vector3(0.01f, -0.01f, 0.01f);
+        }
+
+        private static void LoadPortals(Level lvl)
+        {
+            var mat = MaterialsDatabase.PlaceholderMaterial;
+
+            foreach (var portal in lvl.MediumArxLevel.FTS.portals)
+            {
+                var go = new GameObject("portal " + portal.room_1 + "-" + portal.room_2);
+                go.transform.SetParent(lvl.LevelPortalsObject.transform);
+                var pos = portal.poly.vertices[0].pos.ToUnity();
+                go.transform.localPosition = pos;
+                var line = go.AddComponent<LineRenderer>();
+                line.useWorldSpace = false;
+                line.positionCount = 5;
+                line.widthMultiplier = 0.1f;
+                line.SetPosition(0, portal.poly.vertices[0].pos.ToUnity() - pos);
+                line.SetPosition(1, portal.poly.vertices[1].pos.ToUnity() - pos);
+                line.SetPosition(2, portal.poly.vertices[3].pos.ToUnity() - pos);
+                line.SetPosition(3, portal.poly.vertices[2].pos.ToUnity() - pos);
+                line.SetPosition(4, portal.poly.vertices[0].pos.ToUnity() - pos);
+                line.material = mat;
+            }
+
+            lvl.LevelPortalsObject.transform.localScale = new Vector3(0.01f, -0.01f, 0.01f);
+        }
+
+        private static void LoadNavGrid(Level lvl)
+        {
+            int i = 0;
+            foreach (var a in lvl.MediumArxLevel.FTS.anchors)
+            {
+                var go = new GameObject("anchor" + i++);
+                go.transform.SetParent(lvl.LevelNavGridObject.transform);
+                go.transform.localPosition = a.pos.ToUnity();
+
+                var mf = go.AddComponent<MeshFilter>();
+                mf.sharedMesh = PrimitiveMeshHelper.GetSphereMesh();
+                var mr = go.AddComponent<MeshRenderer>();
+                mr.material = MaterialsDatabase.AnchorMaterial;
+                go.transform.localScale = Vector3.one * 30;
+            }
+            lvl.LevelNavGridObject.transform.localScale = new Vector3(0.01f, -0.01f, 0.01f);
+            lvl.LevelNavGridObject.SetActive(false);
         }
 
         static void LoadMesh(Level lvl)
@@ -146,7 +229,7 @@ namespace Assets.Scripts.ArxLevelLoading
                     {
                         //load 4th vertex manually as it has no lighting value and would break lighting otherwise
                         var lastVert = poly.vertices[3];
-                        var uv  = lastVert.uv.ToUnity();
+                        var uv = lastVert.uv.ToUnity();
                         uv.y = 1 - uv.y;
                         prim.vertices[3] = new EditableVertexInfo(lastVert.position.ToUnity(),
                             uv,

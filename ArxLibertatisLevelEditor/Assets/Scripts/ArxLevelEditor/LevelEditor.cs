@@ -28,7 +28,7 @@ namespace Assets.Scripts.ArxLevelEditor
             {
                 Gizmo_OLD.Detach(); //prevent gizmo from being deleted with the level
                 Gizmo_OLD.Visible = false;
-                Destroy(CurrentLevel.LevelObject);
+                CurrentLevel.Unload();
             }
 
             CurrentLevel = LevelLoader.LoadLevel(name);

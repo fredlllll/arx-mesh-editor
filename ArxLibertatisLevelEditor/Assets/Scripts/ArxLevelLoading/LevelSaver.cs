@@ -1,5 +1,6 @@
 ﻿using ArxLibertatisEditorIO.MediumIO.FTS;
 using ArxLibertatisEditorIO.RawIO;
+using ArxLibertatisEditorIO.RawIO.FTL;
 using Assets.Scripts.ArxLevelEditor;
 using Assets.Scripts.ArxLevelEditor.Mesh;
 using Assets.Scripts.ArxNative.IO;
@@ -79,7 +80,7 @@ namespace Assets.Scripts.ArxLevelLoading
 
             var fts = level.MediumArxLevel.FTS;
             fts.textureContainers.Clear();
-            int i = 1; //nothing speaks against just using a normal index for tc, i dont know why they ever used random ints, has to be 1 based
+            int texIndex = 1; //nothing speaks against just using a normal index for tc, i dont know why they ever used random ints, has to be 1 based
             Dictionary<string, int> texPathToTc = new Dictionary<string, int>();
             foreach (var path in uniqueTexturePaths)
             {
@@ -91,9 +92,9 @@ namespace Assets.Scripts.ArxLevelLoading
                     texPath = PathUtil.GetRelativePath(ArxLibertatisEditorIO.ArxPaths.DataDir, texPath);
                 }
 
-                fts.textureContainers.Add(new ArxLibertatisEditorIO.MediumIO.FTS.TextureContainer() { texturePath = texPath, containerId = i });
-                texPathToTc[path] = i;
-                i++;
+                fts.textureContainers.Add(new ArxLibertatisEditorIO.MediumIO.FTS.TextureContainer() { texturePath = texPath, containerId = texIndex });
+                texPathToTc[path] = texIndex;
+                texIndex++;
             }
 
             //create cells
@@ -142,7 +143,7 @@ namespace Assets.Scripts.ArxLevelLoading
                     var myCell = cells[index];
                     var ftsCell = fts.cells[index];
                     ftsCell.polygons.Clear();
-                    for (i = 0; i < myCell.primitives.Count; i++)
+                    for (int i = 0; i < myCell.primitives.Count; i++)
                     {
                         var tup = myCell.primitives[i];
                         var mat = tup.Item1;
@@ -193,11 +194,20 @@ namespace Assets.Scripts.ArxLevelLoading
                 }
             }
 
+            //also have to regenerate the portal data or the game will not use them
+            for(int i =0; i< fts.portals.Count; i++)
+            {
+                var portal = fts.portals[i];
+                roomPolyDatas[(short)portal.room_1].portals.Add(i);
+                roomPolyDatas[(short)portal.room_2].portals.Add(i);
+            }
+
+
             fts.rooms.Clear();
             if (roomPolyDatas.Count > 0)
             {
                 var maxRoom = roomPolyDatas.Keys.Max();
-                for (i = 0; i < maxRoom + 1; i++)
+                for (int i = 0; i < maxRoom + 1; i++)
                 {
                     if (roomPolyDatas.TryGetValue((short)i, out var room))
                     {

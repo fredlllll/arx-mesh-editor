@@ -12,6 +12,8 @@ namespace Assets.Scripts
         public static Material NotFound { get; private set; }
         public static Material GizmoMaterial { get; private set; }
         public static Material VertexMaterial { get; private set; }
+        public static Material PlaceholderMaterial { get; private set; }
+        public static Material AnchorMaterial { get; private set; }
 
         static MaterialsDatabase()
         {
@@ -24,6 +26,8 @@ namespace Assets.Scripts
             TEST = Object.Instantiate(Resources.Load<Material>("Materials/TEST"));
             GizmoMaterial = Object.Instantiate(Resources.Load<Material>("Materials/Gizmo"));
             VertexMaterial = Object.Instantiate(Resources.Load<Material>("Materials/Vertex"));
+            PlaceholderMaterial = Object.Instantiate(Resources.Load<Material>("Materials/Placeholder"));
+            AnchorMaterial = Object.Instantiate(Resources.Load<Material>("Materials/Anchor"));
         }
     }
 }

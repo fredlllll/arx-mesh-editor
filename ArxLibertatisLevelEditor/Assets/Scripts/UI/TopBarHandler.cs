@@ -12,6 +12,8 @@ namespace Assets.Scripts.UI
         public InputField snapGridSize;
         public Dropdown snapMode;
 
+        public Toggle togglePortals, toggleInters, toggleNavGrid;
+
         private void Start()
         {
             snapMode.value = (int)LevelEditor.SnapManager.SnapMode;
@@ -67,6 +69,21 @@ namespace Assets.Scripts.UI
         public void DeletePolygon()
         {
             PolygonSelector.Instance.DeleteSelected();
+        }
+
+        public void TogglePortals()
+        {
+            LevelEditor.CurrentLevel.LevelPortalsObject.SetActive(togglePortals.isOn);
+        }
+
+        public void ToggleInters()
+        {
+            LevelEditor.CurrentLevel.LevelIntersObject.SetActive(toggleInters.isOn);
+        }
+
+        public void ToggleNavGrid()
+        {
+            LevelEditor.CurrentLevel.LevelNavGridObject.SetActive(toggleNavGrid.isOn);
         }
     }
 }
