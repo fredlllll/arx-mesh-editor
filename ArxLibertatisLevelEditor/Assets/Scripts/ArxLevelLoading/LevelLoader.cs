@@ -77,8 +77,6 @@ namespace Assets.Scripts.ArxLevelLoading
                     continue;
                 }
 
-                
-
                 FTL_IO ftl = new FTL_IO();
                 using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                 {

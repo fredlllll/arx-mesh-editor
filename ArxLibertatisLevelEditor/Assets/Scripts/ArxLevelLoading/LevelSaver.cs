@@ -28,7 +28,7 @@ namespace Assets.Scripts.ArxLevelLoading
 
             var ral = new RawArxLevel();
             Debug.Log("Saving level: " + name);
-            lvln.SaveTo(ral).SaveLevel(name, false);
+            lvln.SaveTo(ral).SaveLevel(name, true);
             Debug.Log($"Saved {lvln.FTS.cells.Select(x => x.polygons.Count).Sum()} polygons");
             Debug.Log($"Saved {lvln.LLF.lightColors.Count} light values");
         }
