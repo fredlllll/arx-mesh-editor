@@ -64,7 +64,7 @@ namespace Assets.Scripts.ArxLevelLoading
             return new Vector2Int((int)(pos.x / 100), (int)(pos.y / 100));
         }
 
-        static void SaveMesh(Level level)
+        public static void SaveMesh(Level level)
         {
             // create texture containers
 
@@ -92,7 +92,7 @@ namespace Assets.Scripts.ArxLevelLoading
                     texPath = PathUtil.GetRelativePath(ArxLibertatisEditorIO.ArxPaths.DataDir, texPath);
                 }
 
-                fts.textureContainers.Add(new ArxLibertatisEditorIO.MediumIO.FTS.TextureContainer() { texturePath = texPath, containerId = texIndex });
+                fts.textureContainers.Add(new TextureContainer() { texturePath = texPath, containerId = texIndex });
                 texPathToTc[path] = texIndex;
                 texIndex++;
             }

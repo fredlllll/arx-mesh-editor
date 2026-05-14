@@ -152,7 +152,7 @@ namespace Assets.Scripts.ArxLevelLoading
             lvl.LevelNavGridObject.SetActive(false);
         }
 
-        static void LoadMesh(Level lvl)
+        public static void LoadMesh(Level lvl)
         {
             int loadedPolys = 0;
             Stopwatch sw = new Stopwatch();

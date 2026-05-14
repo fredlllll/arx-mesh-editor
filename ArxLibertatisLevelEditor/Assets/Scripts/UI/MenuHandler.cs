@@ -1,12 +1,11 @@
-﻿using Assets.Scripts.ArxLevelEditor;
-using Assets.Scripts.ArxNative.IO;
-using Assets.Scripts.ArxNative.IO.DLF;
-using Assets.Scripts.ArxNative.IO.FTS;
-using Assets.Scripts.ArxNative.IO.LLF;
-using Assets.Scripts.ArxNative.IO.PK;
+﻿using ArxLibertatisLightingCalculatorLib;
+using Assets.Scripts.ArxLevelEditor;
+using Assets.Scripts.ArxLevelEditor.Editing;
+using Assets.Scripts.ArxLevelLoading;
 using Assets.Scripts.Util;
 using SFB;
 using System.IO;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -18,6 +17,7 @@ namespace Assets.Scripts.UI
 
         public InputField levelName;
         public InputField arxDirPath;
+        public TMP_Dropdown lightingProfileDropdown;
 
         public void Awake()
         {
@@ -73,6 +73,23 @@ namespace Assets.Scripts.UI
             //only gets called when editing in the ui, have to manually call it when setting text field in code
             ArxLibertatisEditorIO.ArxPaths.DataDir = arxDirPath.text;
             PlayerPrefs.SetString(ArxDirPathName, arxDirPath.text);
+        }
+
+        public void RecalculateLightingClicked()
+        {
+            var lvl = LevelEditor.CurrentLevel;
+            if(lvl == null)
+            {
+                return;
+            }
+            LightingProfile profile = (LightingProfile)System.Enum.Parse(typeof(LightingProfile), lightingProfileDropdown.options[lightingProfileDropdown.value].text.Replace(" ", ""), ignoreCase: true);
+
+            var raycastProvider = new UnityRaycastProvider();
+            PolygonSelector.Instance.Deselect(); //to prevent selected polygon from being omited
+            LevelSaver.SaveMesh(lvl);
+            ArxLibertatisLightingCalculator.Calculate(lvl.MediumArxLevel, profile, raycastProvider);
+            raycastProvider.Dispose();
+            lvl.ReloadMesh();
         }
     }
 }

@@ -64,5 +64,17 @@ namespace Assets.Scripts.ArxLevelEditor
         {
             UnityEngine.Object.Destroy(LevelObject);
         }
+
+        /// <summary>
+        /// reloads the mesh from the medium arx level. needed for lighting recalculation
+        /// </summary>
+        public void ReloadMesh()
+        {
+            UnityEngine.Object.Destroy(LevelMeshObject);
+            LevelMeshObject = GetLevelGameObject("Mesh");
+            EditableLevelMesh = LevelMeshObject.AddComponent<EditableLevelMesh>();
+            LevelMeshObject.transform.localScale = new Vector3(0.01f, -0.01f, 0.01f);
+            LevelLoader.LoadMesh(this);
+        }
     }
 }
