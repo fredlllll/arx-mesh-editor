@@ -67,8 +67,8 @@ namespace Assets.Scripts.ArxLevelLoading
             {
                 UnityEngine.Debug.Log(inter.name);
                 var intername = inter.name.ToLowerInvariant();
-                var internameShort = intername.Replace("\\\\arkaneserver\\public\\arx\\graph\\obj3d\\interactive", "");
-                var ftlName = intername.Replace("\\\\arkaneserver\\public\\arx\\", "\\game\\").Replace(".teo", ".ftl");
+                var internameShort = intername.Replace("c:\\arx\\", "").Replace("\\\\arkaneserver\\public\\arx\\graph\\obj3d\\interactive", "");
+                var ftlName = intername.Replace("c:\\arx\\", "\\game\\").Replace("\\\\arkaneserver\\public\\arx\\", "\\game\\").Replace(".teo", ".ftl");
                 UnityEngine.Debug.Log(ftlName);
                 var filePath = EditorSettings.DataDir + ftlName;
                 if (!File.Exists(filePath))
