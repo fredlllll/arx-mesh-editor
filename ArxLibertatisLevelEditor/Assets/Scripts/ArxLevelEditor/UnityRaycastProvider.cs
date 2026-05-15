@@ -5,22 +5,25 @@ using ArxLibertatisLightingCalculatorLib.RayCasting;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Assets.Scripts.ArxLevelEditor
 {
     public class UnityRaycastProvider : IRaycastProvider
     {
-        private GameObject collisionObject;
-        private MeshCollider meshCollider;
+        private Scene lightingScene;
+        private PhysicsScene physicsScene;
 
         public void Initialize(LightingCalculatorDistanceAngleShadowBase lc, MediumArxLevel mal)
         {
-            collisionObject = new GameObject("LightingCollisionMesh");
-            collisionObject.hideFlags = HideFlags.HideAndDontSave;
+            lightingScene = SceneManager.CreateScene("LightingScene", new CreateSceneParameters(LocalPhysicsMode.Physics3D));
+            physicsScene = lightingScene.GetPhysicsScene();
+            var collisionObject = new GameObject("LightingCollisionMesh");
+            SceneManager.MoveGameObjectToScene(collisionObject, lightingScene);
 
-            UnityEngine.Mesh mesh = BuildCombinedMesh(lc,mal);
+            UnityEngine.Mesh mesh = BuildCombinedMesh(lc, mal);
 
-            meshCollider = collisionObject.AddComponent<MeshCollider>();
+            var meshCollider = collisionObject.AddComponent<MeshCollider>();
             meshCollider.sharedMesh = mesh;
             meshCollider.cookingOptions = MeshColliderCookingOptions.None;
 
@@ -32,11 +35,14 @@ namespace Assets.Scripts.ArxLevelEditor
             //unity raycast normalizes direction, so we have to manually calculate the max length
             float length = direction.Length();
 
-            bool hit = Physics.Raycast(
-                new Vector3(origin.X, origin.Y, origin.Z),
-                new Vector3(direction.X, direction.Y, direction.Z),
+            var ori = new Vector3(origin.X, origin.Y, origin.Z);
+            var dir = new Vector3(direction.X, direction.Y, direction.Z);
+
+            bool hit = physicsScene.Raycast(
+                ori,
+                dir,
                 out RaycastHit hitInfo,
-                maximumT*length,
+                maximumT * length,
                 ~0,
                 QueryTriggerInteraction.Ignore);
 
@@ -48,10 +54,9 @@ namespace Assets.Scripts.ArxLevelEditor
 
         public void Dispose()
         {
-            if (collisionObject != null)
+            if (lightingScene.IsValid())
             {
-                Object.Destroy(collisionObject);
-                collisionObject = null;
+                SceneManager.UnloadSceneAsync(lightingScene);
             }
         }
 
@@ -90,7 +95,6 @@ namespace Assets.Scripts.ArxLevelEditor
                     var v0 = p.vertices[0].position;
                     var v1 = p.vertices[1].position;
                     var v2 = p.vertices[2].position;
-                    var v3 = p.vertices[3].position;
 
                     vertices.Add(new Vector3(v0.X, v0.Y, v0.Z));
                     vertices.Add(new Vector3(v1.X, v1.Y, v1.Z));
@@ -101,6 +105,7 @@ namespace Assets.Scripts.ArxLevelEditor
                     vertices.Add(new Vector3(v1.X, v1.Y, v1.Z));
                     if (p.polyType.HasFlag(PolyType.QUAD))
                     {
+                        var v3 = p.vertices[3].position;
                         vertices.Add(new Vector3(v1.X, v1.Y, v1.Z));
                         vertices.Add(new Vector3(v2.X, v2.Y, v2.Z));
                         vertices.Add(new Vector3(v3.X, v3.Y, v3.Z));
@@ -111,10 +116,14 @@ namespace Assets.Scripts.ArxLevelEditor
                     }
                 }
             }
+            if (vertices.Count <= 0)
+            {
+                throw new System.Exception("No vertices to raycast against");
+            }
             mesh.vertices = vertices.ToArray();
             mesh.triangles = Enumerable.Range(0, vertices.Count).ToArray();
 
-
+            mesh.UploadMeshData(false);
             mesh.RecalculateBounds();
 
             return mesh;

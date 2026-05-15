@@ -85,7 +85,7 @@ namespace Assets.Scripts.UI
             LightingProfile profile = (LightingProfile)System.Enum.Parse(typeof(LightingProfile), lightingProfileDropdown.options[lightingProfileDropdown.value].text.Replace(" ", ""), ignoreCase: true);
 
             var raycastProvider = new UnityRaycastProvider();
-            PolygonSelector.Instance.Deselect(); //to prevent selected polygon from being omited
+            PolygonSelector.Instance.Deselect(); //to prevent selected polygon from being lost
             LevelSaver.SaveMesh(lvl);
             ArxLibertatisLightingCalculator.Calculate(lvl.MediumArxLevel, profile, raycastProvider);
             raycastProvider.Dispose();
