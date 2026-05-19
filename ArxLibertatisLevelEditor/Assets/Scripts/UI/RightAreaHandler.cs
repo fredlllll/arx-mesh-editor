@@ -42,6 +42,8 @@ namespace Assets.Scripts.UI
             NY.onEndEdit.AddListener(NYEndEdit);
             NZ.onEndEdit.AddListener(NZEndEdit);
 
+            room.onEndEdit.AddListener(roomEndEdit);
+
             colorPickerButton.onClick.AddListener(OnColorPickerClicked);
             closeColorPickerButton.onClick.AddListener(OnCloseColorPickerClicked);
             colorPicker.ColorChanged.AddListener(OnPickerColorChanged);
@@ -156,6 +158,7 @@ namespace Assets.Scripts.UI
             X.interactable = true;
             Y.interactable = true;
             Z.interactable = true;
+            room.interactable = true;
             foreach (var ass in toggleAssoc)
             {
                 ass.Item2.interactable = true;
@@ -176,6 +179,7 @@ namespace Assets.Scripts.UI
             X.interactable = false;
             Y.interactable = false;
             Z.interactable = false;
+            room.interactable = false;
             foreach (var ass in toggleAssoc)
             {
                 ass.Item2.interactable = false;
@@ -222,6 +226,11 @@ namespace Assets.Scripts.UI
         private void NZEndEdit(string value)
         {
             UpdateNormal();
+        }
+
+        private void roomEndEdit(string value)
+        {
+            UpdateRoom();
         }
 
         private void OnColorPickerClicked()
@@ -289,6 +298,18 @@ namespace Assets.Scripts.UI
                 NZ.text = v.normal.z.ToString(System.Globalization.CultureInfo.InvariantCulture);
 
                 vert.primitive.UpdateMesh();
+            }
+        }
+
+        private void UpdateRoom()
+        {
+            var poly = PolygonSelector.CurrentlySelected;
+            if (poly != null)
+            {
+                if (short.TryParse(room.text, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out short roomNum))
+                {
+                    poly.info.room = roomNum;
+                }
             }
         }
 
