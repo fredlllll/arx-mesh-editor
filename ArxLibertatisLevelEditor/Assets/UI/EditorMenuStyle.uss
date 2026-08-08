@@ -1,0 +1,49 @@
+.Root{
+  flex-grow: 1;
+  flex-direction: column;
+  flex-basis: auto;
+  position: relative;
+  left: 0;
+  right: 0;
+  top: 0; 
+  bottom: 0;
+  flex-wrap: nowrap;
+  flex-shrink: 1;
+}
+
+.MenuBar{
+  flex-grow: 0;
+  flex-direction: row;
+  height: 30px;
+  flex-shrink: 1;
+}
+
+.ToolBar{
+  flex-grow: 0;
+  flex-direction: row; 
+  height: 40px;
+}
+
+.Main{
+  flex-grow: 1;
+  flex-direction: row;
+}
+
+.Hierarchy{
+  flex-grow: 0;
+  width: 0;
+}
+
+.Viewport{
+  flex-grow: 1;
+}
+
+.Inspector{
+  flex-grow: 0;
+  width: 300px;
+}
+
+.StatusBar{
+  flex-grow: 0;
+  height: 25px;
+}

@@ -219,6 +219,12 @@ namespace Assets.Scripts.ArxLevelLoading
                     }
                 }
             }
+
+            //TODO:
+            //fts.roomDistances, but distance is apparently not the same in both directions
+            //but no idea why
+
+            //even better TODO: use the welldone levels logic that writes to the mal in some way
         }
     }
 }

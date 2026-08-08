@@ -1,0 +1,13 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/EditorMenuStyle.uss?fileID=7433441132597879392&amp;guid=10c88d0c2db15cb4d8847cc2041fda96&amp;type=3#EditorMenuStyle"/>
+    <ui:VisualElement name="Root" class="Root">
+        <ui:VisualElement name="MenuBar" class="MenuBar"/>
+        <ui:VisualElement name="Toolbar" class="ToolBar"/>
+        <ui:VisualElement name="Main" class="Main">
+            <ui:VisualElement name="Hierarchy" class="Hierarchy"/>
+            <ui:VisualElement name="Viewport" class="Viewport"/>
+            <ui:VisualElement name="Inspector" class="Inspector"/>
+        </ui:VisualElement>
+        <ui:VisualElement name="StatusBar" class="StatusBar"/>
+    </ui:VisualElement>
+</ui:UXML>
