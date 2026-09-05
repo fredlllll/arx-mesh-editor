@@ -163,10 +163,10 @@ namespace Assets.Scripts.UI
             {
                 ass.Item2.interactable = true;
             }
-            var tex = LevelEditor.TextureDatabase[prim.Material.TexturePath];
+            var tex = EditorContext.TextureDatabase[prim.Material.TexturePath];
             if (tex == null)
             {
-                tex = LevelEditor.TextureDatabase.NoTextureFoundPlaceholder;
+                tex = EditorContext.TextureDatabase.NoTextureFoundPlaceholder;
             }
             polyTextureImage.texture = tex;
             pickTextureButton.interactable = true;

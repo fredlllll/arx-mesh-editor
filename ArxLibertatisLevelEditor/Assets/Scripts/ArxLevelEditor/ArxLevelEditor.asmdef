@@ -1,0 +1,9 @@
+{
+	"name": "Assets.Scripts.ArxLevelEditor",
+	"references": [
+		"Assets.Scripts.Util",
+		"Assets.Scripts.External",
+		"OEBIF",
+		"UnityEngine.UI"
+	]
+}

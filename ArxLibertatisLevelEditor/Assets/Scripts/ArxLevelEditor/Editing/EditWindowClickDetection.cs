@@ -1,5 +1,4 @@
-﻿using Assets.Scripts.UI;
-using Assets.Scripts.Util;
+﻿using Assets.Scripts.Util;
 using System;
 using UnityEngine;
 
@@ -109,7 +108,7 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
 
         private void Start()
         {
-            if (EditorViewport.ViewportElement != null)
+            if (EditWindow.ViewportElement != null)
             {
                 return;
             }
@@ -249,7 +248,7 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
 
         private void Update()
         {
-            if (EditorViewport.ViewportElement != null)
+            if (EditWindow.ViewportElement != null)
             {
                 return;
             }

@@ -49,7 +49,7 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
 
         private bool HandleClick(Vector3 localPos, int btn)
         {
-            if (LevelEditor.EditState == EditState.Vertices && btn == EditWindowClickDetection.BTN_PRIMARY)
+            if (EditorContext.EditState == EditState.Vertices && btn == EditWindowClickDetection.BTN_PRIMARY)
             {
                 var ray = EditWindow.GetRayFromMousePosition(localPos);
                 //raycast with vertices

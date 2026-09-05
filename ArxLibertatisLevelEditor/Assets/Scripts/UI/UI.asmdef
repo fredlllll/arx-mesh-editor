@@ -1,0 +1,12 @@
+{
+	"name": "Assets.Scripts.UI",
+	"references": [
+		"Assets.Scripts.App",
+		"Assets.Scripts.ArxLevelEditor",
+		"Assets.Scripts.ArxLevelLoading",
+		"Assets.Scripts.Util",
+		"StandaloneFileBrowser",
+		"UnityEngine.UI",
+		"Unity.TextMeshPro"
+	]
+}

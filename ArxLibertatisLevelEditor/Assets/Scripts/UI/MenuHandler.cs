@@ -1,4 +1,5 @@
 ﻿using ArxLibertatisLightingCalculatorLib;
+using Assets.Scripts.App;
 using Assets.Scripts.ArxLevelEditor;
 using Assets.Scripts.ArxLevelEditor.Editing;
 using Assets.Scripts.ArxLevelLoading;
@@ -77,7 +78,7 @@ namespace Assets.Scripts.UI
 
         public void RecalculateLightingClicked()
         {
-            var lvl = LevelEditor.CurrentLevel;
+            var lvl = EditorContext.CurrentLevel;
             if(lvl == null)
             {
                 return;
@@ -89,7 +90,7 @@ namespace Assets.Scripts.UI
             LevelSaver.SaveMesh(lvl);
             ArxLibertatisLightingCalculator.Calculate(lvl.MediumArxLevel, profile, raycastProvider);
             raycastProvider.Dispose();
-            lvl.ReloadMesh();
+            LevelLoader.ReloadMesh(lvl);
         }
     }
 }

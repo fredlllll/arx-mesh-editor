@@ -1,5 +1,5 @@
-﻿using Assets.Scripts.UI;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace Assets.Scripts.ArxLevelEditor.Editing
 {
@@ -15,11 +15,16 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
             get { return 0; }
         }
 
+        public static VisualElement ViewportElement
+        {
+            get; set;
+        }
+
         public static float Width
         {
             get
             {
-                var element = EditorViewport.ViewportElement;
+                var element = ViewportElement;
                 return element != null && !float.IsNaN(element.resolvedStyle.width) ? element.resolvedStyle.width : 0;
             }
         }
@@ -28,7 +33,7 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
         {
             get
             {
-                var element = EditorViewport.ViewportElement;
+                var element = ViewportElement;
                 return element != null && !float.IsNaN(element.resolvedStyle.height) ? element.resolvedStyle.height : 0;
             }
         }
@@ -57,7 +62,7 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
             localMousePos.x /= width;
             localMousePos.y /= height;
 
-            var camera = LevelEditor.EditorCamera;
+            var camera = EditorContext.EditorCamera;
             return camera != null ? camera.ViewportPointToRay(localMousePos) : new Ray();
         }
 

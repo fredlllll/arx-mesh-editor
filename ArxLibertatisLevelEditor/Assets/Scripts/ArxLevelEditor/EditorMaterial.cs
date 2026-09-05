@@ -108,10 +108,10 @@ namespace Assets.Scripts.ArxLevelEditor
             }
             mat = UnityEngine.Object.Instantiate(mat);
             mat.name = editorMat.TexturePath;
-            var matTex = LevelEditor.TextureDatabase[editorMat.TexturePath];
+            var matTex = EditorContext.TextureDatabase[editorMat.TexturePath];
             if (matTex == null)
             {
-                matTex = LevelEditor.TextureDatabase.NoTextureFoundPlaceholder;
+                matTex = EditorContext.TextureDatabase.NoTextureFoundPlaceholder;
             }
             mat.mainTexture = matTex;
             if (transparent)

@@ -1,4 +1,5 @@
-﻿using Assets.Scripts.ArxLevelEditor;
+﻿using Assets.Scripts.App;
+using Assets.Scripts.ArxLevelEditor;
 using Assets.Scripts.ArxLevelEditor.Editing;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,8 +17,8 @@ namespace Assets.Scripts.UI
 
         private void Start()
         {
-            snapMode.value = (int)LevelEditor.SnapManager.SnapMode;
-            snapGridSize.text = LevelEditor.SnapManager.SnapGridSize.ToString(System.Globalization.CultureInfo.InvariantCulture);
+            snapMode.value = (int)EditorContext.SnapManager.SnapMode;
+            snapGridSize.text = EditorContext.SnapManager.SnapGridSize.ToString(System.Globalization.CultureInfo.InvariantCulture);
 
             snapMode.onValueChanged.AddListener(this.SnapModeChanged);
             snapGridSize.onValueChanged.AddListener(this.SnapGridSizeChanged);
@@ -31,34 +32,34 @@ namespace Assets.Scripts.UI
 
         public void PolygonsClicked()
         {
-            LevelEditor.EditState = EditState.Polygons;
+            EditorContext.EditState = EditState.Polygons;
             polygonsButton.GetComponent<Button>().interactable = false;
             verticesButton.GetComponent<Button>().interactable = true;
         }
 
         public void VerticesClicked()
         {
-            LevelEditor.EditState = EditState.Vertices;
+            EditorContext.EditState = EditState.Vertices;
             polygonsButton.GetComponent<Button>().interactable = true;
             verticesButton.GetComponent<Button>().interactable = false;
         }
 
         public void SnapModeChanged(int snapMode)
         {
-            LevelEditor.SnapManager.SnapMode = (SnapMode)snapMode;
+            EditorContext.SnapManager.SnapMode = (SnapMode)snapMode;
         }
 
         public void SnapGridSizeChanged(string value)
         {
             if (float.TryParse(value, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out float val))
             {
-                LevelEditor.SnapManager.SnapGridSize = val;
+                EditorContext.SnapManager.SnapGridSize = val;
             }
         }
 
         void SnapGridSizeEditEnd(string value)
         {
-            snapGridSize.text = LevelEditor.SnapManager.SnapGridSize.ToString(System.Globalization.CultureInfo.InvariantCulture);
+            snapGridSize.text = EditorContext.SnapManager.SnapGridSize.ToString(System.Globalization.CultureInfo.InvariantCulture);
         }
 
         public void DuplicatePolygon()
@@ -73,17 +74,17 @@ namespace Assets.Scripts.UI
 
         public void TogglePortals()
         {
-            LevelEditor.CurrentLevel.LevelPortalsObject.SetActive(togglePortals.isOn);
+            EditorContext.CurrentLevel.LevelPortalsObject.SetActive(togglePortals.isOn);
         }
 
         public void ToggleInters()
         {
-            LevelEditor.CurrentLevel.LevelIntersObject.SetActive(toggleInters.isOn);
+            EditorContext.CurrentLevel.LevelIntersObject.SetActive(toggleInters.isOn);
         }
 
         public void ToggleNavGrid()
         {
-            LevelEditor.CurrentLevel.LevelNavGridObject.SetActive(toggleNavGrid.isOn);
+            EditorContext.CurrentLevel.LevelNavGridObject.SetActive(toggleNavGrid.isOn);
         }
     }
 }

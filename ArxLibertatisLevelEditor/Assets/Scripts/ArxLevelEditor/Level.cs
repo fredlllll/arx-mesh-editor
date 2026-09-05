@@ -1,6 +1,5 @@
 ﻿using ArxLibertatisEditorIO.MediumIO;
 using Assets.Scripts.ArxLevelEditor.Mesh;
-using Assets.Scripts.ArxLevelLoading;
 using UnityEngine;
 
 namespace Assets.Scripts.ArxLevelEditor
@@ -66,15 +65,14 @@ namespace Assets.Scripts.ArxLevelEditor
         }
 
         /// <summary>
-        /// reloads the mesh from the medium arx level. needed for lighting recalculation
+        /// recreates the mesh gameobject hierarchy. needed for lighting recalculation
         /// </summary>
-        public void ReloadMesh()
+        public void ResetMeshObject()
         {
             UnityEngine.Object.Destroy(LevelMeshObject);
             LevelMeshObject = GetLevelGameObject("Mesh");
             EditableLevelMesh = LevelMeshObject.AddComponent<EditableLevelMesh>();
-            LevelMeshObject.transform.localScale = new Vector3(0.01f, -0.01f, 0.01f);
-            LevelLoader.LoadMesh(this);
+            LevelMeshObject.transform.localScale = new Vector3(0.01f, -0.01f, 0.01f); //1 unit is 1 cm in arx, so scale down so one unit is one meter (at least perceived)
         }
     }
 }

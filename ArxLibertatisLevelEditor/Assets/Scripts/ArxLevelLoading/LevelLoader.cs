@@ -25,8 +25,8 @@ namespace Assets.Scripts.ArxLevelLoading
 
             Vector3 camPos = mal.DLF.header.positionEdit.ToUnity() / 100;
             camPos.y *= -1;
-            LevelEditor.EditorCamera.transform.position = camPos;
-            LevelEditor.EditorCamera.transform.eulerAngles = mal.DLF.header.eulersEdit.ToUnity();
+            EditorContext.EditorCamera.transform.position = camPos;
+            EditorContext.EditorCamera.transform.eulerAngles = mal.DLF.header.eulersEdit.ToUnity();
             lvl.LevelOffset = mal.DLF.header.offset.ToUnity();
 
             LoadMesh(lvl);
@@ -150,6 +150,12 @@ namespace Assets.Scripts.ArxLevelLoading
             }
             lvl.LevelNavGridObject.transform.localScale = new Vector3(0.01f, -0.01f, 0.01f);
             lvl.LevelNavGridObject.SetActive(false);
+        }
+
+        public static void ReloadMesh(Level lvl)
+        {
+            lvl.ResetMeshObject();
+            LoadMesh(lvl);
         }
 
         public static void LoadMesh(Level lvl)

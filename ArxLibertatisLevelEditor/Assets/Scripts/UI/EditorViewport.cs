@@ -6,8 +6,6 @@ namespace Assets.Scripts.UI
 {
     public class EditorViewport : MonoBehaviour
     {
-        public static VisualElement ViewportElement { get; private set; }
-
         private const float textureScale = 2f;
 
         private UIDocument document;
@@ -19,7 +17,7 @@ namespace Assets.Scripts.UI
 
         public static void Setup(UIDocument document)
         {
-            if (ViewportElement != null)
+            if (EditWindow.ViewportElement != null)
             {
                 return;
             }
@@ -42,14 +40,9 @@ namespace Assets.Scripts.UI
                 return;
             }
 
-            ViewportElement = viewport;
+            EditWindow.ViewportElement = viewport;
 
             editorCamera = Camera.main;
-            if (editorCamera == null)
-            {
-                Debug.LogError("EditorViewport: No camera tagged 'MainCamera' found.");
-                return;
-            }
 
             viewport.RegisterCallback<PointerDownEvent>(OnPointerDown);
             viewport.RegisterCallback<PointerUpEvent>(OnPointerUp);
@@ -60,9 +53,9 @@ namespace Assets.Scripts.UI
 
         private void OnDisable()
         {
-            if (ViewportElement == viewport)
+            if (EditWindow.ViewportElement == viewport)
             {
-                ViewportElement = null;
+                EditWindow.ViewportElement = null;
             }
         }
 
@@ -76,7 +69,7 @@ namespace Assets.Scripts.UI
             {
                 Destroy(viewportTexture);
             }
-            ViewportElement = null;
+            EditWindow.ViewportElement = null;
         }
 
         private void Update()

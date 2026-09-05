@@ -1,0 +1,7 @@
+{
+	"name": "Assets.Scripts.App",
+	"references": [
+		"Assets.Scripts.ArxLevelEditor",
+		"Assets.Scripts.ArxLevelLoading"
+	]
+}

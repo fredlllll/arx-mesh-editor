@@ -144,7 +144,7 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
         GameObject dragObject;
         bool HandleBeginDrag(Vector3 localPos, int btn)
         {
-            if (LevelEditor.EditState == EditState.Vertices && btn == EditWindowClickDetection.BTN_PRIMARY)
+            if (EditorContext.EditState == EditState.Vertices && btn == EditWindowClickDetection.BTN_PRIMARY)
             {
                 var ray = EditWindow.GetRayFromMousePosition(localPos);
                 if (Physics.Raycast(ray, out RaycastHit hit, float.PositiveInfinity, gizmoLayerMask))
@@ -190,7 +190,7 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
                 virtualPosition += worldOffset;
 
                 var oldPos = transform.position;
-                var newPos = LevelEditor.SnapManager.Snap(virtualPosition, snapAxis);
+                var newPos = EditorContext.SnapManager.Snap(virtualPosition, snapAxis);
 
                 transform.position = newPos;
                 PositionChanged.Invoke(this, oldPos, newPos);

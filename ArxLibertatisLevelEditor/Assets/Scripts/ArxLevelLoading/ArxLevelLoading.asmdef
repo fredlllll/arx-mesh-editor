@@ -1,0 +1,7 @@
+{
+	"name": "Assets.Scripts.ArxLevelLoading",
+	"references": [
+		"Assets.Scripts.ArxLevelEditor",
+		"Assets.Scripts.Util"
+	]
+}

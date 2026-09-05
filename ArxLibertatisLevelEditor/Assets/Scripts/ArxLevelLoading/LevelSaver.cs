@@ -3,7 +3,6 @@ using ArxLibertatisEditorIO.RawIO;
 using ArxLibertatisEditorIO.RawIO.FTL;
 using Assets.Scripts.ArxLevelEditor;
 using Assets.Scripts.ArxLevelEditor.Mesh;
-using Assets.Scripts.ArxNative.IO;
 using Assets.Scripts.Util;
 using System;
 using System.Collections.Generic;
@@ -18,10 +17,10 @@ namespace Assets.Scripts.ArxLevelLoading
         {
             var lvln = level.MediumArxLevel;
 
-            Vector3 camPos = LevelEditor.EditorCamera.transform.position * 100;
+            Vector3 camPos = EditorContext.EditorCamera.transform.position * 100;
             camPos.y *= -1;
             lvln.DLF.header.positionEdit = camPos.ToNumerics();
-            lvln.DLF.header.eulersEdit = LevelEditor.EditorCamera.transform.eulerAngles.ToNumerics(); //TODO: might have to fix rotation because different handedness?
+            lvln.DLF.header.eulersEdit = EditorContext.EditorCamera.transform.eulerAngles.ToNumerics(); //TODO: might have to fix rotation because different handedness?
             lvln.DLF.header.offset = level.LevelOffset.ToNumerics();
 
             SaveMesh(level);
@@ -119,7 +118,7 @@ namespace Assets.Scripts.ArxLevelLoading
                 {
                     var cellpos = GetPrimitiveCellPos(prim);
                     cellpos.Clamp(Vector2Int.zero, maxPos);
-                    var cell = cells[ArxIOHelper.XZToCellIndex(cellpos.x, cellpos.y, sizex, sizez)];
+                    var cell = cells[cellpos.y * sizex + cellpos.x];
                     cell.AddPrimitive(kv.Key, prim);
                 }
             }

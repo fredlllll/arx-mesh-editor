@@ -51,7 +51,7 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
             if (currentlySelected != null)
             {
                 var selectedPrimitive = currentlySelected.GetComponent<EditablePrimitive>();
-                var editableMesh = LevelEditor.CurrentLevel.EditableLevelMesh.GetMaterialMesh(selectedPrimitive.Material);
+                var editableMesh = EditorContext.CurrentLevel.EditableLevelMesh.GetMaterialMesh(selectedPrimitive.Material);
                 editableMesh.AddPrimitive(selectedPrimitive.info);
                 editableMesh.UpdateMesh();
                 OnDeselected.Invoke(selectedPrimitive);
@@ -66,7 +66,7 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
             {
                 //adds the currently selected back to the mesh, but doesnt destroy the gameobject so its like a dupe
                 var selectedPrimitive = currentlySelected.GetComponent<EditablePrimitive>();
-                var editableMesh = LevelEditor.CurrentLevel.EditableLevelMesh.GetMaterialMesh(selectedPrimitive.Material);
+                var editableMesh = EditorContext.CurrentLevel.EditableLevelMesh.GetMaterialMesh(selectedPrimitive.Material);
                 editableMesh.AddPrimitive(selectedPrimitive.info.Copy()); //add copy as adding the same twice could lead to problems
                 editableMesh.UpdateMesh();
             }
@@ -85,7 +85,7 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
 
         private bool HandleClick(Vector3 localPos, int btn)
         {
-            if (LevelEditor.EditState == EditState.Polygons && btn == EditWindowClickDetection.BTN_PRIMARY)
+            if (EditorContext.EditState == EditState.Polygons && btn == EditWindowClickDetection.BTN_PRIMARY)
             {
                 var ray = EditWindow.GetRayFromMousePosition(localPos);
                 //raycast with levelmeshes to see what polygon was clicked
