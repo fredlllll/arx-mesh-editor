@@ -1,4 +1,8 @@
 ﻿using ArxLibertatisLightingCalculatorLib;
+using Assets.Scripts.App;
+using Assets.Scripts.ArxLevelEditor;
+using Assets.Scripts.ArxLevelEditor.Editing;
+using Assets.Scripts.ArxLevelLoading;
 using Assets.Scripts.UI.Elements;
 using System;
 using System.Collections.Generic;
@@ -63,26 +67,28 @@ namespace Assets.Scripts.UI
             MenuBarFactory.AddItems(rootElement, this);
 
             EditorViewport.Setup(document);
+
+            OpenLevelDialog.ShowIfNeeded(document);
         }
 
         public void File_New()
         {
-
+            OpenLevelDialog.Show(GetComponent<UIDocument>());
         }
 
         public void File_Open()
         {
-
+            OpenLevelDialog.Show(GetComponent<UIDocument>());
         }
 
         public void File_Save()
         {
-
+            LevelEditor.SaveLevel();
         }
 
         public void File_Exit()
         {
-
+            Application.Quit();
         }
 
         public void Edit_ImportObj()
@@ -92,7 +98,18 @@ namespace Assets.Scripts.UI
 
         public void LC_Recalculate(LightingProfile profile)
         {
+            var lvl = EditorContext.CurrentLevel;
+            if (lvl == null)
+            {
+                return;
+            }
 
+            var raycastProvider = new UnityRaycastProvider();
+            PolygonSelector.Instance.Deselect(); //to prevent selected polygon from being lost
+            LevelSaver.SaveMesh(lvl);
+            ArxLibertatisLightingCalculator.Calculate(lvl.MediumArxLevel, profile, raycastProvider);
+            raycastProvider.Dispose();
+            LevelLoader.ReloadMesh(lvl);
         }
     }
 }

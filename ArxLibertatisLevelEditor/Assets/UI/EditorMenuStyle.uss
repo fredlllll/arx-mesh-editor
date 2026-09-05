@@ -47,3 +47,62 @@
   flex-grow: 0;
   height: 25px;
 }
+
+.DialogOverlay{
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background-color: rgba(20, 20, 25, 0.55);
+  justify-content: center;
+  align-items: center;
+}
+
+.DialogPanel{
+  flex-grow: 0;
+  flex-direction: column;
+  width: 520px;
+  background-color: rgb(46, 50, 56);
+  border-radius: 4px;
+  padding: 14px;
+}
+
+.DialogTitle{
+  font-size: 16px;
+  margin-bottom: 12px;
+}
+
+.DialogRow{
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.DialogFieldLabel{
+  flex-grow: 0;
+  width: 110px;
+}
+
+.DialogField{
+  flex-grow: 1;
+  margin-right: 8px;
+}
+
+.DialogStatus{
+  color: rgb(200, 200, 200);
+  margin-bottom: 8px;
+}
+
+.DialogStatusError{
+  color: rgb(220, 90, 90);
+}
+
+.DialogButtons{
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+.DialogButtonPrimary{
+  background-color: rgb(60, 90, 160);
+}
