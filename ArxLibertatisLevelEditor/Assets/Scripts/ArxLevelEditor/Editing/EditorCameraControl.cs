@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Assets.Scripts.ArxLevelEditor.Editing
 {
@@ -8,20 +9,31 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
         public float MoveSpeed = 1;
         public float ShiftBoost = 3;
 
+        /// <summary>
+        /// replicates the sensitivity of the legacy InputManager "Mouse X"/"Mouse Y" axes
+        /// </summary>
+        private const float mouseAxisScale = 0.1f;
+
         bool rotating = false;
 
         private void DoRotating()
         {
+            var mouse = Mouse.current;
+            if (mouse == null)
+            {
+                return;
+            }
+
             Vector3 eulers = transform.eulerAngles;
 
             float rotateLeftRight = eulers.y;
             float rotateUpDown = eulers.x;
 
-            float x = Input.GetAxis("Mouse X");
-            float y = Input.GetAxis("Mouse Y");
+            float x = mouse.delta.x.ReadValue() * mouseAxisScale;
+            float y = mouse.delta.y.ReadValue() * mouseAxisScale;
 
             rotateLeftRight += x;
-            if(rotateLeftRight < 0)
+            if (rotateLeftRight < 0)
             {
                 rotateLeftRight += 360;
             }
@@ -32,11 +44,11 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
             {
                 rotateUpDown += 360;
             }
-            if(rotateUpDown > 89.99f && rotateUpDown<= 180)
+            if (rotateUpDown > 89.99f && rotateUpDown <= 180)
             {
                 rotateUpDown = 89.99f;
             }
-            if(rotateUpDown > 180 && rotateUpDown < 270.01f)
+            if (rotateUpDown > 180 && rotateUpDown < 270.01f)
             {
                 rotateUpDown = 270.01f;
             }
@@ -46,26 +58,32 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
 
         private void DoMove()
         {
+            var keyboard = Keyboard.current;
+            if (keyboard == null)
+            {
+                return;
+            }
+
             Vector3 offset = Vector3.zero;
 
-            if (Input.GetKey(KeyCode.W))
+            if (keyboard.wKey.isPressed)
             {
                 offset += transform.forward;
             }
-            if (Input.GetKey(KeyCode.S))
+            if (keyboard.sKey.isPressed)
             {
                 offset -= transform.forward;
             }
-            if (Input.GetKey(KeyCode.A))
+            if (keyboard.aKey.isPressed)
             {
                 offset -= transform.right;
             }
-            if (Input.GetKey(KeyCode.D))
+            if (keyboard.dKey.isPressed)
             {
                 offset += transform.right;
             }
             float moveSpeed = MoveSpeed;
-            if (Input.GetKey(KeyCode.LeftShift))
+            if (keyboard.leftShiftKey.isPressed)
             {
                 moveSpeed *= ShiftBoost;
             }
@@ -74,10 +92,16 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
 
         public void Update()
         {
+            var mouse = Mouse.current;
+            if (mouse == null)
+            {
+                return;
+            }
+
             if (EditWindow.MouseInEditWindow)
             {
                 //only capture clicks when in edit window
-                if (Input.GetMouseButtonDown(1))
+                if (mouse.rightButton.wasPressedThisFrame)
                 {
                     rotating = true;
                     Cursor.lockState = CursorLockMode.Confined;
@@ -87,7 +111,7 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
             if (rotating)
             {
                 DoRotating();
-                if (Input.GetMouseButtonUp(1))
+                if (mouse.rightButton.wasReleasedThisFrame)
                 {
                     rotating = false;
                     Cursor.lockState = CursorLockMode.None;

@@ -1,9 +1,9 @@
 ﻿<Solution>
-  <Project Path="OEBIF.csproj" />
   <Project Path="Assets.Scripts.External.csproj" />
   <Project Path="Assets.Scripts.ArxLevelLoading.csproj" />
   <Project Path="Assets.Scripts.ArxLevelEditor.csproj" />
   <Project Path="Assets.Scripts.UI.csproj" />
+  <Project Path="OEBIF.csproj" />
   <Project Path="Assets.Scripts.Util.csproj" />
   <Project Path="StandaloneFileBrowser.csproj" />
   <Project Path="Assets.Scripts.App.csproj" />

@@ -1,6 +1,8 @@
 ﻿using Assets.Scripts.Util;
 using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Controls;
 
 namespace Assets.Scripts.ArxLevelEditor.Editing
 {
@@ -35,6 +37,22 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
         public float distanceTillDrag = 3; //3 pixels of movement till it actually counts as drag
 
         public static float DragThreshold = 3; //3 pixels of movement till it actually counts as drag
+
+        private static ButtonControl GetMouseButton(int btn)
+        {
+            var mouse = Mouse.current;
+            if (mouse == null)
+            {
+                return null;
+            }
+            switch (btn)
+            {
+                case BTN_PRIMARY: return mouse.leftButton;
+                case BTN_SECONDARY: return mouse.rightButton;
+                case BTN_MIDDLE: return mouse.middleButton;
+                default: return null;
+            }
+        }
 
         public static void HandlePointerDown(Vector3 localPos, int mouseButton)
         {
@@ -112,7 +130,11 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
             {
                 return;
             }
-            Vector3 posLocal = EditWindow.MouseGlobalToLocal(Input.mousePosition);
+            if (Mouse.current == null)
+            {
+                return;
+            }
+            Vector3 posLocal = EditWindow.MouseGlobalToLocal(Mouse.current.position.ReadValue());
             for (int i = 0; i < lastPosition.Length; i++)
             {
                 lastPosition[i] = posLocal;
@@ -193,10 +215,15 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
 
         private void UpdateButton(int btn)
         {
-            var mousePosLocal = EditWindow.MouseGlobalToLocal(Input.mousePosition);
+            var button = GetMouseButton(btn);
+            if (button == null)
+            {
+                return;
+            }
+            var mousePosLocal = EditWindow.MouseGlobalToLocal(Mouse.current.position.ReadValue());
             if (EditWindow.MouseInEditWindow)
             {
-                if (Input.GetMouseButtonDown(btn))
+                if (button.wasPressedThisFrame)
                 {
                     Cursor.lockState = CursorLockMode.Confined;
                     FireMouseDown(mousePosLocal, btn);
@@ -205,7 +232,7 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
                     mouseDownPosition[btn] = mousePosLocal;
                 }
             }
-            if (Input.GetMouseButtonUp(btn))
+            if (button.wasReleasedThisFrame)
             {
                 Cursor.lockState = CursorLockMode.None;
                 FireMouseUp(mousePosLocal, btn, EditWindow.MouseInEditWindow);
@@ -221,7 +248,7 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
                 }
             }
 
-            if (Input.GetMouseButton(btn))
+            if (button.isPressed)
             {
                 if (isDragging[btn])
                 {

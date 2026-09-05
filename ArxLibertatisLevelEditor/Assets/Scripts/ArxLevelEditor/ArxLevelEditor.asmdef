@@ -4,6 +4,7 @@
 		"Assets.Scripts.Util",
 		"Assets.Scripts.External",
 		"OEBIF",
-		"UnityEngine.UI"
+		"UnityEngine.UI",
+		"Unity.InputSystem"
 	]
 }

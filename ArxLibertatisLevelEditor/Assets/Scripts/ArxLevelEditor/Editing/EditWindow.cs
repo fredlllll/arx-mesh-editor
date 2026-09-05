@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
 
 namespace Assets.Scripts.ArxLevelEditor.Editing
@@ -68,7 +69,7 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
 
         public static Ray GetRayFromMousePosition()
         {
-            return GetRayFromMousePosition(MouseGlobalToLocal(Input.mousePosition));
+            return GetRayFromMousePosition(MouseGlobalToLocal(Mouse.current.position.ReadValue()));
         }
 
         public static bool IsInEditWindow(Vector3 localMousePos)
