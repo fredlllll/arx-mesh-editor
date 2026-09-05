@@ -1,37 +1,41 @@
-﻿using UnityEngine;
+﻿using Assets.Scripts.UI;
+using UnityEngine;
 
 namespace Assets.Scripts.ArxLevelEditor.Editing
 {
     public class EditWindow : MonoBehaviour
     {
-        public static RectTransform WindowTransform
-        {
-            get; private set;
-        }
-
         public static int X
         {
-            get { return (int)WindowTransform.offsetMin.x; }
+            get { return 0; }
         }
 
         public static int Y
         {
-            get { return (int)WindowTransform.offsetMin.y; }
+            get { return 0; }
         }
 
-        public static int Width
+        public static float Width
         {
-            get { return (int)WindowTransform.rect.width; }
+            get
+            {
+                var element = EditorViewport.ViewportElement;
+                return element != null && !float.IsNaN(element.resolvedStyle.width) ? element.resolvedStyle.width : 0;
+            }
         }
 
-        public static int Height
+        public static float Height
         {
-            get { return (int)WindowTransform.rect.height; }
+            get
+            {
+                var element = EditorViewport.ViewportElement;
+                return element != null && !float.IsNaN(element.resolvedStyle.height) ? element.resolvedStyle.height : 0;
+            }
         }
 
         public static bool MouseInEditWindow
         {
-            get; private set;
+            get; set;
         }
 
         public static Vector3 MouseGlobalToLocal(Vector3 globalPos)
@@ -43,10 +47,18 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
 
         public static Ray GetRayFromMousePosition(Vector3 localMousePos)
         {
-            localMousePos.x /= Width;
-            localMousePos.y /= Height;
+            float width = Width;
+            float height = Height;
+            if (width <= 0 || height <= 0)
+            {
+                return new Ray();
+            }
 
-            return LevelEditor.EditorCamera.ViewportPointToRay(localMousePos);
+            localMousePos.x /= width;
+            localMousePos.y /= height;
+
+            var camera = LevelEditor.EditorCamera;
+            return camera != null ? camera.ViewportPointToRay(localMousePos) : new Ray();
         }
 
         public static Ray GetRayFromMousePosition()
@@ -62,11 +74,6 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
         public static bool IsInEditWindowGlobal(Vector3 globalMousePos)
         {
             return IsInEditWindow(MouseGlobalToLocal(globalMousePos));
-        }
-
-        private void Awake()
-        {
-            WindowTransform = GetComponent<RectTransform>();
         }
 
         public void EventMouseEnter()

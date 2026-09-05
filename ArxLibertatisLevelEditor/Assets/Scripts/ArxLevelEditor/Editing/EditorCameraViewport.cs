@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Assets.Scripts.UI;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace Assets.Scripts.ArxLevelEditor.Editing
@@ -45,11 +46,19 @@ namespace Assets.Scripts.ArxLevelEditor.Editing
 
         private void Start()
         {
+            if (EditorViewport.ViewportElement != null)
+            {
+                return;
+            }
             RecreateViewport();
         }
 
         private void Update()
         {
+            if (EditorViewport.ViewportElement != null)
+            {
+                return;
+            }
             if (viewport != null)
             {
                 if (viewport.width != Screen.width || viewport.height != Screen.height)

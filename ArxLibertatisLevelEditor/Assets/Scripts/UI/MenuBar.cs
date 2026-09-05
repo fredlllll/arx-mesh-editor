@@ -61,6 +61,8 @@ namespace Assets.Scripts.UI
             rootElement = document.rootVisualElement.Query<VisualElement>("MenuBar");
 
             MenuBarFactory.AddItems(rootElement, this);
+
+            EditorViewport.Setup(document);
         }
 
         public void File_New()
