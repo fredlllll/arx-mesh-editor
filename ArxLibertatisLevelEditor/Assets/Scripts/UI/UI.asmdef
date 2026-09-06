@@ -5,8 +5,6 @@
 		"Assets.Scripts.ArxLevelEditor",
 		"Assets.Scripts.ArxLevelLoading",
 		"Assets.Scripts.Util",
-		"StandaloneFileBrowser",
-		"UnityEngine.UI",
-		"Unity.TextMeshPro"
+		"StandaloneFileBrowser"
 	]
 }

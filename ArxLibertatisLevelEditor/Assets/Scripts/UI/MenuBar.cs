@@ -68,6 +68,10 @@ namespace Assets.Scripts.UI
 
             EditorViewport.Setup(document);
 
+            ToolbarHandler.Setup(document);
+
+            InspectorHandler.Setup(document);
+
             OpenLevelDialog.ShowIfNeeded(document);
         }
 
